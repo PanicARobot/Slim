@@ -1,2 +1,2 @@
 # Slim
-## The successor of Panick Attack
+## The successor of Panic Attack
