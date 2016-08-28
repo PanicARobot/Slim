@@ -1,32 +1,37 @@
 Slim strategy description
 
-This file goal is to clear the behavior of the robot during a combat.
+This file goal is to define the behavior of the robot during a combat.
 
 Inputs:
 1. Motor measured speed left and right (RPM)
 2. Distance sensor left and right (active / not active)
 3. Oiler angles defined orientation (deg)
-4. Acceleration of the robot in 3D (m/s^2)
-5. Tire traction available, left and right (available / not available)
-6. TODO
+4. Orientation in quaternions (quaternions)
+5. Acceleration of the robot in 3D (m/s^2)
+6. Angular speed of the robot (deg/s^2)
+7. Tire traction available, left and right (available / not available)
+8. TODO
 
 Outputs:
 1. Motor set point speed, left and right (RPM)
 2. TODO
 
-Modes:
-1. Initial - the moment after the start signal was applied.
-    Here a searching strategy is needed.
-    Here contact definition is needed.
+States:
+1. Initial state - the moment after the start signal was applied.
+    General approach is to start going trough the terrain in a pattern, pattern is TODO.
 
-2. After contact decision taking
-    Once the opponent position is available we need to take action, this happens here.
-    We need to have different decisions based on type of contact with opponent.
+2. Contact waiting state
+    We need to detect contact event (TODO - how to distinguish contact).
+    We need to control position changing using the pattern decided in the previous state (TODO, maybe PID control of path travelled by every tire).
 
-3. Executing counter measure
-    Once the opponent position is known and the counter measure is chosen we need to make sure the measure is done properly.
+2. Contact detected state
+    Once contact is detected we need to decide action (TODO).
+    Different contacts must have different actions (TODO).
+
+3. Action tracking state
+    Once the opponent position is known and the counter action is chosen we need to make sure the action is done properly.
     Here we need to watch out for disposition problems like lifting us up while trying to push the opponent on the front.
 
-4. Optional Counter measure failure
-    The counter measure has failed in execution, we need to make a new decision on how to proceed. (we go back to step 3 afterwards)
-
+4. OPTIONAL Action failure state
+    The action has failed in execution (TODO definition of action failure).
+    New action is to be chosen and passed to execution.
