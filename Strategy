@@ -1,0 +1,32 @@
+Slim strategy description
+
+This file goal is to clear the behavior of the robot during a combat.
+
+Inputs:
+1. Motor measured speed left and right (RPM)
+2. Distance sensor left and right (active / not active)
+3. Oiler angles defined orientation (deg)
+4. Acceleration of the robot in 3D (m/s^2)
+5. Tire traction available, left and right (available / not available)
+6. TODO
+
+Outputs:
+1. Motor set point speed, left and right (RPM)
+2. TODO
+
+Modes:
+1. Initial - the moment after the start signal was applied.
+    Here a searching strategy is needed.
+    Here contact definition is needed.
+
+2. After contact decision taking
+    Once the opponent position is available we need to take action, this happens here.
+    We need to have different decisions based on type of contact with opponent.
+
+3. Executing counter measure
+    Once the opponent position is known and the counter measure is chosen we need to make sure the measure is done properly.
+    Here we need to watch out for disposition problems like lifting us up while trying to push the opponent on the front.
+
+4. Optional Counter measure failure
+    The counter measure has failed in execution, we need to make a new decision on how to proceed. (we go back to step 3 afterwards)
+
