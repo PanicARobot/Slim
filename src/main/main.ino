@@ -22,7 +22,11 @@ void setup()
 	if(!imu.init())
 	{
 		Serial.println("Failed to detect and initialize IMU!");
-		while(1); // TODO: soft-reset CPU
+
+		delay(500);
+		void (*f)() = nullptr;
+		f();
+		while(1);
 	}
 
 	imu.enableDefault();
