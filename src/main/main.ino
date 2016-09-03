@@ -8,7 +8,7 @@ Mahony ahrs;
 
 const uint32_t MICROS_PER_SEC = 1000000;
 
-const uint32_t SAMPLE_FREQUENCY = 1660;
+const uint32_t SAMPLE_FREQUENCY = 250;
 const uint32_t PRINT_FREQUENCY = 5;
 
 const float gScale = 0x7FFF / (float)8;
@@ -17,7 +17,9 @@ const float dpsScale = 0x7FFF / (float)1000;
 void setup()
 {
 	Serial.begin(115200);
+
 	Wire.begin();
+	Wire.setClock(400000);
 
 	if(!imu.init())
 	{
