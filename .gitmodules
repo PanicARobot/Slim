@@ -1,0 +1,6 @@
+[submodule "lsm6-arduino"]
+	path = src/lsm6-arduino
+	url = https://github.com/pololu/lsm6-arduino.git
+[submodule "src/MahonyAHRS"]
+	path = src/MahonyAHRS
+	url = https://github.com/PaulStoffregen/MahonyAHRS.git
