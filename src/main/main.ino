@@ -40,12 +40,68 @@ void setup()
 		0x2 << 2 | // 1000 degrees per second
 		0x0);
 
+	calibrate_sensors();
+
 	ahrs.begin((float) SAMPLE_FREQUENCY);
+}
+
+int acc_x_offset;
+int acc_y_offset;
+int acc_z_offset;
+
+int gyro_x_offset;
+int gyro_y_offset;
+int gyro_z_offset;
+
+void calibrate_sensors()
+{
+	int samples_count = 0;
+
+	int64_t acc_x_sum = 0;
+	int64_t acc_y_sum = 0;
+	int64_t acc_z_sum = 0;
+
+	int64_t gyro_x_sum = 0;
+	int64_t gyro_y_sum = 0;
+	int64_t gyro_z_sum = 0;
+
+	// Collect sensor data for a second
+	while(micros() < MICROS_PER_SEC)
+	{
+		imu.read();
+
+		acc_x_sum += imu.a.x;
+		acc_y_sum += imu.a.y;
+		acc_z_sum += imu.a.z;
+
+		gyro_x_sum += imu.g.x;
+		gyro_y_sum += imu.g.y;
+		gyro_z_sum += imu.g.z;
+
+		++samples_count;
+	}
+
+	// Should I use floats here?
+	acc_x_offset = acc_x_sum / samples_count;
+	acc_y_offset = acc_y_sum / samples_count;
+	acc_z_offset = acc_z_sum / samples_count - gScale;
+
+	gyro_x_offset = gyro_x_sum / samples_count;
+	gyro_y_offset = gyro_y_sum / samples_count;
+	gyro_z_offset = gyro_z_sum / samples_count;
 }
 
 void read_sensors()
 {
 	imu.read();
+
+	imu.a.x -= acc_x_offset;
+	imu.a.y -= acc_y_offset;
+	imu.a.z -= acc_z_offset;
+
+	imu.g.x -= gyro_x_offset;
+	imu.g.y -= gyro_y_offset;
+	imu.g.z -= gyro_z_offset;
 }
 
 void update_ahrs()
@@ -63,6 +119,8 @@ void update_ahrs()
 
 char report[80];
 
+int cyclesPerSecond = 0;
+
 void print_info()
 {
 	float gyroX = imu.g.x / dpsScale;
@@ -72,6 +130,10 @@ void print_info()
 	float accX = imu.a.x / gScale;
 	float accY = imu.a.y / gScale;
 	float accZ = imu.a.z / gScale;
+
+	Serial.print(cyclesPerSecond * PRINT_FREQUENCY);
+	Serial.print("\t");
+	cyclesPerSecond = 0;
 
 	Serial.print("ACC: ");
 	Serial.print(accX);
@@ -110,12 +172,9 @@ void loop()
 	if(currentMicros - lastSampleMicros >= MICROS_PER_SEC / SAMPLE_FREQUENCY)
 	{
 		read_sensors();
+		update_ahrs();
 
-		if(currentMicros < MICROS_PER_SEC)
-		{
-			// calibrate sensors
-		}
-		else update_ahrs();
+		++cyclesPerSecond;
 
 		lastSampleMicros = currentMicros;
 	}
