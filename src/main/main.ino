@@ -47,9 +47,9 @@ void make_sample()
 {
 	imu.read();
 
-	float gyroX = imu.g.x / dpsScale * M_PI / 180.0f;
-	float gyroY = imu.g.y / dpsScale * M_PI / 180.0f;
-	float gyroZ = imu.g.z / dpsScale * M_PI / 180.0f;
+	float gyroX = imu.g.x / dpsScale;
+	float gyroY = imu.g.y / dpsScale;
+	float gyroZ = imu.g.z / dpsScale;
 
 	float accX = imu.a.x / gScale;
 	float accY = imu.a.y / gScale;
