@@ -14,54 +14,13 @@ const uint32_t PRINT_FREQUENCY = 5;
 const float gScale = 0x7FFF / (float)8;
 const float dpsScale = 0x7FFF / (float)1000;
 
-void setup()
-{
-	Serial.begin(115200);
-
-	Wire.begin();
-	Wire.setClock(400000);
-
-	if(!imu.init())
-	{
-		Serial.println("Failed to detect and initialize IMU!");
-
-		delay(500);
-		void (*f)() = nullptr;
-		f();
-		while(1);
-	}
-
-	imu.enableDefault();
-
-	imu.writeReg(LSM6::CTRL1_XL, // Accelerometer
-		0x8 << 4 | // 1.66 kHz sample frequency
-		0x3 << 2 | // 8g
-		0x1);      // Anti-aliasing: 200 Hz
-	imu.writeReg(LSM6::CTRL2_G, // Gyroscope
-		0x8 << 4 | // 1.66 kHz sample frequency
-		0x2 << 2 | // 1000 degrees per second
-		0x0);
-
-	calibrate_sensors();
-
-	ahrs.begin((float) SAMPLE_FREQUENCY);
-}
-
-int acc_x_offset;
-int acc_y_offset;
-int acc_z_offset;
-
 int gyro_x_offset;
 int gyro_y_offset;
 int gyro_z_offset;
 
-void calibrate_sensors()
+void calibrate_gyroscope()
 {
 	int samples_count = 0;
-
-	int64_t acc_x_sum = 0;
-	int64_t acc_y_sum = 0;
-	int64_t acc_z_sum = 0;
 
 	int64_t gyro_x_sum = 0;
 	int64_t gyro_y_sum = 0;
@@ -72,21 +31,12 @@ void calibrate_sensors()
 	{
 		imu.read();
 
-		acc_x_sum += imu.a.x;
-		acc_y_sum += imu.a.y;
-		acc_z_sum += imu.a.z;
-
 		gyro_x_sum += imu.g.x;
 		gyro_y_sum += imu.g.y;
 		gyro_z_sum += imu.g.z;
 
 		++samples_count;
 	}
-
-	// Should I use floats here?
-	acc_x_offset = acc_x_sum / samples_count;
-	acc_y_offset = acc_y_sum / samples_count;
-	acc_z_offset = acc_z_sum / samples_count - gScale;
 
 	gyro_x_offset = gyro_x_sum / samples_count;
 	gyro_y_offset = gyro_y_sum / samples_count;
@@ -97,10 +47,7 @@ void read_sensors()
 {
 	imu.read();
 
-	imu.a.x -= acc_x_offset;
-	imu.a.y -= acc_y_offset;
-	imu.a.z -= acc_z_offset;
-
+	// Apply gyroscope offsets
 	imu.g.x -= gyro_x_offset;
 	imu.g.y -= gyro_y_offset;
 	imu.g.z -= gyro_z_offset;
@@ -162,6 +109,39 @@ void print_info()
 	Serial.print(" ");
 	Serial.print(yaw);
 	Serial.println("");
+}
+
+void setup()
+{
+	Serial.begin(115200);
+
+	Wire.begin();
+	Wire.setClock(400000);
+
+	if(!imu.init())
+	{
+		Serial.println("Failed to detect and initialize IMU!");
+
+		delay(500);
+		void (*f)() = nullptr;
+		f();
+		while(1);
+	}
+
+	imu.enableDefault();
+
+	imu.writeReg(LSM6::CTRL1_XL, // Accelerometer
+		0x8 << 4 | // 1.66 kHz sample frequency
+		0x3 << 2 | // 8g
+		0x1);      // Anti-aliasing: 200 Hz
+	imu.writeReg(LSM6::CTRL2_G, // Gyroscope
+		0x8 << 4 | // 1.66 kHz sample frequency
+		0x2 << 2 | // 1000 degrees per second
+		0x0);
+
+	calibrate_gyroscope();
+
+	ahrs.begin((float) SAMPLE_FREQUENCY);
 }
 
 uint32_t lastSampleMicros = 0;
