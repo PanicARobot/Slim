@@ -43,10 +43,13 @@ void setup()
 	ahrs.begin((float) SAMPLE_FREQUENCY);
 }
 
-void make_sample()
+void read_sensors()
 {
 	imu.read();
+}
 
+void update_ahrs()
+{
 	float gyroX = imu.g.x / dpsScale;
 	float gyroY = imu.g.y / dpsScale;
 	float gyroZ = imu.g.z / dpsScale;
@@ -106,7 +109,14 @@ void loop()
 
 	if(currentMicros - lastSampleMicros >= MICROS_PER_SEC / SAMPLE_FREQUENCY)
 	{
-		make_sample();
+		read_sensors();
+
+		if(currentMicros < MICROS_PER_SEC)
+		{
+			// calibrate sensors
+		}
+		else update_ahrs();
+
 		lastSampleMicros = currentMicros;
 	}
 
