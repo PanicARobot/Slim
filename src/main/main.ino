@@ -55,7 +55,7 @@ void make_sample()
 	float accY = imu.a.y / gScale;
 	float accZ = imu.a.z / gScale;
 
-	ahrs.update(gyroX, gyroY, gyroZ, accX, accY, accZ, 0.0f, 0.0f, 0.0f);
+	ahrs.updateIMU(gyroX, gyroY, gyroZ, accX, accY, accZ);
 }
 
 char report[80];
