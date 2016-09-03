@@ -27,7 +27,8 @@ void calibrate_gyroscope()
 	int64_t gyro_z_sum = 0;
 
 	// Collect sensor data for a second
-	while(micros() < MICROS_PER_SEC)
+	uint32_t startMicros = micros();
+	while(micros() - startMicros < MICROS_PER_SEC)
 	{
 		imu.read();
 
@@ -66,7 +67,69 @@ void update_ahrs()
 	ahrs.updateIMU(gyroX, gyroY, gyroZ, accX, accY, accZ);
 }
 
-char report[80];
+float ahrs_roll_offset;
+float ahrs_pitch_offset;
+float ahrs_yaw_offset;
+
+void calibrate_ahrs()
+{
+	{
+		uint32_t startMicros = micros();
+		uint32_t lastSampleMicros = startMicros - MICROS_PER_SEC / SAMPLE_FREQUENCY;
+
+		while(true)
+		{
+			uint32_t currentMicros = micros();
+			if(currentMicros - startMicros > MICROS_PER_SEC)
+				break;
+
+			if(currentMicros - lastSampleMicros < MICROS_PER_SEC / SAMPLE_FREQUENCY)
+				continue;
+
+			lastSampleMicros = currentMicros;
+
+			read_sensors();
+			update_ahrs();
+		}
+	}
+
+	int samples_count = 0;
+
+	float roll_sum = 0;
+	float pitch_sum = 0;
+	float yaw_sum = 0;
+
+	// Collect data for a second
+	uint32_t startMicros = micros();
+	uint32_t lastSampleMicros = startMicros - MICROS_PER_SEC / SAMPLE_FREQUENCY;
+
+	while(true)
+	{
+		uint32_t currentMicros = micros();
+		if(currentMicros - startMicros > MICROS_PER_SEC)
+			break;
+
+		if(currentMicros - lastSampleMicros < MICROS_PER_SEC / SAMPLE_FREQUENCY)
+			continue;
+
+		lastSampleMicros = currentMicros;
+
+		read_sensors();
+		update_ahrs();
+
+		roll_sum += ahrs.getRollRadians();
+		pitch_sum += ahrs.getPitchRadians();
+		yaw_sum += ahrs.getYawRadians();
+
+		++samples_count;
+	}
+
+	Serial.println(roll_sum);
+
+	ahrs_roll_offset = roll_sum / samples_count;
+	ahrs_pitch_offset = pitch_sum / samples_count;
+	ahrs_yaw_offset = yaw_sum / samples_count;
+}
 
 int cyclesPerSecond = 0;
 
@@ -98,9 +161,9 @@ void print_info()
 	Serial.print(gyroZ);
 	Serial.print("   ");
 
-	float roll = ahrs.getRoll();
-	float pitch = ahrs.getPitch();
-	float yaw = ahrs.getYaw();
+	float roll = ahrs.getRoll() - ahrs_roll_offset * 180 / M_PI;
+	float pitch = ahrs.getPitch() - ahrs_pitch_offset * 180 / M_PI;
+	float yaw = ahrs.getYaw() - ahrs_yaw_offset * 180 / M_PI;
 	
 	Serial.print("AHRS: ");
 	Serial.print(roll);
@@ -142,6 +205,7 @@ void setup()
 	calibrate_gyroscope();
 
 	ahrs.begin((float) SAMPLE_FREQUENCY);
+	calibrate_ahrs();
 }
 
 uint32_t lastSampleMicros = 0;
