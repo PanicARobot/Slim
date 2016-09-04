@@ -1,4 +1,5 @@
 #include "SDLogDriver.h"
+
 #include <SD.h>
 
 void read_file(const char* filename)
@@ -13,7 +14,7 @@ void read_file(const char* filename)
 void append_file(const char* filename, const char* entry)
 {
 	File f = SD.open(filename, FILE_WRITE);
-	if(!f) Serial.println("Some error");
+	if(!f) Serial.println("Can not write to file");
 	f.println(entry);
 	f.close();
 }
