@@ -55,11 +55,11 @@ void setup()
 	position.calibrate();
 }
 
-uint32_t lastSampleMicros = 0;
-uint32_t lastPrintMicros = 0;
-
 void loop()
 {
+	static uint32_t lastSampleMicros = 0;
+	static uint32_t lastPrintMicros = 0;
+
 	uint32_t currentMicros = micros();
 
 	if(currentMicros - lastSampleMicros >= MICROS_PER_SEC / SAMPLE_FREQUENCY)
