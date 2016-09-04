@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include <stdint.h>
 
-uint8_t initMotorsPortDriver(void);
-uint8_t runMotorPortDriverMainFunction(void);
+void initMotors(void);
+void setMotors(int32_t, int32_t);
 
 #endif // __MOTOR_DRIVER_H
