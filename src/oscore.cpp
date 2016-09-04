@@ -13,14 +13,8 @@ const uint32_t PRINT_FREQUENCY = 5;
 
 OrientationSensors position;
 
-int cyclesPerSecond = 0;
-
-void print_info()
+void log_info()
 {
-	Serial.print(cyclesPerSecond * PRINT_FREQUENCY);
-	Serial.print("\t");
-	cyclesPerSecond = 0;
-
 	Serial.print("ACC: ");
 	Serial.print(position.getAccX());
 	Serial.print(" ");
@@ -69,14 +63,13 @@ void loop()
 	if(currentMicros - lastSampleMicros >= MICROS_PER_SEC / SAMPLE_FREQUENCY)
 	{
 		position.read_sensors();
-		++cyclesPerSecond;
 		lastSampleMicros = currentMicros;
 	}
 
-	// Print to serial port
+	// Log data
 	if(currentMicros - lastPrintMicros >= MICROS_PER_SEC / PRINT_FREQUENCY)
 	{
-		print_info();
+		log_info();
 		lastPrintMicros = currentMicros;
 	}
 
