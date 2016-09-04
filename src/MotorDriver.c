@@ -1,3 +1,5 @@
+#include "MotorDriver.h"
+
 #define MOTOR_LEFT_DIR_PIN    9
 #define MOTOR_LEFT_PWM_PIN    10
 #define MOTOR_RIGHT_DIR_PIN   12
@@ -26,6 +28,9 @@ uint8_t initMotorsPortDriver(void)
   // set PWM to default value
   analogWrite(MOTOR_LEFT_PWM_PIN, MOTOR_LEFT_PWM_DEFAULT_VALUE);
   analogWrite(MOTOR_RIGHT_PWM_PIN, MOTOR_RIGHT_PWM_DEFAULT_VALUE);
+
+  // return NO_ERROR (0) since no failure is possible for now
+  return 0;
 }
 
 // a function on periodic call used for update of port and PWM states as to required by the upper layer
