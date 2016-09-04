@@ -17,6 +17,8 @@ CORE_PATH=${ARDUINO_PACKAGES}/adafruit/hardware/samd/1.0.13/cores/arduino
 VARIANTS_PATH=${ARDUINO_PACKAGES}/adafruit/hardware/samd/1.0.13/variants/arduino_zero
 LIBRARIES_PATH=${ARDUINO_PACKAGES}/adafruit/hardware/samd/1.0.13/libraries
 
+ARDUINO_LIBS_PATH=${ARDUINO}/libraries
+
 BUILD_DIR=build
 
 OUTPUT_ELF=${BUILD_DIR}/result.elf
@@ -30,7 +32,9 @@ INCLUDES=\
 	-I${ARDUINO_PACKAGES}/arduino/tools/CMSIS/4.0.0-atmel/Device/ATMEL/ \
 	-I${CORE_PATH} \
 	-I${VARIANTS_PATH} \
-	-I${LIBRARIES_PATH}/Wire
+	-I${LIBRARIES_PATH}/Wire/ \
+	-I${LIBRARIES_PATH}/SPI/ \
+	-I${ARDUINO_LIBS_PATH}/SD/src/
 
 DEFINES=-DF_CPU=48000000L -DARDUINO=10611 -DARDUINO_SAMD_FEATHER_M0 -DARDUINO_ARCH_SAMD -DARDUINO_SAMD_ZERO -D__SAMD21G18A__ -DUSB_VID=0x239A -DUSB_PID=0x800B -DUSBCON '-DUSB_MANUFACTURER="Adafruit"' '-DUSB_PRODUCT="Feather M0"'
 
@@ -83,11 +87,21 @@ CPP_CORES=\
 
 CPP_VARIANTS=variant.cpp
 
-CPP_LIBS=Wire/Wire.cpp
+CPP_LIBS=\
+	Wire/Wire.cpp \
+	SPI/SPI.cpp
+
+CPP_ARDUINO_LIBS=\
+	SD/src/SD.cpp \
+	SD/src/File.cpp \
+	SD/src/utility/SdFile.cpp \
+	SD/src/utility/SdVolume.cpp \
+	SD/src/utility/Sd2Card.cpp
 
 CPP_FILES=\
 	oscore.cpp\
 	OrientationSensorsWrapper.cpp \
+	SDLogDriver.cpp \
 	lsm6-arduino/LSM6.cpp \
 	MahonyAHRS/src/MahonyAHRS.cpp
 
@@ -95,7 +109,8 @@ OBJ_FILES=\
 	$(addprefix ${BUILD_DIR}/,${CPP_FILES:.cpp=.o}) \
 	$(addprefix ${BUILD_DIR}/variants/,${CPP_VARIANTS:.cpp=.o}) \
 	$(addprefix ${BUILD_DIR}/cores/,${ASM_CORES:.S=.o} ${C_CORES:.c=.o} ${CPP_CORES:.cpp=.o}) \
-	$(addprefix ${BUILD_DIR}/libs/,${CPP_LIBS:.cpp=.o})
+	$(addprefix ${BUILD_DIR}/libs/,${CPP_LIBS:.cpp=.o}) \
+	$(addprefix ${BUILD_DIR}/arduino_libs/,${CPP_ARDUINO_LIBS:.cpp=.o})
 
 
 
@@ -143,6 +158,10 @@ ${BUILD_DIR}/cores/%.o: ${CORE_PATH}/%.cpp
 	${CXX} ${CXXFLAGS} -c $< -o $@
 
 ${BUILD_DIR}/libs/%.o: ${LIBRARIES_PATH}/%.cpp
+	mkdir -p $(shell dirname $@)
+	${CXX} ${CXXFLAGS} -c $< -o $@
+
+${BUILD_DIR}/arduino_libs/%.o: ${ARDUINO_LIBS_PATH}/%.cpp
 	mkdir -p $(shell dirname $@)
 	${CXX} ${CXXFLAGS} -c $< -o $@
 
