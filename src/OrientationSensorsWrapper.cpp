@@ -140,3 +140,5 @@ void OrientationSensors::read_sensors()
 	ahrs_reading.y = ahrs.getPitchRadians() - ahrs_offset.y;
 	ahrs_reading.z = ahrs.getYawRadians() - ahrs_offset.z;
 }
+
+OrientationSensors position;

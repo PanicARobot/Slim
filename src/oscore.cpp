@@ -14,8 +14,6 @@ const uint32_t MICROS_PER_SEC = 1000000;
 const uint32_t SAMPLE_FREQUENCY = 250;
 const uint32_t PRINT_FREQUENCY = 5;
 
-OrientationSensors position;
-
 void log_info()
 {
 	Serial.print("ACC: ");
