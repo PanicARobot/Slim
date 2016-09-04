@@ -16,26 +16,24 @@ const uint32_t PRINT_FREQUENCY = 5;
 
 void log_info()
 {
-	Serial.print("ACC: ");
-	Serial.print(position.getAccX());
-	Serial.print(" ");
-	Serial.print(position.getAccY());
-	Serial.print(" ");
-	Serial.print(position.getAccZ());
+	log_data_pack.timestamp = millis();
 
-	Serial.print("   Gyro: ");
-	Serial.print(position.getGyroX());
-	Serial.print(" ");
-	Serial.print(position.getGyroY());
-	Serial.print(" ");
-	Serial.print(position.getGyroZ());
-	Serial.print("   AHRS: ");
-	Serial.print(position.getRoll() * 180 / M_PI);
-	Serial.print(" ");
-	Serial.print(position.getPitch() * 180 / M_PI);
-	Serial.print(" ");
-	Serial.print(position.getYaw() * 180 / M_PI);
-	Serial.println("");
+	log_data_pack.acc_x = position.getAccX();
+	log_data_pack.acc_y = position.getAccY();
+	log_data_pack.acc_z = position.getAccZ();
+
+	log_data_pack.gyro_x = position.getGyroX();
+	log_data_pack.gyro_y = position.getGyroY();
+	log_data_pack.gyro_z = position.getGyroZ();
+
+	log_data_pack.ahrs_x = position.getRoll();
+	log_data_pack.ahrs_y = position.getPitch();
+	log_data_pack.ahrs_z = position.getYaw();
+
+	log_data_pack.leftSpeed = leftEncoder.getSpeed();
+	log_data_pack.rightSpeed = rightEncoder.getSpeed();
+
+	logDataPack();
 }
 
 void setup()
@@ -43,6 +41,8 @@ void setup()
 	Serial.begin(115200);
 
 	SD.begin(4);
+
+	initLogger();
 
 	initDualEncoders();
 	initMotors();
@@ -52,6 +52,54 @@ void setup()
 
 	position.init();
 	position.calibrate();
+}
+
+void processCommand()
+{
+	static int left = 0;
+	static int right = 0;
+
+	if(Serial.available() == 0) return;
+
+	char cmd = Serial.read();
+	if(cmd == 'l')
+	{
+		left = 0;
+		if(Serial.available() > 0)
+		{
+			char dir = Serial.read();
+			while(Serial.available() > 0)
+			{
+				char digit = Serial.read();
+				left = left * 10 + (digit - '0');
+			}
+
+			if(dir == '-') left = -left;
+		}
+
+		setMotors(left, right);
+	}
+	else if(cmd == 'r')
+	{
+		right = 0;
+		if(Serial.available() > 0)
+		{
+			char dir = Serial.read();
+			while(Serial.available() > 0)
+			{
+				char digit = Serial.read();
+				right = right * 10 + (digit - '0');
+			}
+
+			if(dir == '-') right = -right;
+		}
+
+		setMotors(left, right);
+	}
+	else if(cmd == 'd')
+	{
+		dumpLog();
+	}
 }
 
 void loop()
@@ -86,4 +134,6 @@ void loop()
 	{
 		digitalWrite(LED_PIN, LOW);
 	}
+
+	processCommand();
 }
