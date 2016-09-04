@@ -2,8 +2,8 @@
 
 #include <Arduino.h>
 
-#define LEFT_A_PIN 11
-#define LEFT_B_PIN 12
+#define LEFT_A_PIN 12
+#define LEFT_B_PIN 11
 #define RIGHT_A_PIN 9
 #define RIGHT_B_PIN 10
 
