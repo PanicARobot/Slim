@@ -102,6 +102,7 @@ CPP_FILES=\
 	oscore.cpp\
 	OrientationSensorsWrapper.cpp \
 	SDLogDriver.cpp \
+	DualEncoderDriver.cpp \
 	lsm6-arduino/LSM6.cpp \
 	MahonyAHRS/src/MahonyAHRS.cpp
 

@@ -1,1 +1,0 @@
-#define ENCODER_PIN_A   
