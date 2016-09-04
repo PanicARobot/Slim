@@ -7,15 +7,27 @@
 #define RIGHT_A_PIN 9
 #define RIGHT_B_PIN 10
 
+#define WHEEL_PERIMETER (18 * M_PI)
+#define IMPULSES_PER_ROUND 358.32
+#define MICROS_PER_SECOND 1000000
+
+static constexpr float DISTANCE = MICROS_PER_SECOND * WHEEL_PERIMETER / IMPULSES_PER_ROUND;
 
 Encoder::Encoder()
-	: direction(0), lastReadingMicros(0) {}
+	: direction(0), lastMicros(0), impulseCounter(0) {}
 
-int Encoder::getSpeed() // mm/s
+void Encoder::update(int b)
 {
-	int currentMicros = micros();
-	float speed = DISTANCE / (currentMicros - lastReadingMicros);
-	lastReadingMicros = currentMicros;
+	direction = b;
+	++impulseCounter;
+}
+
+float Encoder::getSpeed() // mm/s
+{
+	uint32_t currentMicros = micros();
+	float speed = DISTANCE * impulseCounter / (currentMicros - lastMicros);
+	impulseCounter = 0;
+	lastMicros = currentMicros;
 	return direction == 0 ? -speed : speed; // 1 is forward, 0 is backward
 }
 
