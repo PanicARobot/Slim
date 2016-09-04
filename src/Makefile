@@ -142,10 +142,6 @@ serial:
 
 
 # Building source
-${BUILD_DIR}/%.o: %.c
-	mkdir -p $(shell dirname $@)
-	${CC} ${CFLAGS} -c $< -o $@
-
 ${BUILD_DIR}/%.o: %.cpp
 	mkdir -p $(shell dirname $@)
 	${CXX} ${CXXFLAGS} -c $< -o $@
