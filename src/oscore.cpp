@@ -1,7 +1,7 @@
 #include <Wire.h>
-#include "LSM6.h"
+#include <LSM6.h>
 
-#include "MahonyAHRS.h"
+#include <MahonyAHRS.h>
 
 LSM6 imu;
 Mahony ahrs;
@@ -176,6 +176,14 @@ void print_info()
 
 void setup()
 {
+	pinMode(13, OUTPUT);
+	while(false)
+	{
+		digitalWrite(13, HIGH);
+		delay(100);
+		digitalWrite(13, LOW);
+		delay(100);
+	}
 	Serial.begin(115200);
 
 	Wire.begin();
