@@ -4,6 +4,8 @@
 #include <SD.h>
 #include "SDLogDriver.h"
 
+#define LED_PIN 13
+
 const uint32_t MICROS_PER_SEC = 1000000;
 
 const uint32_t SAMPLE_FREQUENCY = 250;
@@ -59,9 +61,11 @@ void loop()
 {
 	static uint32_t lastSampleMicros = 0;
 	static uint32_t lastPrintMicros = 0;
+	static uint32_t lastBlinkMicros = 0;
 
 	uint32_t currentMicros = micros();
 
+	// Read orientation sensors
 	if(currentMicros - lastSampleMicros >= MICROS_PER_SEC / SAMPLE_FREQUENCY)
 	{
 		position.read_sensors();
@@ -69,9 +73,21 @@ void loop()
 		lastSampleMicros = currentMicros;
 	}
 
+	// Print to serial port
 	if(currentMicros - lastPrintMicros >= MICROS_PER_SEC / PRINT_FREQUENCY)
 	{
 		print_info();
 		lastPrintMicros = currentMicros;
+	}
+
+	// Blink when working
+	if(currentMicros - lastBlinkMicros >= MICROS_PER_SEC / 2)
+	{
+		lastBlinkMicros = currentMicros;
+		digitalWrite(LED_PIN, HIGH);
+	}
+	else if(currentMicros - lastBlinkMicros >= MICROS_PER_SEC / 3)
+	{
+		digitalWrite(LED_PIN, LOW);
 	}
 }
