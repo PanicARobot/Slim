@@ -87,6 +87,7 @@ CPP_LIBS=Wire/Wire.cpp
 
 CPP_FILES=\
 	oscore.cpp\
+	OrientationSensorsWrapper.cpp \
 	lsm6-arduino/LSM6.cpp \
 	MahonyAHRS/src/MahonyAHRS.cpp
 
