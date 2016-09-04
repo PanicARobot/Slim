@@ -2,9 +2,9 @@
 
 #include <Arduino.h>
 
-#define MOTOR_LEFT_DIR_PIN  15
-#define MOTOR_LEFT_PWM_PIN  16
-#define MOTOR_RIGHT_DIR_PIN 6
+#define MOTOR_LEFT_DIR_PIN  1
+#define MOTOR_LEFT_PWM_PIN  6
+#define MOTOR_RIGHT_DIR_PIN 0
 #define MOTOR_RIGHT_PWM_PIN 5
 
 void initMotors(void)

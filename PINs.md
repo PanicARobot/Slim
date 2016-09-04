@@ -2,9 +2,9 @@
 
 | Functionality      | Pin    |
 |:-------------------|:-------|
-| Left motor dir     | 15     |
-| Left motor pwm     | 16     |
-| Right motor dir    | 6      |
+| Left motor dir     | 1      |
+| Left motor pwm     | 6      |
+| Right motor dir    | 0      |
 | Right motor pwm    | 5      |
 | Left? sensor       | A4     |
 | Right? sensor      | A5     |
