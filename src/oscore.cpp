@@ -1,10 +1,13 @@
-#include <Wire.h>
 #include "OrientationSensorsWrapper.h"
-
-#include <SD.h>
 #include "SDLogDriver.h"
+#include "DualEncoderDriver.h"
+#include "MotorDriver.h"
+
+#include <Wire.h>
+#include <SD.h>
 
 #define LED_PIN 13
+
 
 const uint32_t MICROS_PER_SEC = 1000000;
 
@@ -21,15 +24,14 @@ void log_info()
 	Serial.print(position.getAccY());
 	Serial.print(" ");
 	Serial.print(position.getAccZ());
+
 	Serial.print("   Gyro: ");
 	Serial.print(position.getGyroX());
 	Serial.print(" ");
 	Serial.print(position.getGyroY());
 	Serial.print(" ");
 	Serial.print(position.getGyroZ());
-	Serial.print("   ");
-
-	Serial.print("AHRS: ");
+	Serial.print("   AHRS: ");
 	Serial.print(position.getRoll() * 180 / M_PI);
 	Serial.print(" ");
 	Serial.print(position.getPitch() * 180 / M_PI);
@@ -43,6 +45,9 @@ void setup()
 	Serial.begin(115200);
 
 	SD.begin(4);
+
+	initDualEncoders();
+	initMotors();
 
 	Wire.begin();
 	Wire.setClock(400000);
