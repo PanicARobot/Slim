@@ -21,6 +21,10 @@ uint8_t getLeftTireContactState()
     {
         return 0;
     }
+    else if((position.getAccX() * position.getAccX() + position.getAccY() * position.getAccY() + position.getAccZ() * position.getAccZ()) < 0.75)
+    {
+        return 0;
+    }
     else
     {
         return 1;
@@ -32,6 +36,10 @@ uint8_t getRightTireContactState()
 {
     // TODO validate
     if(position.getPitch() < -thresholdForTireLostContact)
+    {
+        return 0;
+    }
+    else if((position.getAccX() * position.getAccX() + position.getAccY() * position.getAccY() + position.getAccZ() * position.getAccZ()) < 0.75)
     {
         return 0;
     }
