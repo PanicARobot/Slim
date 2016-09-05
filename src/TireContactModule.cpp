@@ -16,7 +16,7 @@ void tiresContactInit(float thresholdForLostOfContact)
 uint8_t getLeftTireContactState()
 {
     // TODO validate
-    if(position.getPitch > thresholdForTireLostContact)
+    if(position.getPitch() > thresholdForTireLostContact)
     {
         return 0;
     }
@@ -30,7 +30,7 @@ uint8_t getLeftTireContactState()
 uint8_t getRightTireContactState()
 {
     // TODO validate
-    if(position.getPitch < -thresholdForTireLostContact)
+    if(position.getPitch() < -thresholdForTireLostContact)
     {
         return 0;
     }
