@@ -21,7 +21,7 @@ uint8_t getLeftTireContactState()
     {
         return 0;
     }
-    else if((position.getAccX() * position.getAccX() + position.getAccY() * position.getAccY() + position.getAccZ() * position.getAccZ()) < 0.75)
+    else if((position.getAccX() * position.getAccX() + position.getAccY() * position.getAccY() + position.getAccZ() * position.getAccZ()) < ZERO_G_DETECTION_THRESHOLD)
     {
         return 0;
     }
@@ -39,7 +39,7 @@ uint8_t getRightTireContactState()
     {
         return 0;
     }
-    else if((position.getAccX() * position.getAccX() + position.getAccY() * position.getAccY() + position.getAccZ() * position.getAccZ()) < 0.75)
+    else if((position.getAccX() * position.getAccX() + position.getAccY() * position.getAccY() + position.getAccZ() * position.getAccZ()) < ZERO_G_DETECTION_THRESHOLD)
     {
         return 0;
     }

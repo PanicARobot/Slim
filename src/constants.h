@@ -40,5 +40,6 @@
 // lift detection
 #define TIRE_LOST_OF_CONTACT_DEGREES 5.00
 #define FRONT_LIFTED_THRESHOLD       3.00
+#define ZERO_G_DETECTION_THRESHOLD   0.75
 
 #endif // __CONSTANTS_H
