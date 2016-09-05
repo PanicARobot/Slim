@@ -104,6 +104,9 @@ CPP_FILES=\
 	SDLogDriver.cpp \
 	MotorDriver.cpp \
 	DualEncoderDriver.cpp \
+	PlanarAccelerationModule.cpp \
+	TireContactModule.cpp \
+	FrontLiftedDetection.cpp \
 	lsm6-arduino/LSM6.cpp \
 	MahonyAHRS/src/MahonyAHRS.cpp
 

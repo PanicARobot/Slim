@@ -1,6 +1,7 @@
+#include "TireContactModule.h"
 
 #include "OrientationSensorsWrapper.h"
-#include "TireContactModule.h"
+#include "constants.h"
 
 // a module that determines whether the tires have contact to the surface, based on AHRS data
 

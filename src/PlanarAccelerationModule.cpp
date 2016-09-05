@@ -24,13 +24,13 @@ void PlanarAcceleration::calibrate()
 	while(true)
 	{
 		uint32_t current_micros = micros();
-		if(current_micros - start_micros > MICROS_PER_SEC / 3)
+		if(current_micros - start_micros > MICROS_PER_SECOND / 3)
 			return;
 
-		if(current_micros - last_micros < MICROS_PER_SEC / CALIBRATION_FREQUENCY)
+		if(current_micros - last_micros < MICROS_PER_SECOND / CALIBRATION_FREQUENCY)
 			continue;
 
-		float left_speed = leftEncoder.getSpeed()
+		float left_speed = leftEncoder.getSpeed();
 		float right_speed = rightEncoder.getSpeed();
 
 		float acceleration = (left_speed + right_speed - last_left_speed - last_right_speed) / 2;

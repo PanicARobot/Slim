@@ -2,6 +2,7 @@
 #include "SDLogDriver.h"
 #include "DualEncoderDriver.h"
 #include "MotorDriver.h"
+#include "TireContactModule.h"
 #include "FrontLiftedDetection.h"
 
 #include "constants.h"
@@ -248,6 +249,10 @@ void loop()
 	{
 		log_info();
 		last_log_micros = current_micros;
+
+		Serial.print(getLeftTireContactState()); Serial.print(" ");
+		Serial.print(getRightTireContactState()); Serial.print(" ");
+		Serial.print(getFrontLiftedState()); Serial.println("");
 	}
 
 	serialCommand();

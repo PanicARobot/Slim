@@ -1,5 +1,6 @@
-
 #include "FrontLiftedDetection.h"
+
+#include "OrientationSensorsWrapper.h"
 
 // local threshold keeping
 static float frontLiftedThreshold_local;
