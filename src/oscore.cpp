@@ -2,6 +2,7 @@
 #include "SDLogDriver.h"
 #include "DualEncoderDriver.h"
 #include "MotorDriver.h"
+#include "FrontLiftedDetection.h"
 
 #include <Wire.h>
 #include <SD.h>
@@ -12,6 +13,8 @@
 #define RIGHT_SENSOR_PIN A5
 
 #define TIRE_LOST_OF_CONTACT_DEGREES 5.00
+
+#define FRONT_LIFTED_THRESHOLD 3.00
 
 const uint32_t MICROS_PER_SEC = 1000000;
 
@@ -71,6 +74,8 @@ void setup()
 	position.init();
 
 	tiresContactInit(TIRE_LOST_OF_CONTACT_DEGREES);
+
+	initFrontLifted(FRONT_LIFTED_THRESHOLD);
 }
 
 void serialCommand()
