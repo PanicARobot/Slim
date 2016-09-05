@@ -38,7 +38,7 @@ void dumpLog()
 		char c = f.read();
 		if(c == BEGIN_LIFE_BYTE)
 		{
-			Serial.println("UNIT BOOTUP");
+			Serial.println("=== UNIT BOOTUP ===");
 		}
 		else if(c == BEGIN_DATA_BYTE)
 		{
@@ -47,22 +47,22 @@ void dumpLog()
 
 			Serial.print(log_data_pack.timestamp); Serial.print("ms: ");
 
-			Serial.print("Acc (");
+			Serial.print("Acc ("); // g
 			Serial.print(log_data_pack.acc_x); Serial.print(", ");
 			Serial.print(log_data_pack.acc_y); Serial.print(", ");
 			Serial.print(log_data_pack.acc_z); Serial.print(")\t");
 
-			Serial.print("Gyro (");
+			Serial.print("Gyro ("); // m / s^2
 			Serial.print(log_data_pack.gyro_x); Serial.print(", ");
 			Serial.print(log_data_pack.gyro_y); Serial.print(", ");
 			Serial.print(log_data_pack.gyro_z); Serial.print(")\t");
 
-			Serial.print("Ahrs (");
-			Serial.print(log_data_pack.ahrs_x); Serial.print(", ");
-			Serial.print(log_data_pack.ahrs_y); Serial.print(", ");
-			Serial.print(log_data_pack.ahrs_z); Serial.print(")\t");
+			Serial.print("Ahrs ("); // degrees
+			Serial.print(log_data_pack.ahrs_x * 180 / M_PI); Serial.print(", ");
+			Serial.print(log_data_pack.ahrs_y * 180 / M_PI); Serial.print(", ");
+			Serial.print(log_data_pack.ahrs_z * 180 / M_PI); Serial.print(")\t");
 
-			Serial.print("Encoders (");
+			Serial.print("Encoders ("); // mm / s
 			Serial.print(log_data_pack.leftSpeed); Serial.print(", ");
 			Serial.print(log_data_pack.rightSpeed); Serial.print(")\n");
 		}
