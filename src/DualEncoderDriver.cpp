@@ -7,22 +7,27 @@
 static constexpr float DISTANCE = MICROS_PER_SECOND * WHEEL_PERIMETER / IMPULSES_PER_ROUND;
 
 Encoder::Encoder() :
-	direction(0), last_micros(0),
-	impulse_counter(0), speed(0) {}
+	last_micros(0), impulse_counter(0),
+	direction(0), speed(0), acceleration(0) {}
 
-void Encoder::update(int b)
+void Encoder::update(int8_t b)
 {
 	direction = b;
 	++impulse_counter;
 }
 
-void Encoder::updateSpeed()
+void Encoder::update()
 {
 	uint32_t current_micros = micros();
+
+	float last_speed = speed;
 	speed = DISTANCE * impulse_counter / (current_micros - last_micros);
-	impulse_counter = 0;
-	last_micros = current_micros;
 	if(direction == 0) speed = -speed;
+
+	acceleration = (speed - last_speed) / (current_micros - last_micros);
+
+	last_micros = current_micros;
+	impulse_counter = 0;
 }
 
 Encoder leftEncoder, rightEncoder;
