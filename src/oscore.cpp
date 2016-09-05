@@ -81,14 +81,18 @@ void serialCommand()
 		left = 0;
 		if(Serial.available() > 0)
 		{
-			char dir = Serial.read();
+			int dir = 1;
+			if(Serial.peek() == '-')
+			{
+				dir = -1;
+				Serial.read();
+			}
 			while(Serial.available() > 0)
 			{
 				char digit = Serial.read();
 				left = left * 10 + (digit - '0');
 			}
-
-			if(dir == '-') left = -left;
+			left *= dir;
 		}
 
 		setMotors(left, right);
@@ -98,14 +102,18 @@ void serialCommand()
 		right = 0;
 		if(Serial.available() > 0)
 		{
-			char dir = Serial.read();
+			int dir = 1;
+			if(Serial.peek() == '-')
+			{
+				dir = -1;
+				Serial.read();
+			}
 			while(Serial.available() > 0)
 			{
 				char digit = Serial.read();
 				right = right * 10 + (digit - '0');
 			}
-
-			if(dir == '-') right = -right;
+			right *= dir;
 		}
 
 		setMotors(left, right);
