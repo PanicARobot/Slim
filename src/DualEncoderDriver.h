@@ -7,15 +7,21 @@
 class Encoder {
 	private:
 		int direction;
-		uint32_t lastMicros;
-		int impulseCounter;
+		uint32_t last_micros;
+		int impulse_counter;
+		float speed;
+
+		void update(int);
 
 	public:
 		Encoder();
 
-		void update(int);
+		void updateSpeed();
 		inline int getDirection() { return direction; } // 1 is forward, 0 is backward
-		float getSpeed();
+		inline float getSpeed() { return speed; }; // mm / s
+
+		friend void leftHandler();
+		friend void rightHandler();
 };
 
 extern Encoder leftEncoder, rightEncoder;
