@@ -170,7 +170,7 @@ void getCommand()
 					robot_state = WAITING_FOR_COMMAND;
 					break;
 				case 2:
-					robot_state = TEST;
+					robot_state = TEST_MODE;
 					setMotors(80, 80);
 					break;
 			}
