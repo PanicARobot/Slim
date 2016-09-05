@@ -15,10 +15,8 @@ enum {
 	WAITING_FOR_COMMAND,
 	PREPARE_TO_FIGHT,
 	FIGHT_MODE,
-	RECALIBRATE,
 	BRAINDEAD,
-	TEST_MODE,
-	SERIAL_MODE
+	TEST_MODE
 } robot_state = WAITING_FOR_COMMAND;
 
 void log_info()
@@ -153,19 +151,12 @@ void getProximityCommand()
 						break;
 
 					case 1:
-						robot_state = RECALIBRATE;
 						digitalWrite(LED_PIN, HIGH);
 						position.calibrate();
-						planarAcceleration.calibrate();
-						robot_state = WAITING_FOR_COMMAND;
 						break;
 
 					case 2:
 						robot_state = TEST_MODE;
-						break;
-
-					case 3:
-						robot_state = SERIAL_MODE;
 						break;
 				}
 			}
@@ -191,7 +182,6 @@ void getProximityCommand()
 	last_right = right;
 }
 
-bool set = false;
 void loop()
 {
 	static uint32_t last_sample_micros = 0;
@@ -216,8 +206,9 @@ void loop()
 				high_cycle /= 20;
 				break;
 
-			case SERIAL_MODE:
-				break;
+			case TEST_MODE:
+				full_cycle /= 2;
+				high_cycle /= 3;
 
 			default:
 				full_cycle /= 2;
@@ -250,12 +241,25 @@ void loop()
 			break;
 
 		case TEST_MODE:
-			if(planarAcceleration.getAcc() > 0.2 && !set)
+			if(current_micros - last_sample_micros >= MICROS_PER_SECOND / SAMPLE_FREQUENCY)
 			{
-				set = true;
-				if(planarAcceleration.getAngle() < 0)
-					setMotors(50, -50);
-				else setMotors(-50, 50);
+				static constexpr float GRAVITY = 9805.63;
+
+				Serial.print("Accelerometer: ");
+				Serial.print(position.getAccX() * GRAVITY); Serial.print(", ");
+				Serial.print(position.getAccY() * GRAVITY); Serial.print("     ");
+
+				Serial.print("Speed: ");
+				Serial.print(leftEncoder.getSpeed()); Serial.print(", ");
+				Serial.print(rightEncoder.getSpeed()); Serial.print("     ");
+
+				Serial.print("Acc: ");
+				Serial.print(leftEncoder.getAcc()); Serial.print(", ");
+				Serial.print(rightEncoder.getAcc()); Serial.print("     ");
+
+				Serial.print("Vector: ");
+				Serial.print(planarAcceleration.getX()); Serial.print(", ");
+				Serial.print(planarAcceleration.getY()); Serial.print("\n");
 			}
 			break;
 
@@ -267,19 +271,13 @@ void loop()
 	if(current_micros - last_sample_micros >= MICROS_PER_SECOND / SAMPLE_FREQUENCY)
 	{
 		position.update();
-		leftEncoder.updateSpeed();
-		rightEncoder.updateSpeed();
+		leftEncoder.update();
+		rightEncoder.update();
 		planarAcceleration.update();
 
 		getProximityCommand();
 
 		last_sample_micros = current_micros;
-
-		if(robot_state == SERIAL_MODE && planarAcceleration.getAcc() > 0.2)
-		{
-			Serial.print(planarAcceleration.getAcc()); Serial.print("   ");
-			Serial.print(planarAcceleration.getAngle()); Serial.println("");
-		}
 	}
 
 	// Log data
@@ -287,10 +285,7 @@ void loop()
 	{
 		log_info();
 		last_log_micros = current_micros;
-
-		if(robot_state == SERIAL_MODE)
-		{
-			getSerialCommand();
-		}
 	}
+
+	getSerialCommand();
 }

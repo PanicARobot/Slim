@@ -1,8 +1,6 @@
 #ifndef __CONSTANTS_H
 #define __CONSTANTS_H
 
-#define MICROS_PER_SECOND       1000000
-
 #define SERIAL_BAUD_RATE        115200
 #define I2C_FREQUENCY           400000
 #define SD_CHIP_SELECT          4
@@ -33,6 +31,8 @@
 #define IMPULSES_PER_ROUND      358.32
 
 // calibration config
+#define MICROS_PER_SECOND       1000000
+
 #define SAMPLE_FREQUENCY        250
 #define CALIBRATION_FREQUENCY   250
 #define LOG_FREQUENCY           5
