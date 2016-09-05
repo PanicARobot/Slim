@@ -11,6 +11,8 @@
 #define LEFT_SENSOR_PIN  A4
 #define RIGHT_SENSOR_PIN A5
 
+#define TIRE_LOST_OF_CONTACT_DEGREES 5.00
+
 const uint32_t MICROS_PER_SEC = 1000000;
 
 const uint32_t SAMPLE_FREQUENCY = 250;
@@ -67,6 +69,8 @@ void setup()
 	Wire.setClock(400000);
 
 	position.init();
+
+	tiresContactInit(TIRE_LOST_OF_CONTACT_DEGREES);
 }
 
 void serialCommand()
