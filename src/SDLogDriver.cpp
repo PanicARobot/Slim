@@ -73,6 +73,8 @@ void dumpLog()
 		}
 	}
 
+	Serial.println("=== DUMP COMPLETE ===");
+
 	f.close();
 
 	SD.remove(LOG_FILENAME);
