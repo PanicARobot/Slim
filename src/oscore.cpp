@@ -45,9 +45,9 @@ void log_info()
 
 void setup()
 {
-	Serial.begin(115200);
+	Serial.begin(SERIAL_BAUD_RATE);
 
-	SD.begin(4);
+	SD.begin(SD_CHIP_SELECT);
 
 	initLogger();
 
@@ -58,7 +58,7 @@ void setup()
 	pinMode(RIGHT_SENSOR_PIN, INPUT);
 
 	Wire.begin();
-	Wire.setClock(400000);
+	Wire.setClock(I2C_FREQUENCY);
 
 	position.init();
 

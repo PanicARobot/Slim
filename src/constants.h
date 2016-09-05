@@ -3,6 +3,10 @@
 
 #define MICROS_PER_SECOND       1000000
 
+#define SERIAL_BAUD_RATE        115200
+#define I2C_FREQUENCY           400000
+#define SD_CHIP_SELECT          4
+
 // pins
 #define LED_PIN                 13
 
