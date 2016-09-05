@@ -135,50 +135,52 @@ void getCommand()
 
 	readProximitySensors(left, right);
 
-	if(right)
+	if(robot_state == WAITING_FOR_COMMAND)
 	{
-		if(left > last_left)
+		if(right)
 		{
-			++command_counter;
-			Serial.print("Command counter: ");
-			Serial.println(command_counter);
+			if(left > last_left)
+			{
+				++command_counter;
+				Serial.print("Command counter: ");
+				Serial.println(command_counter);
+			}
+		}
+		else if(right < last_right)
+		{
+			switch(command_counter)
+			{
+				case 0:
+					robot_state = PREPARE_TO_FIGHT;
+					prepare_micros = micros();
+					break;
+				case 1:
+					robot_state = RECALIBRATE;
+					position.calibrate();
+					robot_state = WAITING_FOR_COMMAND;
+					break;
+				case 2:
+					robot_state = TEST;
+					setMotors(80, 80);
+					break;
+			}
+
+			command_counter = 0;
 		}
 	}
-	else if(right < last_right)
+	else if(left && right)
 	{
-		switch(command_counter)
+		if(robot_state == PREPARE_TO_FIGHT)
+			robot_state = WAITING_FOR_COMMAND;
+		else
 		{
-			case 0:
-				robot_state = PREPARE_TO_FIGHT;
-				prepare_micros = micros();
-				break;
-			case 1:
-				robot_state = TEST;
-				setMotors(80, 80);
-				break;
-			case 2:
-				robot_state = RECALIBRATE;
-				position.calibrate();
-				robot_state = WAITING_FOR_COMMAND;
-				break;
+			robot_state = BRAINDEAD;
+			setMotors(0, 0);
 		}
-
-		command_counter = 0;
 	}
 
 	last_left = left;
 	last_right = right;
-}
-
-void checkFailSafe()
-{
-	int left, right;
-	readProximitySensors(left, right);
-	if(left && right)
-	{
-		robot_state = BRAINDEAD;
-		setMotors(0, 0);
-	}
 }
 
 void loop()
@@ -239,9 +241,7 @@ void loop()
 	{
 		position.read_sensors();
 
-		if(robot_state == WAITING_FOR_COMMAND)
-			getCommand();
-		else checkFailSafe();
+		getCommand();
 
 		last_sample_micros = current_micros;
 	}
