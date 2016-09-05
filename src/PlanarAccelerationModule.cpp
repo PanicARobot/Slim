@@ -14,7 +14,7 @@ void PlanarAcceleration::calibrate()
 	int samples_count = 0;
 
 	uint32_t start_micros = micros();
-	uint32_t last_micros;
+	uint32_t last_micros = start_micros - MICROS_PER_SECOND;
 
 	float last_left_speed = 0;
 	float last_right_speed = 0;
@@ -47,8 +47,11 @@ void PlanarAcceleration::calibrate()
 	acc_offset_x /= samples_count;
 	acc_offset_y /= samples_count;
 
+	Serial.print("Planar: ");
 	Serial.print(acc_offset_x); Serial.print(" ");
 	Serial.print(acc_offset_y); Serial.println("");
 
 	setMotors(0, 0);
 }
+
+PlanarAcceleration plannarAcceleration;

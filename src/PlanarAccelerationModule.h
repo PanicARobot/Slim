@@ -10,4 +10,6 @@ class PlanarAcceleration {
 		void calibrate();
 };
 
+extern PlanarAcceleration plannarAcceleration;
+
 #endif // __PLANAR_ACCELERATION_MODULE_H

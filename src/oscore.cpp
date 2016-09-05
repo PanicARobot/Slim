@@ -2,6 +2,7 @@
 #include "SDLogDriver.h"
 #include "DualEncoderDriver.h"
 #include "MotorDriver.h"
+#include "PlanarAccelerationModule.h"
 #include "TireContactModule.h"
 #include "FrontLiftedDetection.h"
 
@@ -155,6 +156,7 @@ void getCommand()
 				case 1:
 					robot_state = RECALIBRATE;
 					position.calibrate();
+					plannarAcceleration.calibrate();
 					robot_state = WAITING_FOR_COMMAND;
 					break;
 				case 2:
