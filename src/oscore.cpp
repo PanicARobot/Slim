@@ -146,7 +146,7 @@ void getCommand()
 	{
 		if(right)
 		{
-			if(left > last_left)
+			if(left < last_left)
 			{
 				++command_counter;
 				Serial.print("Command counter: ");
@@ -155,6 +155,8 @@ void getCommand()
 		}
 		else if(right < last_right)
 		{
+			if(left) command_counter = 42;
+
 			switch(command_counter)
 			{
 				case 0:
@@ -179,7 +181,10 @@ void getCommand()
 	else if(left && right)
 	{
 		if(robot_state == PREPARE_TO_FIGHT)
+		{
 			robot_state = WAITING_FOR_COMMAND;
+			command_counter = 42;
+		}
 		else
 		{
 			robot_state = BRAINDEAD;
