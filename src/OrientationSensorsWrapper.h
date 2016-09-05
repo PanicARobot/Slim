@@ -4,6 +4,8 @@
 #include <LSM6.h>
 #include <MahonyAHRS.h>
 
+#include <cstdint>
+
 class OrientationSensors {
 	private:
 		static constexpr float gScale = 0x7FFF / (float)8;
@@ -17,7 +19,8 @@ class OrientationSensors {
 				_T x, y, z;
 		};
 
-		xyz<int> gyro_offset;
+		xyz<int32_t> gyro_offset;
+
 		xyz<float> ahrs_offset;
 		xyz<float> ahrs_reading;
 
@@ -27,8 +30,6 @@ class OrientationSensors {
 		void update_ahrs();
 
 	public:
-		OrientationSensors();
-
 		void init();
 		void calibrate();
 		void read_sensors();
