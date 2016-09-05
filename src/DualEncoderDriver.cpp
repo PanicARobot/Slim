@@ -34,13 +34,13 @@ Encoder leftEncoder, rightEncoder;
 
 void leftHandler()
 {
-	int b = digitalRead(LEFT_B_PIN);
+	int8_t b = digitalRead(LEFT_B_PIN);
 	leftEncoder.update(b);
 }
 
 void rightHandler()
 {
-	int b = digitalRead(RIGHT_B_PIN);
+	int8_t b = digitalRead(RIGHT_B_PIN);
 	rightEncoder.update(b);
 }
 
@@ -48,7 +48,7 @@ void initDualEncoders()
 {
 	pinMode(LEFT_A_PIN, INPUT);
 	pinMode(LEFT_B_PIN, INPUT);
-	pinMode(RIGHT_B_PIN, INPUT);
+	pinMode(RIGHT_A_PIN, INPUT);
 	pinMode(RIGHT_B_PIN, INPUT);
 
 	attachInterrupt(digitalPinToInterrupt(LEFT_A_PIN), leftHandler, RISING);
