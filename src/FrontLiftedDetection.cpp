@@ -14,7 +14,7 @@ void initFrontLifted(float frontLiftedThreshold)
 // evaluate front scoop lifted state
 uint8_t getFrontLiftedState()
 {
-    if(position.getRoll() > frontLiftedThreshold_local)
+    if(position.getRoll() * 180 / M_PI > frontLiftedThreshold_local)
     {
         return 1;
     }
