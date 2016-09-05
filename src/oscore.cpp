@@ -4,22 +4,10 @@
 #include "MotorDriver.h"
 #include "FrontLiftedDetection.h"
 
+#include "constants.h"
+
 #include <Wire.h>
 #include <SD.h>
-
-#define LED_PIN 13
-
-#define LEFT_SENSOR_PIN  A4
-#define RIGHT_SENSOR_PIN A5
-
-#define TIRE_LOST_OF_CONTACT_DEGREES 5.00
-
-#define FRONT_LIFTED_THRESHOLD 3.00
-
-const uint32_t MICROS_PER_SEC = 1000000;
-
-const uint32_t SAMPLE_FREQUENCY = 250;
-const uint32_t PRINT_FREQUENCY = 5;
 
 enum {
 	WAITING_FOR_COMMAND,
@@ -206,18 +194,18 @@ void loop()
 
 		if(robot_state == BRAINDEAD)
 		{
-			full_cycle = MICROS_PER_SEC * 2;
-			high_cycle = MICROS_PER_SEC;
+			full_cycle = MICROS_PER_SECOND * 2;
+			high_cycle = MICROS_PER_SECOND;
 		}
 		else if(robot_state == PREPARE_TO_FIGHT)
 		{
-			full_cycle = MICROS_PER_SEC / 10;
-			high_cycle = MICROS_PER_SEC / 20;
+			full_cycle = MICROS_PER_SECOND / 10;
+			high_cycle = MICROS_PER_SECOND / 20;
 		}
 		else
 		{
-			full_cycle = MICROS_PER_SEC / 2;
-			high_cycle = MICROS_PER_SEC / 3;
+			full_cycle = MICROS_PER_SECOND / 2;
+			high_cycle = MICROS_PER_SECOND / 3;
 		}
 
 		if(current_micros - last_blink_micros >= full_cycle)
@@ -239,14 +227,14 @@ void loop()
 
 	if(robot_state == PREPARE_TO_FIGHT)
 	{
-		if(current_micros - prepare_micros >= MICROS_PER_SEC * 5)
+		if(current_micros - prepare_micros >= MICROS_PER_SECOND * 5)
 		{
 			robot_state = IN_COMBAT;
 		}
 	}
 
 	// Read sensors
-	if(current_micros - last_sample_micros >= MICROS_PER_SEC / SAMPLE_FREQUENCY)
+	if(current_micros - last_sample_micros >= MICROS_PER_SECOND / SAMPLE_FREQUENCY)
 	{
 		position.read_sensors();
 
@@ -256,7 +244,7 @@ void loop()
 	}
 
 	// Log data
-	if(current_micros - last_log_micros >= MICROS_PER_SEC / PRINT_FREQUENCY)
+	if(current_micros - last_log_micros >= MICROS_PER_SECOND / LOG_FREQUENCY)
 	{
 		log_info();
 		last_log_micros = current_micros;

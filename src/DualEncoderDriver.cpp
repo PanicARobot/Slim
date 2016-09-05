@@ -1,15 +1,8 @@
 #include "DualEncoderDriver.h"
 
+#include "constants.h"
+
 #include <Arduino.h>
-
-#define LEFT_A_PIN 12
-#define LEFT_B_PIN 11
-#define RIGHT_A_PIN 9
-#define RIGHT_B_PIN 10
-
-#define WHEEL_PERIMETER (18 * M_PI)
-#define IMPULSES_PER_ROUND 358.32
-#define MICROS_PER_SECOND 1000000
 
 static constexpr float DISTANCE = MICROS_PER_SECOND * WHEEL_PERIMETER / IMPULSES_PER_ROUND;
 

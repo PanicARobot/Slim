@@ -1,7 +1,6 @@
 #include "OrientationSensorsWrapper.h"
 
-const int MICROS_PER_SEC = 1000000;
-const int CALIBRATION_FREQUENCY = 250;
+#include "constants.h"
 
 void OrientationSensors::init()
 {
@@ -44,15 +43,15 @@ void OrientationSensors::calibrate_gyroscope()
 
 	// Collect sensor data for a second
 	uint32_t start_micros = micros();
-	uint32_t last_micros = start_micros - MICROS_PER_SEC;
+	uint32_t last_micros = start_micros - MICROS_PER_SECOND;
 
 	while(true)
 	{
 		uint32_t current_micros = micros();
-		if(current_micros - start_micros > MICROS_PER_SEC)
+		if(current_micros - start_micros > MICROS_PER_SECOND)
 			break;
 
-		if(current_micros - last_micros < MICROS_PER_SEC / CALIBRATION_FREQUENCY)
+		if(current_micros - last_micros < MICROS_PER_SECOND / CALIBRATION_FREQUENCY)
 			continue;
 
 		imu.read();
@@ -72,16 +71,16 @@ void OrientationSensors::calibrate_gyroscope()
 void OrientationSensors::calibrate_ahrs()
 {
 	uint32_t start_micros = micros();
-	uint32_t last_micros = start_micros - MICROS_PER_SEC;
+	uint32_t last_micros = start_micros - MICROS_PER_SECOND;
 
 	// Give ahrs a second
 	while(true)
 	{
 		uint32_t current_micros = micros();
-		if(current_micros - start_micros > MICROS_PER_SEC)
+		if(current_micros - start_micros > MICROS_PER_SECOND)
 			break;
 
-		if(current_micros - last_micros < MICROS_PER_SEC / CALIBRATION_FREQUENCY)
+		if(current_micros - last_micros < MICROS_PER_SECOND / CALIBRATION_FREQUENCY)
 			continue;
 
 		last_micros = current_micros;
@@ -94,15 +93,15 @@ void OrientationSensors::calibrate_ahrs()
 
 	// Collect data for a second
 	start_micros = micros();
-	last_micros = start_micros - MICROS_PER_SEC;
+	last_micros = start_micros - MICROS_PER_SECOND;
 
 	while(true)
 	{
 		uint32_t current_micros = micros();
-		if(current_micros - start_micros > MICROS_PER_SEC)
+		if(current_micros - start_micros > MICROS_PER_SECOND)
 			break;
 
-		if(current_micros - last_micros < MICROS_PER_SEC / CALIBRATION_FREQUENCY)
+		if(current_micros - last_micros < MICROS_PER_SECOND / CALIBRATION_FREQUENCY)
 			continue;
 
 		last_micros = current_micros;

@@ -1,11 +1,8 @@
 #include "MotorDriver.h"
 
-#include <Arduino.h>
+#include "constants.h"
 
-#define MOTOR_LEFT_DIR_PIN  1
-#define MOTOR_LEFT_PWM_PIN  6
-#define MOTOR_RIGHT_DIR_PIN 0
-#define MOTOR_RIGHT_PWM_PIN 5
+#include <Arduino.h>
 
 void initMotors(void)
 {
@@ -21,10 +18,8 @@ void initMotors(void)
 
 void setMotor(int32_t speed, int dirPin, int speedPin)
 {
-	static constexpr int32_t MAX_SPEED = 255;
-
-	if(speed > MAX_SPEED) speed = MAX_SPEED;
-	else if(speed < -MAX_SPEED) speed = -MAX_SPEED;
+	if(speed > MOTOR_MAX_SPEED) speed = MOTOR_MAX_SPEED;
+	else if(speed < -MOTOR_MAX_SPEED) speed = -MOTOR_MAX_SPEED;
 
 	digitalWrite(dirPin, speed > 0);
 	if(speed < 0) speed = -speed;

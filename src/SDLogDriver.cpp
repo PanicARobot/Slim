@@ -1,10 +1,8 @@
 #include "SDLogDriver.h"
 
-#include <SD.h>
+#include "constants.h"
 
-#define LOG_FILENAME    "LOG"
-#define BEGIN_LIFE_BYTE 'B'
-#define BEGIN_DATA_BYTE 'b'
+#include <SD.h>
 
 __LOG_DATA log_data_pack;
 

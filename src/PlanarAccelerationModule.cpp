@@ -4,10 +4,7 @@
 #include "DualEncoderDriver.h"
 #include "MotorDriver.h"
 
-#define MOTORS_CALIBRATE_SPEED 80, 80
-
-const uint32_t MICROS_PER_SEC = 1000000;
-const int CALIBRATION_FREQUENCY = 250;
+#include "constants.h"
 
 void PlanarAcceleration::calibrate()
 {
