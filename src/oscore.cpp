@@ -17,7 +17,7 @@ enum {
 	IN_COMBAT,
 	RECALIBRATE,
 	BRAINDEAD,
-	TEST
+	TEST_MODE
 } robot_state = WAITING_FOR_COMMAND;
 
 uint32_t prepare_micros;
@@ -260,9 +260,12 @@ void loop()
 		log_info();
 		last_log_micros = current_micros;
 
-		Serial.print(getLeftTireContactState()); Serial.print(" ");
-		Serial.print(getRightTireContactState()); Serial.print(" ");
-		Serial.print(getFrontLiftedState()); Serial.println("");
+		if(robot_state == TEST_MODE)
+		{
+			Serial.print(getLeftTireContactState()); Serial.print(" ");
+			Serial.print(getRightTireContactState()); Serial.print(" ");
+			Serial.print(getFrontLiftedState()); Serial.println("");
+		}
 	}
 
 	serialCommand();
