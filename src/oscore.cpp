@@ -67,7 +67,7 @@ void setup()
 	initFrontLifted(FRONT_LIFTED_THRESHOLD);
 }
 
-void serialCommand()
+void getSerialCommand()
 {
 	static int left = 0;
 	static int right = 0;
@@ -131,7 +131,7 @@ void readProximitySensors(int& left, int& right)
 	right = digitalRead(RIGHT_SENSOR_PIN) ^ 1;
 }
 
-void getCommand()
+void getProximityCommand()
 {
 	static int left = 0;
 	static int right = 0;
@@ -154,32 +154,33 @@ void getCommand()
 		}
 		else if(right < last_right)
 		{
-			if(left) command_counter = 42;
-
-			switch(command_counter)
+			if(!left)
 			{
-				case 0:
-					robot_state = PREPARE_TO_FIGHT;
-					event_micros = micros();
-					break;
+				switch(command_counter)
+				{
+					case 0:
+						robot_state = PREPARE_TO_FIGHT;
+						event_micros = micros();
+						break;
 
-				case 1:
-					robot_state = RECALIBRATE;
-					digitalWrite(LED_PIN, HIGH);
-					position.calibrate();
-					plannarAcceleration.calibrate();
-					robot_state = WAITING_FOR_COMMAND;
-					break;
+					case 1:
+						robot_state = RECALIBRATE;
+						digitalWrite(LED_PIN, HIGH);
+						position.calibrate();
+						plannarAcceleration.calibrate();
+						robot_state = WAITING_FOR_COMMAND;
+						break;
 
-				case 2:
-					robot_state = TEST_MODE;
-					setMotors(100, 100);
-					event_micros = micros();
-					break;
+					case 2:
+						robot_state = TEST_MODE;
+						setMotors(100, 100);
+						event_micros = micros();
+						break;
 
-				case 3:
-					robot_state = SERIAL_MODE;
-					break;
+					case 3:
+						robot_state = SERIAL_MODE;
+						break;
+				}
 			}
 
 			command_counter = 0;
@@ -190,7 +191,7 @@ void getCommand()
 		if(robot_state == PREPARE_TO_FIGHT)
 		{
 			robot_state = WAITING_FOR_COMMAND;
-			command_counter = 42;
+			command_counter = 42; // Just something invalid
 		}
 		else
 		{
@@ -249,34 +250,36 @@ void loop()
 		}
 	}
 
-	if(robot_state == BRAINDEAD)
+	switch(robot_state)
 	{
-		setMotors(0, 0);
-		return;
-	}
-
-	if(robot_state == PREPARE_TO_FIGHT)
-	{
-		if(current_micros - event_micros >= MICROS_PER_SECOND * 5)
-		{
-			robot_state = FIGHT_MODE;
-		}
-	}
-	else if(robot_state == TEST_MODE)
-	{
-		if(current_micros - event_micros >= MICROS_PER_SECOND / 2)
-		{
+		case BRAINDEAD:
 			setMotors(0, 0);
-			robot_state = WAITING_FOR_COMMAND;
-		}
+			return;
+
+		case PREPARE_TO_FIGHT:
+			if(current_micros - event_micros >= MICROS_PER_SECOND * 5)
+			{
+				robot_state = FIGHT_MODE;
+			}
+			break;
+
+		case TEST_MODE:
+			if(current_micros - event_micros >= MICROS_PER_SECOND / 2)
+			{
+				setMotors(0, 0);
+				robot_state = WAITING_FOR_COMMAND;
+			}
 	}
 
 	// Read sensors
 	if(current_micros - last_sample_micros >= MICROS_PER_SECOND / SAMPLE_FREQUENCY)
 	{
 		position.read_sensors();
+		leftEncoder.updateSpeed();
+		rightEncoder.updateSpeed();
+		// planar
 
-		getCommand();
+		getProximityCommand();
 
 		last_sample_micros = current_micros;
 	}
@@ -293,7 +296,7 @@ void loop()
 			Serial.print(getRightTireContactState()); Serial.print(" ");
 			Serial.print(getFrontLiftedState()); Serial.println("");
 
-			serialCommand();
+			getSerialCommand();
 		}
 	}
 }
