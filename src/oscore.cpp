@@ -14,13 +14,12 @@
 enum {
 	WAITING_FOR_COMMAND,
 	PREPARE_TO_FIGHT,
-	IN_COMBAT,
+	FIGHT_MODE,
 	RECALIBRATE,
 	BRAINDEAD,
-	TEST_MODE
+	TEST_MODE,
+	SERIAL_MODE
 } robot_state = WAITING_FOR_COMMAND;
-
-uint32_t prepare_micros;
 
 void log_info()
 {
@@ -124,6 +123,8 @@ void serialCommand()
 	}
 }
 
+uint32_t event_micros;
+
 void readProximitySensors(int& left, int& right)
 {
 	left = digitalRead(LEFT_SENSOR_PIN) ^ 1;
@@ -149,8 +150,6 @@ void getCommand()
 			if(left < last_left)
 			{
 				++command_counter;
-				Serial.print("Command counter: ");
-				Serial.println(command_counter);
 			}
 		}
 		else if(right < last_right)
@@ -161,17 +160,25 @@ void getCommand()
 			{
 				case 0:
 					robot_state = PREPARE_TO_FIGHT;
-					prepare_micros = micros();
+					event_micros = micros();
 					break;
+
 				case 1:
 					robot_state = RECALIBRATE;
+					digitalWrite(LED_PIN, HIGH);
 					position.calibrate();
 					plannarAcceleration.calibrate();
 					robot_state = WAITING_FOR_COMMAND;
 					break;
+
 				case 2:
 					robot_state = TEST_MODE;
-					setMotors(80, 80);
+					setMotors(100, 100);
+					event_micros = micros();
+					break;
+
+				case 3:
+					robot_state = SERIAL_MODE;
 					break;
 			}
 
@@ -208,20 +215,27 @@ void loop()
 		uint32_t full_cycle;
 		uint32_t high_cycle;
 
-		if(robot_state == BRAINDEAD)
+		switch(robot_state)
 		{
-			full_cycle = MICROS_PER_SECOND * 2;
-			high_cycle = MICROS_PER_SECOND;
-		}
-		else if(robot_state == PREPARE_TO_FIGHT)
-		{
-			full_cycle = MICROS_PER_SECOND / 10;
-			high_cycle = MICROS_PER_SECOND / 20;
-		}
-		else
-		{
-			full_cycle = MICROS_PER_SECOND / 2;
-			high_cycle = MICROS_PER_SECOND / 3;
+			case BRAINDEAD:
+				full_cycle = MICROS_PER_SECOND * 2;
+				high_cycle = MICROS_PER_SECOND;
+				break;
+
+			case PREPARE_TO_FIGHT:
+				full_cycle = MICROS_PER_SECOND / 10;
+				high_cycle = MICROS_PER_SECOND / 20;
+				break;
+
+			case FIGHT_MODE:
+			case TEST_MODE:
+				full_cycle = MICROS_PER_SECOND / 3;
+				high_cycle = MICROS_PER_SECOND / 6;
+				break;
+
+			default:
+				full_cycle = MICROS_PER_SECOND;
+				high_cycle = MICROS_PER_SECOND * 3 / 5;
 		}
 
 		if(current_micros - last_blink_micros >= full_cycle)
@@ -243,9 +257,17 @@ void loop()
 
 	if(robot_state == PREPARE_TO_FIGHT)
 	{
-		if(current_micros - prepare_micros >= MICROS_PER_SECOND * 5)
+		if(current_micros - event_micros >= MICROS_PER_SECOND * 5)
 		{
-			robot_state = IN_COMBAT;
+			robot_state = FIGHT_MODE;
+		}
+	}
+	else if(robot_state == TEST_MODE)
+	{
+		if(current_micros - event_micros >= MICROS_PER_SECOND / 2)
+		{
+			setMotors(0, 0);
+			robot_state = WAITING_FOR_COMMAND;
 		}
 	}
 
@@ -265,13 +287,13 @@ void loop()
 		log_info();
 		last_log_micros = current_micros;
 
-		if(robot_state == TEST_MODE)
+		if(robot_state == SERIAL_MODE)
 		{
 			Serial.print(getLeftTireContactState()); Serial.print(" ");
 			Serial.print(getRightTireContactState()); Serial.print(" ");
 			Serial.print(getFrontLiftedState()); Serial.println("");
+
+			serialCommand();
 		}
 	}
-
-	serialCommand();
 }
