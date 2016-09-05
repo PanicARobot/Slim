@@ -19,12 +19,13 @@ class OrientationSensors {
 				_T x, y, z;
 		};
 
+		xyz<int32_t> acc_offset;
 		xyz<int32_t> gyro_offset;
 
 		xyz<float> ahrs_offset;
 		xyz<float> ahrs_reading;
 
-		void calibrate_gyroscope();
+		void calibrate_sensors();
 		void calibrate_ahrs();
 
 		void update_ahrs();

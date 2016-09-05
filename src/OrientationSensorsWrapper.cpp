@@ -30,15 +30,17 @@ void OrientationSensors::init()
 
 void OrientationSensors::calibrate()
 {
-	calibrate_gyroscope(); // Remove gyro jitters
+	calibrate_sensors();
 
 	ahrs.begin((float) CALIBRATION_FREQUENCY);
 	calibrate_ahrs();
 }
 
-void OrientationSensors::calibrate_gyroscope()
+void OrientationSensors::calibrate_sensors()
 {
 	int samples_count = 0;
+
+	acc_offset = {0, 0, 0};
 	gyro_offset = {0, 0, 0};
 
 	// Collect sensor data for a second
@@ -56,12 +58,20 @@ void OrientationSensors::calibrate_gyroscope()
 
 		imu.read();
 
+		acc_offset.x += imu.a.x;
+		acc_offset.y += imu.a.y;
+//		acc_offset.z += imu.a.z; let gravity stay there
+
 		gyro_offset.x += imu.g.x;
 		gyro_offset.y += imu.g.y;
 		gyro_offset.z += imu.g.z;
 
 		++samples_count;
 	}
+
+	acc_offset.x /= samples_count;
+	acc_offset.y /= samples_count;
+	acc_offset.z /= samples_count;
 
 	gyro_offset.x /= samples_count;
 	gyro_offset.y /= samples_count;
@@ -141,6 +151,11 @@ void OrientationSensors::update()
 	ahrs_reading.x = ahrs.getRollRadians() - ahrs_offset.x;
 	ahrs_reading.y = ahrs.getPitchRadians() - ahrs_offset.y;
 	ahrs_reading.z = ahrs.getYawRadians() - ahrs_offset.z;
+
+	// Apply accelerometer offsets
+	imu.a.x -= acc_offset.x;
+	imu.a.y -= acc_offset.y;
+	imu.a.z -= acc_offset.z;
 }
 
 OrientationSensors position;
