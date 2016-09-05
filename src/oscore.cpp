@@ -23,7 +23,7 @@ enum {
 	RECALIBRATE,
 	BRAINDEAD,
 	TEST
-} RobotState = WAITING_FOR_COMMAND;
+} robot_state = WAITING_FOR_COMMAND;
 
 uint32_t prepare_micros;
 
@@ -67,10 +67,9 @@ void setup()
 	Wire.setClock(400000);
 
 	position.init();
-	position.calibrate();
 }
 
-void processCommand()
+void serialCommand()
 {
 	static int left = 0;
 	static int right = 0;
@@ -141,7 +140,8 @@ void getCommand()
 		if(left > last_left)
 		{
 			++command_counter;
-			Serial.print(command_counter);
+			Serial.print("Command counter: ");
+			Serial.println(command_counter);
 		}
 	}
 	else if(right < last_right)
@@ -149,15 +149,17 @@ void getCommand()
 		switch(command_counter)
 		{
 			case 0:
-				RobotState = PREPARE_TO_FIGHT;
+				robot_state = PREPARE_TO_FIGHT;
 				prepare_micros = micros();
 				break;
 			case 1:
-				RobotState = TEST;
+				robot_state = TEST;
 				setMotors(80, 80);
 				break;
 			case 2:
-				RobotState = RECALIBRATE;
+				robot_state = RECALIBRATE;
+				position.calibrate();
+				robot_state = WAITING_FOR_COMMAND;
 				break;
 		}
 
@@ -174,74 +176,82 @@ void checkFailSafe()
 	readProximitySensors(left, right);
 	if(left && right)
 	{
-		RobotState = BRAINDEAD;
+		robot_state = BRAINDEAD;
 		setMotors(0, 0);
 	}
 }
 
 void loop()
 {
-	static uint32_t lastSampleMicros = 0;
-	static uint32_t lastPrintMicros = 0;
-	static uint32_t lastBlinkMicros = 0;
+	static uint32_t last_sample_micros = 0;
+	static uint32_t last_log_micros = 0;
+	static uint32_t last_blink_micros = 0;
 
-	uint32_t currentMicros = micros();
+	uint32_t current_micros = micros();
 
-	if(RobotState == BRAINDEAD)
-	{
-		setMotors(0, 0);
+	{ // blink control
+		uint32_t full_cycle;
+		uint32_t high_cycle;
 
-		// Braindead blink
-		if(currentMicros - lastBlinkMicros >= MICROS_PER_SEC * 2)
+		if(robot_state == BRAINDEAD)
 		{
-			lastBlinkMicros = currentMicros;
-			digitalWrite(LED_PIN, HIGH);
+			full_cycle = MICROS_PER_SEC * 2;
+			high_cycle = MICROS_PER_SEC;
 		}
-		else if(currentMicros - lastBlinkMicros >= MICROS_PER_SEC)
+		else if(robot_state == PREPARE_TO_FIGHT)
+		{
+			full_cycle = MICROS_PER_SEC / 10;
+			high_cycle = MICROS_PER_SEC / 20;
+		}
+		else
+		{
+			full_cycle = MICROS_PER_SEC / 2;
+			high_cycle = MICROS_PER_SEC / 3;
+		}
+
+		if(current_micros - last_blink_micros >= full_cycle)
+		{
+			digitalWrite(LED_PIN, HIGH);
+			last_blink_micros = current_micros;
+		}
+		else if(current_micros - last_blink_micros >= high_cycle)
 		{
 			digitalWrite(LED_PIN, LOW);
 		}
+	}
 
+	if(robot_state == BRAINDEAD)
+	{
+		setMotors(0, 0);
 		return;
 	}
 
-	if(RobotState == PREPARE_TO_FIGHT)
+	if(robot_state == PREPARE_TO_FIGHT)
 	{
-		if(currentMicros - prepare_micros >= MICROS_PER_SEC * 5)
+		if(current_micros - prepare_micros >= MICROS_PER_SEC * 5)
 		{
-			RobotState = IN_COMBAT;
+			robot_state = IN_COMBAT;
 		}
 	}
 
 	// Read sensors
-	if(currentMicros - lastSampleMicros >= MICROS_PER_SEC / SAMPLE_FREQUENCY)
+	if(current_micros - last_sample_micros >= MICROS_PER_SEC / SAMPLE_FREQUENCY)
 	{
 		position.read_sensors();
 
-		if(RobotState == WAITING_FOR_COMMAND)
+		if(robot_state == WAITING_FOR_COMMAND)
 			getCommand();
 		else checkFailSafe();
 
-		lastSampleMicros = currentMicros;
+		last_sample_micros = current_micros;
 	}
 
 	// Log data
-	if(currentMicros - lastPrintMicros >= MICROS_PER_SEC / PRINT_FREQUENCY)
+	if(current_micros - last_log_micros >= MICROS_PER_SEC / PRINT_FREQUENCY)
 	{
 		log_info();
-		lastPrintMicros = currentMicros;
+		last_log_micros = current_micros;
 	}
 
-	// Blink when working
-	if(currentMicros - lastBlinkMicros >= MICROS_PER_SEC / 2)
-	{
-		lastBlinkMicros = currentMicros;
-		digitalWrite(LED_PIN, HIGH);
-	}
-	else if(currentMicros - lastBlinkMicros >= MICROS_PER_SEC / 3)
-	{
-		digitalWrite(LED_PIN, LOW);
-	}
-
-	processCommand();
+	serialCommand();
 }
