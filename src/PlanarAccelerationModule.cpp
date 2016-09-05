@@ -30,6 +30,9 @@ void PlanarAcceleration::calibrate()
 		if(current_micros - last_micros < MICROS_PER_SECOND / CALIBRATION_FREQUENCY)
 			continue;
 
+		leftEncoder.updateSpeed();
+		rightEncoder.updateSpeed();
+
 		float left_speed = leftEncoder.getSpeed();
 		float right_speed = rightEncoder.getSpeed();
 
@@ -52,4 +55,10 @@ void PlanarAcceleration::calibrate()
 	setMotors(0, 0);
 }
 
-PlanarAcceleration plannarAcceleration;
+void PlanarAcceleration::update()
+{
+	acc_x = position.getAccX();
+	acc_y = position.getAccY();
+}
+
+PlanarAcceleration planarAcceleration;

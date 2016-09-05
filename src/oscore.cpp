@@ -37,8 +37,8 @@ void log_info()
 	log_data_pack.ahrs_y = position.getPitch();
 	log_data_pack.ahrs_z = position.getYaw();
 
-	log_data_pack.leftSpeed = leftEncoder.getSpeed();
-	log_data_pack.rightSpeed = rightEncoder.getSpeed();
+	log_data_pack.left_speed = leftEncoder.getSpeed();
+	log_data_pack.right_speed = rightEncoder.getSpeed();
 
 	logDataPack();
 }
@@ -69,15 +69,16 @@ void setup()
 
 void getSerialCommand()
 {
+	if(Serial.available() == 0) return;
+
 	static int left = 0;
 	static int right = 0;
 
-	if(Serial.available() == 0) return;
-
 	char cmd = Serial.read();
-	if(cmd == 'l')
+
+	if(cmd == 'l' || cmd == 'r' || cmd == 'b')
 	{
-		left = 0;
+		int speed = 0;
 		if(Serial.available() > 0)
 		{
 			int dir = 1;
@@ -89,37 +90,23 @@ void getSerialCommand()
 			while(Serial.available() > 0)
 			{
 				char digit = Serial.read();
-				left = left * 10 + (digit - '0');
+				speed = speed * 10 + (digit - '0');
 			}
-			left *= dir;
+			speed *= dir;
 		}
 
-		setMotors(left, right);
-	}
-	else if(cmd == 'r')
-	{
-		right = 0;
-		if(Serial.available() > 0)
-		{
-			int dir = 1;
-			if(Serial.peek() == '-')
-			{
-				dir = -1;
-				Serial.read();
-			}
-			while(Serial.available() > 0)
-			{
-				char digit = Serial.read();
-				right = right * 10 + (digit - '0');
-			}
-			right *= dir;
-		}
+		if(cmd == 'l' || cmd == 'b') left = speed;
+		if(cmd == 'r' || cmd == 'b') right = speed;
 
 		setMotors(left, right);
 	}
 	else if(cmd == 'd')
 	{
 		dumpLog();
+	}
+	else if(cmd == 'e')
+	{
+		dropLog();
 	}
 }
 
@@ -150,6 +137,8 @@ void getProximityCommand()
 			if(left < last_left)
 			{
 				++command_counter;
+				Serial.print("Counter: ");
+				Serial.println(command_counter);
 			}
 		}
 		else if(right < last_right)
@@ -167,14 +156,12 @@ void getProximityCommand()
 						robot_state = RECALIBRATE;
 						digitalWrite(LED_PIN, HIGH);
 						position.calibrate();
-						plannarAcceleration.calibrate();
+						planarAcceleration.calibrate();
 						robot_state = WAITING_FOR_COMMAND;
 						break;
 
 					case 2:
 						robot_state = TEST_MODE;
-						setMotors(100, 100);
-						event_micros = micros();
 						break;
 
 					case 3:
@@ -204,6 +191,7 @@ void getProximityCommand()
 	last_right = right;
 }
 
+bool set = false;
 void loop()
 {
 	static uint32_t last_sample_micros = 0;
@@ -213,30 +201,28 @@ void loop()
 	uint32_t current_micros = micros();
 
 	{ // blink control
-		uint32_t full_cycle;
-		uint32_t high_cycle;
+		uint32_t full_cycle = MICROS_PER_SECOND;
+		uint32_t high_cycle = MICROS_PER_SECOND;
 
 		switch(robot_state)
 		{
 			case BRAINDEAD:
-				full_cycle = MICROS_PER_SECOND * 2;
-				high_cycle = MICROS_PER_SECOND;
+				full_cycle *= 2;
+				high_cycle *= 1;
 				break;
 
 			case PREPARE_TO_FIGHT:
-				full_cycle = MICROS_PER_SECOND / 10;
-				high_cycle = MICROS_PER_SECOND / 20;
+				full_cycle /= 10;
+				high_cycle /= 20;
 				break;
 
-			case FIGHT_MODE:
-			case TEST_MODE:
-				full_cycle = MICROS_PER_SECOND / 3;
-				high_cycle = MICROS_PER_SECOND / 6;
+			case SERIAL_MODE:
 				break;
 
 			default:
-				full_cycle = MICROS_PER_SECOND;
-				high_cycle = MICROS_PER_SECOND * 3 / 5;
+				full_cycle /= 2;
+				high_cycle /= 5;
+				break;
 		}
 
 		if(current_micros - last_blink_micros >= full_cycle)
@@ -264,24 +250,36 @@ void loop()
 			break;
 
 		case TEST_MODE:
-			if(current_micros - event_micros >= MICROS_PER_SECOND / 2)
+			if(planarAcceleration.getAcc() > 0.2 && !set)
 			{
-				setMotors(0, 0);
-				robot_state = WAITING_FOR_COMMAND;
+				set = true;
+				if(planarAcceleration.getAngle() < 0)
+					setMotors(50, -50);
+				else setMotors(-50, 50);
 			}
+			break;
+
+		default:
+			break;
 	}
 
 	// Read sensors
 	if(current_micros - last_sample_micros >= MICROS_PER_SECOND / SAMPLE_FREQUENCY)
 	{
-		position.read_sensors();
+		position.update();
 		leftEncoder.updateSpeed();
 		rightEncoder.updateSpeed();
-		// planar
+		planarAcceleration.update();
 
 		getProximityCommand();
 
 		last_sample_micros = current_micros;
+
+		if(robot_state == SERIAL_MODE && planarAcceleration.getAcc() > 0.2)
+		{
+			Serial.print(planarAcceleration.getAcc()); Serial.print("   ");
+			Serial.print(planarAcceleration.getAngle()); Serial.println("");
+		}
 	}
 
 	// Log data
@@ -292,10 +290,6 @@ void loop()
 
 		if(robot_state == SERIAL_MODE)
 		{
-			Serial.print(getLeftTireContactState()); Serial.print(" ");
-			Serial.print(getRightTireContactState()); Serial.print(" ");
-			Serial.print(getFrontLiftedState()); Serial.println("");
-
 			getSerialCommand();
 		}
 	}

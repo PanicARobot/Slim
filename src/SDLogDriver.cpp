@@ -61,8 +61,8 @@ void dumpLog()
 			Serial.print(log_data_pack.ahrs_z * 180 / M_PI); Serial.print(")\t");
 
 			Serial.print("Encoders ("); // mm / s
-			Serial.print(log_data_pack.leftSpeed); Serial.print(", ");
-			Serial.print(log_data_pack.rightSpeed); Serial.print(")\n");
+			Serial.print(log_data_pack.left_speed); Serial.print(", ");
+			Serial.print(log_data_pack.right_speed); Serial.print(")\n");
 		}
 		else
 		{
@@ -74,6 +74,17 @@ void dumpLog()
 	Serial.println("=== DUMP COMPLETE ===");
 
 	f.close();
+
+	SD.remove(LOG_FILENAME);
+
+	initLogger();
+}
+
+void dropLog()
+{
+	f.close();
+
+	Serial.println("=== LOG ERASED ===");
 
 	SD.remove(LOG_FILENAME);
 

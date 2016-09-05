@@ -32,7 +32,7 @@ class OrientationSensors {
 	public:
 		void init();
 		void calibrate();
-		void read_sensors();
+		void update();
 
 		inline float getAccX() { return imu.a.x / gScale; }
 		inline float getAccY() { return imu.a.y / gScale; }

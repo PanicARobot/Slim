@@ -85,7 +85,7 @@ void OrientationSensors::calibrate_ahrs()
 
 		last_micros = current_micros;
 
-		read_sensors();
+		update();
 	}
 
 	int samples_count = 0;
@@ -106,7 +106,7 @@ void OrientationSensors::calibrate_ahrs()
 
 		last_micros = current_micros;
 
-		read_sensors();
+		update();
 
 		ahrs_offset.x += ahrs.getRollRadians();
 		ahrs_offset.y += ahrs.getPitchRadians();
@@ -126,7 +126,7 @@ void OrientationSensors::update_ahrs()
 			getAccX(), getAccY(), getAccZ());
 }
 
-void OrientationSensors::read_sensors()
+void OrientationSensors::update()
 {
 	imu.read();
 
@@ -137,6 +137,7 @@ void OrientationSensors::read_sensors()
 
 	update_ahrs();
 
+	// Apply ahrs offsets
 	ahrs_reading.x = ahrs.getRollRadians() - ahrs_offset.x;
 	ahrs_reading.y = ahrs.getPitchRadians() - ahrs_offset.y;
 	ahrs_reading.z = ahrs.getYawRadians() - ahrs_offset.z;
