@@ -2,6 +2,7 @@
 #include "MotorDriver.h"
 #include "DualEncoderDriver.h"
 #include "FrontLiftedDetection.h"
+#include "RobotStateControl.h"
 
 #include "Constants.h"
 
@@ -13,13 +14,12 @@
 
 enum {
 	SEARCH_INITIAL,
-    SEARCH_TURNING,
-    SEARCH_FORWARD,
+	SEARCH_TURNING,
+	SEARCH_FORWARD,
 
-    EXIT_STATE_ON_SIDE,
-    EXIT_STATE_ON_IMPACT,
-    EXIT_STATE_OUT_OF_RING,
-    EXIT_STATE_FRONT_LIFTED,
+	FOUND_LEFT,
+	FOUND_RIGHT,
+	FOUND_STRAIGHT,
 
 	STOP_MOVING
 } STATE = SEARCH_INITIAL;
@@ -166,7 +166,7 @@ void LinearMovement(int32_t distanceInMMWithDirection) // TODO: Fix backwards
 	movementSystemStatus = MOVEMENT_SYSTEM_STATUS_LINEAR_MOVEMENT;
 }
 
-void Turn(int turnRadius, int turnDegrees) // TODO: Fix when radius != 0
+void Turn(int turnRadius, int turnDegrees)
 {
 	if(turnDegrees == 0) return;
 
@@ -198,8 +198,8 @@ void Turn(int turnRadius, int turnDegrees) // TODO: Fix when radius != 0
 
 void MovePattern()
 {
-    switch(STATE)
-    {
+	switch(STATE)
+	{
 		case SEARCH_INITIAL:
 			if(IsMovementComplete())
 			{
@@ -224,13 +224,31 @@ void MovePattern()
 			}
 			break;
 
+		case FOUND_LEFT:
+			Turn(0, -90);
+			STATE = FOUND_STRAIGHT;
+			break;
+
+		case FOUND_RIGHT:
+			Turn(0, 90);
+			STATE = FOUND_STRAIGHT;
+			break;
+
+		case FOUND_STRAIGHT:
+			if(IsMovementComplete())
+			{
+				LinearMovement(1000);
+				STATE = FOUND_STRAIGHT;
+			}
+			break;
+
 		default:
 			if(IsMovementComplete())
 			{
 				setMotors(0, 0);
 			}
 			break;
-    }
+	}
 }
 
 /*
@@ -257,74 +275,31 @@ void RoundPattern()
 			setMotors(0, 0);
 			break;
 	}
-    // if( digitalRead(LEFT_SENSOR_PIN) ^ 1 == 1 || digitalRead(RIGHT_SENSOR_PIN) ^ 1 == 1)
-    // {
+	// if( digitalRead(LEFT_SENSOR_PIN) ^ 1 == 1 || digitalRead(RIGHT_SENSOR_PIN) ^ 1 == 1)
+	// {
 	// 	STATE = EXIT_STATE_ON_SIDE;
 	// }
-
-    // if(OutOfRing())
+	
+	// if(OutOfRing())
 	// {
-    // 	STATE = EXIT_STATE_OUT_OF_RING;
+	// 	STATE = EXIT_STATE_OUT_OF_RING;
 	// }
 
-    // if(Impact())
+	// if(Impact())
 	// {
-    // 	STATE = EXIT_STATE_ON_IMPACT;
+	// 	STATE = EXIT_STATE_ON_IMPACT;
 	// }
 }
 */
 
-// After Collision Actions
-void Push()
-{
-//    if(STATE == EXIT_STATE_ON_IMPACT)
-//    {
-//        setMotors(MAX_SPEED,MAX_SPEED);
-//
-//        //Check Traction TO DO
-//        if(!Traction)
-//        {
-//            Stop();
-//            //Wait 50 mil
-//            setMotors(MAX_SPEED - SPEED_CONST,MAX_SPEED - SPEED_CONST);
-//            //Check C used
-//            //if no Traction = 0
-//            //if yes Traction = 1
-//        }
-//    }
-//
-//
-//    //EXITS
-//    //Enemy lost
-//    if(digitalRead(LEFT_SENSOR_PIN) ^ 1 == 1 || digitalRead(RIGHT_SENSOR_PIN) ^ 1 == 1)
-//    STATE = EXIT_STATE_ON_SIDE;
-//
-//    //lifted front scoop
-//    if(getFrontLiftedState)
-//    STATE = EXIT_STATE_FRONT_LIFTED;
-//    //OUT OF RING
-//    if(OutOfRing())
-//    STATE = EXIT_STATE_OUT_OF_RING;
-//    //Pushed Back TO DO
-}
-void WaitToPass()
-{
-    //WTFFFFFF
-}
-void TurnTowards()
-{
-//    if(digitalRead(RIGHT_SENSOR_PIN) ^ 1 && IsMovementComplete())
-//    Turn(0,90); //turn right
-//
-//    if(digitalRead(LEFT_SENSOR_PIN) ^ 1 && IsMovementComplete())
-//    Turn(0,-90); // turn left
-}
-void TurnAround()
-{
-}
-
 void MainLogic()
 {
+	uint8_t left, right;
+	readProximitySensors(left, right);
+
+	if(left) STATE = FOUND_LEFT;
+	else if(right) STATE = FOUND_RIGHT;
+
 	MovePattern();
 	HandleControlledMovement();
 }

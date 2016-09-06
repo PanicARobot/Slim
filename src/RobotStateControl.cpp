@@ -113,7 +113,7 @@ void getSerialCommand()
 
 uint32_t event_micros;
 
-void readProximitySensors(int& left, int& right)
+void readProximitySensors(uint8_t& left, uint8_t& right)
 {
 	left = digitalRead(LEFT_SENSOR_PIN) ^ 1;
 	right = digitalRead(RIGHT_SENSOR_PIN) ^ 1;
@@ -121,11 +121,11 @@ void readProximitySensors(int& left, int& right)
 
 void getProximityCommand()
 {
-	static int left = 0;
-	static int right = 0;
+	static uint8_t left = 0;
+	static uint8_t right = 0;
 
-	static int last_left = 0;
-	static int last_right = 0;
+	static uint8_t last_left = 0;
+	static uint8_t last_right = 0;
 
 	static int command_counter = 0;
 
@@ -247,6 +247,12 @@ void loop()
 		{
 			if(current_micros - last_sample_micros >= MICROS_PER_SECOND / SAMPLE_FREQUENCY)
 			{
+				/*if(getLeftTireContactState() == 0 && getRightTireContactState() == 0)
+				{
+					robot_state = BRAINDEAD;
+					break;
+				}*/
+
 				MainLogic();
 			}
 		}
