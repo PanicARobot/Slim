@@ -319,7 +319,7 @@ void TroughCernterPattern()
 		case INITIAL_STATE:
 		{
 			Turn(0,100);
-			state = STATE_TURNING;
+			STATE = STATE_TURNING;
 			break;
 		}
 
@@ -328,7 +328,7 @@ void TroughCernterPattern()
 			if(IsMovementComplete())
 			{
 				Turn(100,270);
-				state = STATE_TURNING;
+				STATE = STATE_TURNING;
 			}
 			break;
 		}
@@ -338,7 +338,7 @@ void TroughCernterPattern()
 			if(IsMovementComplete())
 			{
 				linearMovement(40);
-				state = STATE_FORWARD;
+				STATE = STATE_FORWARD;
 			}
 			break;
 		}
@@ -370,7 +370,7 @@ void RoundPattern()
 		case INITIAL_STATE:
 		{
 			Turn(200,360);
-			state = STATE_TURNING;
+			STATE = STATE_TURNING;
 			break;
 		}
 
