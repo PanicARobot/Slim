@@ -414,7 +414,7 @@ void RoundPattern()
 
 uint8_t movementSystemStatus = MOVEMENT_SYSTEM_STATUS_OFF;
 
-int32_t distancePassedByLeftTire, distancePassedByRightTire,
+float distancePassedByLeftTire, distancePassedByRightTire,
 		distanceExpectedByLeftTire, distanceExpectedByRightTire;
 
 int16_t leftMotorSpeed, rightMotorSpeed, leftMotorDir, rightMotorDir;
@@ -503,7 +503,7 @@ void Turn(int turnRadius, int turnDegrees)
 			leftMotorDir = 1;
 			rightMotorDir = 1;
 		}
-		
+
 		// set motor speeds, used in handler
 		rightMotorSpeed = STANDARD_SPEED;
 		leftMotorSpeed = circleMotorSpeedDifference * STANDARD_SPEED;
@@ -523,8 +523,8 @@ void handleControlledMovement()
 		
 		case MOVEMENT_SYSTEM_STATUS_LINEAR_MOVEMENT:
 		{
-			int32_t leftTyreSpeed = leftEncoder.getSpeed();
-			int32_t rightTyreSpeed = rightEncoder.getSpeed();
+			float leftTyreSpeed = leftEncoder.getSpeed();
+			float rightTyreSpeed = rightEncoder.getSpeed();
 
 			// check if the speeds are the same if not correct the speed of the slower motors
 			if(leftTyreSpeed > rightTyreSpeed)
@@ -537,8 +537,8 @@ void handleControlledMovement()
 			}
 
 			// update moved distance
-			distanceExpectedByLeftTire -= leftTyreSpeed;
-			distanceExpectedByRightTire -= rightTyreSpeed;
+			distanceExpectedByLeftTire -= leftTyreSpeed / SAMPLE_FREQUENCY;
+			distanceExpectedByRightTire -= rightTyreSpeed / SAMPLE_FREQUENCY;
 
 			if(	(distanceExpectedByLeftTire < 0 && directionOfLinearMovement > 0) ||
 				(distanceExpectedByLeftTire > 0 && directionOfLinearMovement < 0) )
@@ -565,8 +565,8 @@ void handleControlledMovement()
 		
 		case MOVEMENT_SYSTEM_STATUS_ROUND_MOVEMENT:
 		{
-			int32_t leftTyreSpeed = leftEncoder.getSpeed();
-			int32_t rightTyreSpeed = rightEncoder.getSpeed();
+			float leftTyreSpeed = leftEncoder.getSpeed();
+			float rightTyreSpeed = rightEncoder.getSpeed();
 
 			// check if the speeds are the same if not correct the speed of the slower motors
 			if((float)(leftTyreSpeed) > (float)((float)(rightTyreSpeed) * (float)circleMotorSpeedDifference))
@@ -579,8 +579,8 @@ void handleControlledMovement()
 			}
 
 			// update moved distance
-			distanceExpectedByLeftTire -= leftTyreSpeed;
-			distanceExpectedByRightTire -= rightTyreSpeed;
+			distanceExpectedByLeftTire -= leftTyreSpeed / SAMPLE_FREQUENCY;
+			distanceExpectedByRightTire -= rightTyreSpeed / SAMPLE_FREQUENCY;
 
 			if(	(distanceExpectedByLeftTire < 0 && leftMotorDir > 0) ||
 				(distanceExpectedByLeftTire > 0 && leftMotorDir < 0) )
