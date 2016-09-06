@@ -12,15 +12,17 @@
 
 
 enum {
-    INITIAL_STATE,
-    STATE_TURNING,
-    STATE_FORWARD,
-	STATE_STOP,
+	SEARCH_INITIAL,
+    SEARCH_TURNING,
+    SEARCH_FORWARD,
+
     EXIT_STATE_ON_SIDE,
     EXIT_STATE_ON_IMPACT,
     EXIT_STATE_OUT_OF_RING,
-    EXIT_STATE_FRONT_LIFTED
-} STATE = INITIAL_STATE;
+    EXIT_STATE_FRONT_LIFTED,
+
+	STOP_MOVING
+} STATE = SEARCH_INITIAL;
 
 enum {
 	MOVEMENT_SYSTEM_STATUS_OFF,
@@ -30,12 +32,12 @@ enum {
 
 template<typename T> inline void swap(T& a, T& b) { T c = a; a = b; b = c; }
 
-static float distancePassedByLeftTire, distancePassedByRightTire,
-		distanceExpectedByLeftTire, distanceExpectedByRightTire;
+static float distanceExpectedByLeftTire, distanceExpectedByRightTire;
 
 static int16_t leftMotorSpeed, rightMotorSpeed, leftMotorDir, rightMotorDir;
 static int8_t directionOfLinearMovement;
 static float circleMotorSpeedDifference;
+
 
 void HandleControlledMovement()
 {
@@ -133,12 +135,12 @@ void HandleControlledMovement()
 	}
 }
 
-bool IsMovementComplete()
+inline bool IsMovementComplete()
 {
 	return movementSystemStatus == MOVEMENT_SYSTEM_STATUS_OFF;
 }
 
-void LinearMovement(int32_t distanceInMMWithDirection) // TODO: Fix backwars
+void LinearMovement(int32_t distanceInMMWithDirection) // TODO: Fix backwards
 {
 	// evaluate direction and pass to drivers the start state
 	if(0 < distanceInMMWithDirection)
@@ -164,7 +166,7 @@ void LinearMovement(int32_t distanceInMMWithDirection) // TODO: Fix backwars
 	movementSystemStatus = MOVEMENT_SYSTEM_STATUS_LINEAR_MOVEMENT;
 }
 
-void Turn(int turnRadius, int turnDegrees)
+void Turn(int turnRadius, int turnDegrees) // TODO: Fix when radius != 0
 {
 	if(turnDegrees == 0) return;
 
@@ -179,7 +181,7 @@ void Turn(int turnRadius, int turnDegrees)
 
 	circleMotorSpeedDifference = distanceExpectedByLeftTire / distanceExpectedByRightTire;
 
-	leftMotorDir = (turnDegrees > 0 || distancePassedByLeftTire > 0) ? 1 : -1;
+	leftMotorDir = (turnDegrees > 0 || distanceExpectedByLeftTire > 0) ? 1 : -1;
 	rightMotorDir = (turnDegrees < 0 || distanceExpectedByRightTire > 0) ? 1 : -1;
 
 	leftMotorSpeed = STANDARD_SPEED * leftMotorDir;
@@ -194,33 +196,31 @@ void Turn(int turnRadius, int turnDegrees)
 	movementSystemStatus = MOVEMENT_SYSTEM_STATUS_ROUND_MOVEMENT;
 }
 
-// Search Patterns
-void ThroughCenterPattern()
+void MovePattern()
 {
     switch(STATE)
     {
-		case INITIAL_STATE:
+		case SEARCH_INITIAL:
+			if(IsMovementComplete())
 			{
 				Turn(0, -90);
-				STATE = STATE_TURNING;
-				STATE = STATE_STOP;
+				STATE = SEARCH_TURNING;
 			}
 			break;
 
-		case STATE_TURNING:
+		case SEARCH_TURNING:
 			if(IsMovementComplete())
 			{
-				Turn(50, 90);
-				STATE = STATE_FORWARD;
-				STATE = STATE_STOP;
+				LinearMovement(200);
+				STATE = SEARCH_FORWARD;
 			}
 			break;
 
-		case STATE_FORWARD:
+		case SEARCH_FORWARD:
 			if(IsMovementComplete())
 			{
-				Turn(100, 270);
-				STATE = STATE_TURNING;
+				Turn(50, 270);
+				STATE = SEARCH_TURNING;
 			}
 			break;
 
@@ -233,6 +233,7 @@ void ThroughCenterPattern()
     }
 }
 
+/*
 void RoundPattern()
 {
 	switch(STATE)
@@ -271,40 +272,40 @@ void RoundPattern()
     // 	STATE = EXIT_STATE_ON_IMPACT;
 	// }
 }
+*/
 
 // After Collision Actions
-/*
 void Push()
 {
-    if(STATE == EXIT_STATE_ON_IMPACT)
-    {
-        setMotors(MAX_SPEED,MAX_SPEED);
-
-        //Check Traction TO DO
-        if(!Traction)
-        {
-            Stop();
-            //Wait 50 mil
-            setMotors(MAX_SPEED - SPEED_CONST,MAX_SPEED - SPEED_CONST);
-            //Check C used
-            //if no Traction = 0
-            //if yes Traction = 1
-        }
-    }
-
-
-    //EXITS
-    //Enemy lost
-    if( digitalRead(LEFT_SENSOR_PIN) ^ 1 == 1 || digitalRead(RIGHT_SENSOR_PIN) ^ 1 == 1)
-    STATE = EXIT_STATE_ON_SIDE;
-
-    //lifted front scoop
-    if(getFrontLiftedState)
-    STATE = EXIT_STATE_FRONT_LIFTED;
-    //OUT OF RING
-    if(OutOfRing())
-    STATE = EXIT_STATE_OUT_OF_RING;
-    //Pushed Back TO DO
+//    if(STATE == EXIT_STATE_ON_IMPACT)
+//    {
+//        setMotors(MAX_SPEED,MAX_SPEED);
+//
+//        //Check Traction TO DO
+//        if(!Traction)
+//        {
+//            Stop();
+//            //Wait 50 mil
+//            setMotors(MAX_SPEED - SPEED_CONST,MAX_SPEED - SPEED_CONST);
+//            //Check C used
+//            //if no Traction = 0
+//            //if yes Traction = 1
+//        }
+//    }
+//
+//
+//    //EXITS
+//    //Enemy lost
+//    if(digitalRead(LEFT_SENSOR_PIN) ^ 1 == 1 || digitalRead(RIGHT_SENSOR_PIN) ^ 1 == 1)
+//    STATE = EXIT_STATE_ON_SIDE;
+//
+//    //lifted front scoop
+//    if(getFrontLiftedState)
+//    STATE = EXIT_STATE_FRONT_LIFTED;
+//    //OUT OF RING
+//    if(OutOfRing())
+//    STATE = EXIT_STATE_OUT_OF_RING;
+//    //Pushed Back TO DO
 }
 void WaitToPass()
 {
@@ -312,18 +313,18 @@ void WaitToPass()
 }
 void TurnTowards()
 {
-    if(digitalRead(RIGHT_SENSOR_PIN) ^ 1 && IsMovementComplete())
-    Turn(0,90); //turn right
-
-    if(digitalRead(LEFT_SENSOR_PIN) ^ 1 && IsMovementComplete())
-    Turn(0,-90); // turn left
-
+//    if(digitalRead(RIGHT_SENSOR_PIN) ^ 1 && IsMovementComplete())
+//    Turn(0,90); //turn right
+//
+//    if(digitalRead(LEFT_SENSOR_PIN) ^ 1 && IsMovementComplete())
+//    Turn(0,-90); // turn left
 }
-void TurnAround();
-*/
+void TurnAround()
+{
+}
 
 void MainLogic()
 {
-	ThroughCenterPattern();
+	MovePattern();
 	HandleControlledMovement();
 }
