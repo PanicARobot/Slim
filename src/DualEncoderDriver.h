@@ -7,7 +7,7 @@
 class Encoder {
 	private:
 		uint32_t last_micros;
-		uint32_t impulse_counter;
+		int8_t impulse_counter;
 
 		float speed;
 		float acceleration;
@@ -21,8 +21,10 @@ class Encoder {
 		inline float getSpeed() { return speed; }; // mm / s
 		inline float getAcc() { return acceleration; }; // mm / s^2
 
-		friend void leftHandler();
-		friend void rightHandler();
+		friend void leftAHandler();
+		friend void leftBHandler();
+		friend void rightAHandler();
+		friend void rightBHandler();
 };
 
 extern Encoder leftEncoder, rightEncoder;
