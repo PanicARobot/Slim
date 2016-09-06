@@ -403,7 +403,7 @@ void RoundPattern()
 	// }
 }
 
-#define STANDARD_SPEED								160
+#define STANDARD_SPEED								120
 #define SPEED_CHANGE_STEP							1
 #define DISTANCE_BETWEEN_MOTORS						86.00
 #define HALF_DISTANCE_BETWEEN_MOTORS				DISTANCE_BETWEEN_MOTORS / 2.00
@@ -465,6 +465,15 @@ void Turn(int turnRadius, int turnDegrees)
 			
 		// set state on state machine
 		movementSystemStatus = MOVEMENT_SYSTEM_STATUS_ROUND_MOVEMENT;
+	
+		if(0 < turnDegrees)
+		{
+			setMotors(circleMotorSpeedDifference * STANDARD_SPEED, STANDARD_SPEED);
+		}
+		else
+		{
+			setMotors(STANDARD_SPEED, circleMotorSpeedDifference * STANDARD_SPEED);
+		}
 	}
 	else
 	{
@@ -475,6 +484,15 @@ void Turn(int turnRadius, int turnDegrees)
 			
 		// set state on state machine
 		movementSystemStatus = MOVEMENT_SYSTEM_STATUS_ROUND_MOVEMENT;
+		
+		if(0 < turnDegrees)
+		{
+			setMotors(circleMotorSpeedDifference * STANDARD_SPEED, STANDARD_SPEED);
+		}
+		else
+		{
+			setMotors(STANDARD_SPEED, circleMotorSpeedDifference * STANDARD_SPEED);
+		}
 	}
 }
 
