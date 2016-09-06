@@ -259,8 +259,11 @@ void loop()
 			break;
 		case FIGHT_MODE:
 		{
-			TroughCernterPattern();
-			handleControlledMovement();
+			if(current_micros - last_sample_micros >= MICROS_PER_SECOND / SAMPLE_FREQUENCY)
+			{
+				TroughCernterPattern();
+				handleControlledMovement();
+			}
 		}
 		break;
 
@@ -466,7 +469,7 @@ void Turn(int turnRadius, int turnDegrees)
 		// set state on state machine
 		movementSystemStatus = MOVEMENT_SYSTEM_STATUS_ROUND_MOVEMENT;
 		
-		if(turnRadius == 0)
+		if(distanceExpectedByRightTire < 0)
 		{
 			leftMotorDir = 1;
 			rightMotorDir = -1;
@@ -493,7 +496,7 @@ void Turn(int turnRadius, int turnDegrees)
 		// set state on state machine
 		movementSystemStatus = MOVEMENT_SYSTEM_STATUS_ROUND_MOVEMENT;
 		
-		if(turnRadius == 0)
+		if(distanceExpectedByLeftTire < 0)
 		{
 			leftMotorDir = -1;
 			rightMotorDir = 1;
