@@ -34,6 +34,8 @@ void linearMovement(int32_t distanceInMMWithDirection);
 void Turn(int turnRadius, int turnDegrees);
 void handleControlledMovement();
 bool IsMovementComplete();
+void RoundPattern();
+void TroughCernterPattern();
 
 void log_info()
 {
@@ -359,6 +361,7 @@ void TroughCernterPattern()
     // 	STATE = EXIT_STATE_ON_IMPACT;
 	// }
 }
+
 void RoundPattern()
 {
     if(IsMovementComplete())
