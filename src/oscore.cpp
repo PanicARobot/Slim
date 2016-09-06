@@ -417,7 +417,7 @@ uint8_t movementSystemStatus = MOVEMENT_SYSTEM_STATUS_OFF;
 int32_t distancePassedByLeftTire, distancePassedByRightTire,
 		distanceExpectedByLeftTire, distanceExpectedByRightTire;
 
-int16_t leftMotorSpeed, rightMotorSpeed;
+int16_t leftMotorSpeed, rightMotorSpeed, leftMotorDir, rightMotorDir;
 
 int8_t directionOfLinearMovement;
 
@@ -465,7 +465,18 @@ void Turn(int turnRadius, int turnDegrees)
 			
 		// set state on state machine
 		movementSystemStatus = MOVEMENT_SYSTEM_STATUS_ROUND_MOVEMENT;
-	
+		
+		if(turnRadius == 0)
+		{
+			leftMotorDir = 1;
+			rightMotorDir = -1;
+		}
+		else
+		{
+			leftMotorDir = 1;
+			rightMotorDir = 1;
+		}
+
 		if(0 < turnDegrees)
 		{
 			// set motor speeds, used in handler
@@ -493,12 +504,31 @@ void Turn(int turnRadius, int turnDegrees)
 		// set state on state machine
 		movementSystemStatus = MOVEMENT_SYSTEM_STATUS_ROUND_MOVEMENT;
 		
+		if(turnRadius == 0)
+		{
+			leftMotorDir = -1;
+			rightMotorDir = 1;
+		}
+		else
+		{
+			leftMotorDir = 1;
+			rightMotorDir = 1;
+		}
+
 		if(0 < turnDegrees)
 		{
+			// set motor speeds, used in handler
+			rightMotorSpeed = STANDARD_SPEED;
+			leftMotorSpeed = circleMotorSpeedDifference * STANDARD_SPEED;
+
 			setMotors(circleMotorSpeedDifference * STANDARD_SPEED, STANDARD_SPEED);
 		}
 		else
 		{
+			// set motor speeds, used in handler
+			rightMotorSpeed = circleMotorSpeedDifference * STANDARD_SPEED;
+			leftMotorSpeed = STANDARD_SPEED;
+
 			setMotors(STANDARD_SPEED, circleMotorSpeedDifference * STANDARD_SPEED);
 		}
 	}
@@ -574,15 +604,15 @@ void handleControlledMovement()
 			distanceExpectedByLeftTire -= leftTyreSpeed;
 			distanceExpectedByRightTire -= rightTyreSpeed;
 
-			if(	(distanceExpectedByLeftTire < 0 && directionOfLinearMovement > 0) ||
-				(distanceExpectedByLeftTire > 0 && directionOfLinearMovement < 0) )
+			if(	(distanceExpectedByLeftTire < 0 && leftMotorDir > 0) ||
+				(distanceExpectedByLeftTire > 0 && leftMotorDir < 0) )
 			{
 				leftMotorSpeed = 0;
 			}
 			
 			
-			if(	(distanceExpectedByRightTire < 0 && directionOfLinearMovement > 0) ||
-				(distanceExpectedByRightTire > 0 && directionOfLinearMovement < 0) )
+			if(	(distanceExpectedByRightTire < 0 && rightMotorDir > 0) ||
+				(distanceExpectedByRightTire > 0 && rightMotorDir < 0) )
 			{
 				rightMotorSpeed = 0;
 			}
