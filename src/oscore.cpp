@@ -468,10 +468,18 @@ void Turn(int turnRadius, int turnDegrees)
 	
 		if(0 < turnDegrees)
 		{
+			// set motor speeds, used in handler
+			rightMotorSpeed = STANDARD_SPEED;
+			leftMotorSpeed = circleMotorSpeedDifference * STANDARD_SPEED;
+
 			setMotors(circleMotorSpeedDifference * STANDARD_SPEED, STANDARD_SPEED);
 		}
 		else
 		{
+			// set motor speeds, used in handler
+			rightMotorSpeed = circleMotorSpeedDifference * STANDARD_SPEED;
+			leftMotorSpeed = STANDARD_SPEED;
+			
 			setMotors(STANDARD_SPEED, circleMotorSpeedDifference * STANDARD_SPEED);
 		}
 	}
