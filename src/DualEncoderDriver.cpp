@@ -1,6 +1,6 @@
 #include "DualEncoderDriver.h"
 
-#include "constants.h"
+#include "Constants.h"
 
 #include <Arduino.h>
 

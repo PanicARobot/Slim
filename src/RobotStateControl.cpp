@@ -7,7 +7,7 @@
 #include "FrontLiftedDetection.h"
 #include "MainLogic.h"
 
-#include "constants.h"
+#include "Constants.h"
 
 #include <Wire.h>
 #include <SD.h>

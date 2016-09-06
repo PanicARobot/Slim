@@ -99,7 +99,7 @@ CPP_ARDUINO_LIBS=\
 	SD/src/utility/Sd2Card.cpp
 
 CPP_FILES=\
-	oscore.cpp\
+	RobotStateControl.cpp \
 	OrientationSensorsWrapper.cpp \
 	SDLogDriver.cpp \
 	MotorDriver.cpp \
