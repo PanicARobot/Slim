@@ -33,6 +33,7 @@ enum{
 void linearMovement(int32_t distanceInMMWithDirection);
 void Turn(int turnRadius, int turnDegrees);
 void handleControlledMovement();
+bool IsMovementComplete();
 
 void log_info()
 {
