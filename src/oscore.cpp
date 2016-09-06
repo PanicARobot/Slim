@@ -336,7 +336,7 @@ void TroughCernterPattern()
 		{
 			if(IsMovementComplete())
 			{
-				linearMovement(0,40);
+				linearMovement(40);
 				state = STATE_FORWARD;
 			}
 			break;
