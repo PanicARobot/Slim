@@ -225,12 +225,12 @@ void MovePattern()
 			break;
 
 		case FOUND_LEFT:
-			Turn(0, -10);
+			Turn(0, -90);
 			STATE = FOUND_STRAIGHT;
 			break;
 
 		case FOUND_RIGHT:
-			Turn(0, 10);
+			Turn(0, 90);
 			STATE = FOUND_STRAIGHT;
 			break;
 
