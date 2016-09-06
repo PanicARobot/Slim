@@ -28,7 +28,7 @@
 
 // encoder config
 #define WHEEL_PERIMETER         (18 * M_PI)
-#define IMPULSES_PER_ROUND      358.32
+#define IMPULSES_PER_ROUND      (12 * 29.86)
 
 // calibration config
 #define MICROS_PER_SECOND       1000000
