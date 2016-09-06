@@ -107,6 +107,7 @@ CPP_FILES=\
 	PlanarAccelerationModule.cpp \
 	TireContactModule.cpp \
 	FrontLiftedDetection.cpp \
+	MainLogic.cpp \
 	lsm6-arduino/LSM6.cpp \
 	MahonyAHRS/src/MahonyAHRS.cpp
 
