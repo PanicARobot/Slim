@@ -13,7 +13,7 @@ enum{
 }STATE =DEFAULT_STATE;
 bool stateImpact = 0;
 //Search Patterns
-void TroughCernterPattern()
+void TroughCenterPattern()
 {
     switch(STATE)
     {
@@ -109,5 +109,3 @@ void TurnTowards()
 
 }
 void TurnAround();
-
-    

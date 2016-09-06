@@ -4,7 +4,7 @@
 #define MAX_SPEED 180
 #define SPEED_CONST 5
 //Search Patterns
-void TroughCernterPattern();
+void TroughCenterPattern();
 void RoundPattern();
 //Afster Collision Actions
 

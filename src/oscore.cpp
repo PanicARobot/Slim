@@ -43,7 +43,7 @@ void Turn(int turnRadius, int turnDegrees);
 void handleControlledMovement();
 bool IsMovementComplete();
 void RoundPattern();
-void TroughCernterPattern();
+void TroughCenterPattern();
 
 void log_info()
 {
@@ -269,7 +269,7 @@ void loop()
 		{
 			if(current_micros - last_sample_micros >= MICROS_PER_SECOND / SAMPLE_FREQUENCY)
 			{
-				TroughCernterPattern();
+				TroughCenterPattern();
 				handleControlledMovement();
 			}
 		}
@@ -325,7 +325,7 @@ void loop()
 	getSerialCommand();
 }
 
-void TroughCernterPattern()
+void TroughCenterPattern()
 {
     switch(STATE)
     {
