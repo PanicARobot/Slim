@@ -111,6 +111,9 @@ CPP_FILES=\
 	lsm6-arduino/LSM6.cpp \
 	MahonyAHRS/src/MahonyAHRS.cpp
 
+# TODO: Don't rebuild whole project on a header change
+HEADER_FILES=${CPP_FILES:.cpp=.h} Constants.h
+
 OBJ_FILES=\
 	$(addprefix ${BUILD_DIR}/,${CPP_FILES:.cpp=.o}) \
 	$(addprefix ${BUILD_DIR}/variants/,${CPP_VARIANTS:.cpp=.o}) \
@@ -124,15 +127,12 @@ OBJ_FILES=\
 
 
 all: bin
+compile: ${OBJ_FILES}
+link: ${OUTPUT_ELF}
+bin: ${OUTPUT_BIN}
 
 clean:
 	rm -rf ${BUILD_DIR}
-
-compile: ${OBJ_FILES}
-
-link: ${OUTPUT_ELF}
-
-bin: ${OUTPUT_BIN}
 
 program: bin
 	stty -F ${PORT_DEVICE} 1200
@@ -140,13 +140,14 @@ program: bin
 	while [[ ! -c ${PORT_DEVICE} ]]; do sleep .1; done
 	${BOSSAC} -i -d --port=${PORT} -U true -i -e -w -v ${OUTPUT_BIN} -R 
 
-serial:
+serial: program
+	sleep 2
 	stty -F ${PORT_DEVICE} cs8 ${SERIAL_BAUD} ignbrk -brkint -icrnl -imaxbel -opost -onlcr -isig -icanon -iexten -echo -echoe -echok -echoctl -echoke noflsh -ixon -crtscts
-	tail -f ${PORT_DEVICE} # Manual flushes may me needed
+	tail -f ${PORT_DEVICE}  | tee log.txt
 
 
 # Building source
-${BUILD_DIR}/%.o: %.cpp
+${BUILD_DIR}/%.o: %.cpp ${HEADER_FILES}
 	mkdir -p $(shell dirname $@)
 	${CXX} ${CXXFLAGS} -c $< -o $@
 
@@ -175,6 +176,7 @@ ${BUILD_DIR}/variants/%.o: ${VARIANTS_PATH}/%.cpp
 	mkdir -p $(shell dirname $@)
 	${CXX} ${CXXFLAGS} -c $< -o $@
 
+# Linking and stuff
 ${OUTPUT_ELF}: compile
 	${CC} ${LDFLAGS} -Wl,--start-group -lm ${OBJ_FILES} -Wl,--end-group -o $@
 
@@ -182,4 +184,4 @@ ${OUTPUT_BIN}: ${OUTPUT_ELF}
 	${OBJCOPY} -O binary $< $@
 
 
-.PHONY: all, program, clean, compile, link, bin
+.PHONY: all, program, serial, clean, compile, link, bin
