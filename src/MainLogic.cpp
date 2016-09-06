@@ -6,7 +6,7 @@
 
 #include "Constants.h"
 
-#define STANDARD_SPEED				       120
+#define STANDARD_SPEED				       170
 #define SPEED_CHANGE_STEP			       1
 #define DISTANCE_BETWEEN_MOTORS		       85.00
 #define HALF_DISTANCE_BETWEEN_MOTORS       (DISTANCE_BETWEEN_MOTORS / 2.00)
@@ -225,12 +225,12 @@ void MovePattern()
 			break;
 
 		case FOUND_LEFT:
-			Turn(0, -90);
+			Turn(0, -10);
 			STATE = FOUND_STRAIGHT;
 			break;
 
 		case FOUND_RIGHT:
-			Turn(0, 90);
+			Turn(0, 10);
 			STATE = FOUND_STRAIGHT;
 			break;
 

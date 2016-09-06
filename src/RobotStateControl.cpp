@@ -172,13 +172,15 @@ void getProximityCommand()
 		if(robot_state == FIGHT_MODE)
 		{
 			robot_state = BRAINDEAD;
-			setMotors(0, 0);
 		}
 		else
 		{
 			robot_state = WAITING_FOR_COMMAND;
 			command_counter = 42; // Just something invalid and BIG
 		}
+
+		robot_state = WAITING_FOR_COMMAND;
+		setMotors(0, 0);
 	}
 
 	last_left = left;
