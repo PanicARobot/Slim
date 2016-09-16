@@ -8,6 +8,7 @@
 #include "TireContactModule.h"
 #include "FrontLiftedDetection.h"
 #include "MainLogic.h"
+#include "ProximitySensors.h"
 
 #include <Wire.h>
 #include <SD.h>
@@ -18,13 +19,10 @@
 
 #define LOG_FREQUENCY           5
 
-#define LED_PIN                 13
-
-#define LEFT_SENSOR_PIN         A4
-#define RIGHT_SENSOR_PIN        A5
-
 #define SAMPLE_FREQUENCY        250
 #define MICROS_PER_SECOND       1000000
+
+#define LED_PIN                 13
 
 enum {
 	WAITING_FOR_COMMAND,
@@ -67,8 +65,7 @@ void setup()
 	initDualEncoders();
 	initMotors();
 
-	pinMode(LEFT_SENSOR_PIN, INPUT);
-	pinMode(RIGHT_SENSOR_PIN, INPUT);
+	initProximitySensors();
 
 	Wire.begin();
 	Wire.setClock(I2C_FREQUENCY);
@@ -120,12 +117,6 @@ void getSerialCommand()
 }
 
 uint32_t event_micros;
-
-void readProximitySensors(uint8_t& left, uint8_t& right)
-{
-	left = digitalRead(LEFT_SENSOR_PIN) ^ 1;
-	right = digitalRead(RIGHT_SENSOR_PIN) ^ 1;
-}
 
 void getProximityCommand()
 {
