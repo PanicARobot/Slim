@@ -5,9 +5,6 @@
 
 // a module that determines whether the tires have contact to the surface, based on AHRS data
 
-// init the module
-void tiresContactInit(float);
-
 // read left tire contact state
 uint8_t getLeftTireContactState();
 

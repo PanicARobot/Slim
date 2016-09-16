@@ -9,10 +9,22 @@
 #include "FrontLiftedDetection.h"
 #include "MainLogic.h"
 
-#include "Constants.h"
-
 #include <Wire.h>
 #include <SD.h>
+
+#define SERIAL_BAUD_RATE        115200
+#define I2C_FREQUENCY           400000
+#define SD_CHIP_SELECT          4
+
+#define LOG_FREQUENCY           5
+
+#define LED_PIN                 13
+
+#define LEFT_SENSOR_PIN         A4
+#define RIGHT_SENSOR_PIN        A5
+
+#define SAMPLE_FREQUENCY        250
+#define MICROS_PER_SECOND       1000000
 
 enum {
 	WAITING_FOR_COMMAND,
@@ -62,10 +74,6 @@ void setup()
 	Wire.setClock(I2C_FREQUENCY);
 
 	position.init();
-
-	tiresContactInit(TIRE_LOST_OF_CONTACT_DEGREES);
-
-	initFrontLifted(FRONT_LIFTED_THRESHOLD);
 }
 
 void getSerialCommand()

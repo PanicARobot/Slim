@@ -1,7 +1,6 @@
 #ifndef __DUAL_ENCODER_DRIVER_H
 #define __DUAL_ENCODER_DRIVER_H
 
-#include <cmath>
 #include <cstdint>
 
 class Encoder {

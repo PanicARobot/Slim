@@ -112,7 +112,7 @@ CPP_FILES=\
 	MahonyAHRS/src/MahonyAHRS.cpp
 
 # TODO: Don't rebuild whole project on a header change
-HEADER_FILES=${CPP_FILES:.cpp=.h} Constants.h
+HEADER_FILES=${CPP_FILES:.cpp=.h}
 
 OBJ_FILES=\
 	$(addprefix ${BUILD_DIR}/,${CPP_FILES:.cpp=.o}) \

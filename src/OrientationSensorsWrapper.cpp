@@ -1,6 +1,7 @@
 #include "OrientationSensorsWrapper.h"
 
-#include "Constants.h"
+#define CALIBRATION_FREQUENCY   250
+#define MICROS_PER_SECOND       1000000
 
 void OrientationSensors::init()
 {

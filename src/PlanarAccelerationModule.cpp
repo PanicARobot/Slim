@@ -2,8 +2,6 @@
 
 #include "DualEncoderDriver.h"
 
-#include "Constants.h"
-
 void PlanarAcceleration::update()
 {
 	static constexpr float d = 85; // mm

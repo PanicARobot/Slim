@@ -2,19 +2,13 @@
 
 #include "OrientationSensorsWrapper.h"
 
-// local threshold keeping
-static float frontLiftedThreshold_local;
+#include <cmath>
 
-// init the module trough a set threshold
-void initFrontLifted(float frontLiftedThreshold)
-{
-    frontLiftedThreshold_local = frontLiftedThreshold;
-}
+#define FRONT_LIFTED_THRESHOLD       2.00
 
-// evaluate front scoop lifted state
 uint8_t getFrontLiftedState()
 {
-    if(position.getRoll() * 180 / M_PI > frontLiftedThreshold_local)
+    if(position.getRoll() * 180 / M_PI > FRONT_LIFTED_THRESHOLD)
     {
         return 1;
     }
