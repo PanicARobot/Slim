@@ -1,5 +1,3 @@
-ARDUINO=/home/cuki/robotics/arduino-1.6.11
-
 ARDUINO_PACKAGES=/home/cuki/.arduino15/packages
 TOOLCHAIN_PATH=${ARDUINO_PACKAGES}/arduino/tools/arm-none-eabi-gcc/4.8.3-2014q1
 
