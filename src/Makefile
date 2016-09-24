@@ -3,6 +3,8 @@ ARDUINO=/home/cuki/robotics/arduino-1.6.11
 ARDUINO_PACKAGES=/home/cuki/.arduino15/packages
 TOOLCHAIN_PATH=${ARDUINO_PACKAGES}/arduino/tools/arm-none-eabi-gcc/4.8.3-2014q1
 
+VARIANTS_PATH=${ARDUINO_PACKAGES}/adafruit/hardware/samd/1.0.13/variants/arduino_zero
+
 BOSSAC=${ARDUINO_PACKAGES}/arduino/tools/bossac/1.6.1-arduino/bossac
 PORT=ttyACM0
 PORT_DEVICE=/dev/${PORT}
@@ -13,28 +15,22 @@ CXX=${TOOLCHAIN_PATH}/bin/arm-none-eabi-g++
 AR=${TOOLCHAIN_PATH}/bin/arm-none-eabi-ar
 OBJCOPY=${TOOLCHAIN_PATH}/bin/arm-none-eabi-objcopy
 
-CORE_PATH=${ARDUINO_PACKAGES}/adafruit/hardware/samd/1.0.13/cores/arduino
-VARIANTS_PATH=${ARDUINO_PACKAGES}/adafruit/hardware/samd/1.0.13/variants/arduino_zero
-LIBRARIES_PATH=${ARDUINO_PACKAGES}/adafruit/hardware/samd/1.0.13/libraries
-
-ARDUINO_LIBS_PATH=${ARDUINO}/libraries
-
-
 BUILD_DIR=build
 
 TARGET_ELF=${BUILD_DIR}/result.elf
 TARGET_BIN=${BUILD_DIR}/result.bin
 
 INCLUDE_DIRS=\
-	./lsm6-arduino/ \
-	./MahonyAHRS/src/ \
+	./Arduino/libraries/SD/src/ \
 	${ARDUINO_PACKAGES}/arduino/tools/CMSIS/4.0.0-atmel/CMSIS/Include/ \
 	${ARDUINO_PACKAGES}/arduino/tools/CMSIS/4.0.0-atmel/Device/ATMEL/ \
-	${CORE_PATH} \
-	${VARIANTS_PATH} \
-	${LIBRARIES_PATH}/Wire/ \
-	${LIBRARIES_PATH}/SPI/ \
-	${ARDUINO_LIBS_PATH}/SD/src/
+	./ArduinoCore-samd/cores/arduino/ \
+	./ArduinoCore-samd/variants/arduino_zero/ \
+	./ArduinoCore-samd/libraries/Wire/ \
+	./ArduinoCore-samd/libraries/SPI/ \
+	./lsm6-arduino/ \
+	./MahonyAHRS/src/
+
 INCLUDE_FLAGS=$(addprefix -I,${INCLUDE_DIRS})
 
 DEFINES=-DF_CPU=48000000L -DARDUINO=10611 -DARDUINO_SAMD_FEATHER_M0 -DARDUINO_ARCH_SAMD -DARDUINO_SAMD_ZERO -D__SAMD21G18A__ -DUSB_VID=0x239A -DUSB_PID=0x800B -DUSBCON '-DUSB_MANUFACTURER="Adafruit"' '-DUSB_PRODUCT="Feather M0"'
@@ -54,11 +50,11 @@ SRC_DIRS=\
 	./Slim \
 	./lsm6-arduino \
 	./MahonyAHRS/src \
-	${CORE_PATH} \
-	${VARIANTS_PATH} \
-	${LIBRARIES_PATH}/Wire/ \
-	${LIBRARIES_PATH}/SPI/ \
-	${ARDUINO_LIBS_PATH}/SD/src/
+	./Arduino/libraries/SD/src/ \
+	./ArduinoCore-samd/cores/arduino/ \
+	./ArduinoCore-samd/variants/arduino_zero/ \
+	./ArduinoCore-samd/libraries/Wire/ \
+	./ArduinoCore-samd/libraries/SPI/
 
 SRC_FILES=$(shell find ${SRC_DIRS} -name \*.S -or -name \*.c -or -name \*.cpp)
 
