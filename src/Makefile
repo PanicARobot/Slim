@@ -1,7 +1,9 @@
 ARDUINO_PACKAGES=/home/cuki/.arduino15/packages
 TOOLCHAIN_PATH=${ARDUINO_PACKAGES}/arduino/tools/arm-none-eabi-gcc/4.8.3-2014q1
 
-VARIANTS_PATH=${ARDUINO_PACKAGES}/adafruit/hardware/samd/1.0.13/variants/arduino_zero
+CORES_PATH=./ArduinoCore-samd/cores/arduino
+VARIANTS_PATH=./ArduinoCore-samd/variants/arduino_zero
+LIBRARIES_PATH=./ArduinoCore-samd/libraries
 
 BOSSAC=${ARDUINO_PACKAGES}/arduino/tools/bossac/1.6.1-arduino/bossac
 PORT=ttyACM0
@@ -22,10 +24,10 @@ INCLUDE_DIRS=\
 	./Arduino/libraries/SD/src/ \
 	${ARDUINO_PACKAGES}/arduino/tools/CMSIS/4.0.0-atmel/CMSIS/Include/ \
 	${ARDUINO_PACKAGES}/arduino/tools/CMSIS/4.0.0-atmel/Device/ATMEL/ \
-	./ArduinoCore-samd/cores/arduino/ \
-	./ArduinoCore-samd/variants/arduino_zero/ \
-	./ArduinoCore-samd/libraries/Wire/ \
-	./ArduinoCore-samd/libraries/SPI/ \
+	${CORES_PATH} \
+	${VARIANTS_PATH} \
+	${LIBRARIES_PATH}/Wire/ \
+	${LIBRARIES_PATH}/SPI/ \
 	./lsm6-arduino/ \
 	./MahonyAHRS/src/
 
