@@ -19,170 +19,91 @@ LIBRARIES_PATH=${ARDUINO_PACKAGES}/adafruit/hardware/samd/1.0.13/libraries
 
 ARDUINO_LIBS_PATH=${ARDUINO}/libraries
 
+
 BUILD_DIR=build
 
-OUTPUT_ELF=${BUILD_DIR}/result.elf
-OUTPUT_BIN=${BUILD_DIR}/result.bin
+TARGET_ELF=${BUILD_DIR}/result.elf
+TARGET_BIN=${BUILD_DIR}/result.bin
 
-
-INCLUDES=\
-	-I./lsm6-arduino/ \
-	-I./MahonyAHRS/src/ \
-	-I${ARDUINO_PACKAGES}/arduino/tools/CMSIS/4.0.0-atmel/CMSIS/Include/ \
-	-I${ARDUINO_PACKAGES}/arduino/tools/CMSIS/4.0.0-atmel/Device/ATMEL/ \
-	-I${CORE_PATH} \
-	-I${VARIANTS_PATH} \
-	-I${LIBRARIES_PATH}/Wire/ \
-	-I${LIBRARIES_PATH}/SPI/ \
-	-I${ARDUINO_LIBS_PATH}/SD/src/
+INCLUDE_DIRS=\
+	./lsm6-arduino/ \
+	./MahonyAHRS/src/ \
+	${ARDUINO_PACKAGES}/arduino/tools/CMSIS/4.0.0-atmel/CMSIS/Include/ \
+	${ARDUINO_PACKAGES}/arduino/tools/CMSIS/4.0.0-atmel/Device/ATMEL/ \
+	${CORE_PATH} \
+	${VARIANTS_PATH} \
+	${LIBRARIES_PATH}/Wire/ \
+	${LIBRARIES_PATH}/SPI/ \
+	${ARDUINO_LIBS_PATH}/SD/src/
+INCLUDE_FLAGS=$(addprefix -I,${INCLUDE_DIRS})
 
 DEFINES=-DF_CPU=48000000L -DARDUINO=10611 -DARDUINO_SAMD_FEATHER_M0 -DARDUINO_ARCH_SAMD -DARDUINO_SAMD_ZERO -D__SAMD21G18A__ -DUSB_VID=0x239A -DUSB_PID=0x800B -DUSBCON '-DUSB_MANUFACTURER="Adafruit"' '-DUSB_PRODUCT="Feather M0"'
 
 OPTIMISE_FLAGS=-mcpu=cortex-m0plus -mthumb -Os
 WARNING_FLAGS=-Wall -Wextra
 DEBUG_FLAGS=-g
-COMMON_FLAGS=${OPTIMISE_FLAGS} ${DEBUG_FLAGS} ${WARNING_FLAGS} -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500
+COMMON_FLAGS=${OPTIMISE_FLAGS} ${DEBUG_FLAGS} ${WARNING_FLAGS} -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500 ${DEFINES} ${INCLUDE_FLAGS} -MMD -MP
 
-ASMFLAGS=${DEBUG_FLAGS} -x assembler-with-cpp ${DEFINES} ${INCLUDES}
-CFLAGS=-std=gnu11 ${COMMON_FLAGS} ${DEFINES} ${INCLUDES}
-CXXFLAGS=-std=gnu++11 ${COMMON_FLAGS} -fno-threadsafe-statics -fno-rtti -fno-exceptions ${DEFINES} ${INCLUDES}
-
-LDFLAGS=${OPTIMISE_FLAGS} -Os -Wl,--gc-sections -save-temps "-T${VARIANTS_PATH}/linker_scripts/gcc/flash_with_bootloader.ld" --specs=nano.specs --specs=nosys.specs -Wl,--check-sections -Wl,--gc-sections -Wl,--unresolved-symbols=report-all -Wl,--warn-common -Wl,--warn-section-align # -Wl,--cref
-
-ASM_CORES=pulse_asm.S
-
-C_CORES=\
-	WInterrupts.c \
-	cortex_handlers.c \
-	delay.c \
-	hooks.c \
-	itoa.c \
-	pulse.c \
-	startup.c \
-	wiring.c \
-	wiring_analog.c \
-	wiring_digital.c \
-	wiring_private.c \
-	wiring_shift.c \
-	USB/samd21_host.c \
-	avr/dtostrf.c
-
-CPP_CORES=\
-	IPAddress.cpp \
-	Print.cpp \
-	Reset.cpp \
-	RingBuffer.cpp \
-	SERCOM.cpp \
-	Stream.cpp \
-	Tone.cpp \
-	Uart.cpp \
-	WMath.cpp \
-	WString.cpp \
-	abi.cpp \
-	main.cpp \
-	new.cpp \
-	USB/CDC.cpp \
-	USB/PluggableUSB.cpp \
-	USB/USBCore.cpp
-
-CPP_VARIANTS=variant.cpp
-
-CPP_LIBS=\
-	Wire/Wire.cpp \
-	SPI/SPI.cpp
-
-CPP_ARDUINO_LIBS=\
-	SD/src/SD.cpp \
-	SD/src/File.cpp \
-	SD/src/utility/SdFile.cpp \
-	SD/src/utility/SdVolume.cpp \
-	SD/src/utility/Sd2Card.cpp
-
-CPP_FILES=\
-	RobotStateControl.cpp \
-	OrientationSensorsWrapper.cpp \
-	SDLogDriver.cpp \
-	MotorDriver.cpp \
-	DualEncoderDriver.cpp \
-	PlanarAccelerationModule.cpp \
-	TireContactModule.cpp \
-	FrontLiftedDetection.cpp \
-	MainLogic.cpp \
-	ProximitySensors.cpp \
-	lsm6-arduino/LSM6.cpp \
-	MahonyAHRS/src/MahonyAHRS.cpp
-
-# TODO: Don't rebuild whole project on a header change
-HEADER_FILES=${CPP_FILES:.cpp=.h}
-
-OBJ_FILES=\
-	$(addprefix ${BUILD_DIR}/,${CPP_FILES:.cpp=.o}) \
-	$(addprefix ${BUILD_DIR}/variants/,${CPP_VARIANTS:.cpp=.o}) \
-	$(addprefix ${BUILD_DIR}/cores/,${ASM_CORES:.S=.o} ${C_CORES:.c=.o} ${CPP_CORES:.cpp=.o}) \
-	$(addprefix ${BUILD_DIR}/libs/,${CPP_LIBS:.cpp=.o}) \
-	$(addprefix ${BUILD_DIR}/arduino_libs/,${CPP_ARDUINO_LIBS:.cpp=.o})
+ASMFLAGS=${DEBUG_FLAGS} -x assembler-with-cpp ${DEFINES} ${INCLUDE_FLAGS}
+CFLAGS=-std=gnu11 ${COMMON_FLAGS}
+CXXFLAGS=-std=gnu++11 ${COMMON_FLAGS} -fno-threadsafe-statics -fno-rtti -fno-exceptions
+LDFLAGS=${OPTIMISE_FLAGS} -Wl,--gc-sections -save-temps "-T${VARIANTS_PATH}/linker_scripts/gcc/flash_with_bootloader.ld" --specs=nano.specs --specs=nosys.specs -Wl,--check-sections -Wl,--gc-sections -Wl,--unresolved-symbols=report-all -Wl,--warn-common -Wl,--warn-section-align # -Wl,--cref
 
 
+SRC_DIRS=. \
+	${CORE_PATH} \
+	${VARIANTS_PATH} \
+	${LIBRARIES_PATH}/Wire/ \
+	${LIBRARIES_PATH}/SPI/ \
+	${ARDUINO_LIBS_PATH}/SD/src/
 
+SRC_FILES=$(shell find ${SRC_DIRS} -name \*.S -or -name \*.c -or -name \*.cpp)
 
+OBJ_FILES=$(SRC_FILES:%=${BUILD_DIR}/%.o)
+DEPENDENCIES=${OBJ_FILES:.o=.d}
 
 
 all: bin
 compile: ${OBJ_FILES}
-link: ${OUTPUT_ELF}
-bin: ${OUTPUT_BIN}
+link: ${TARGET_ELF}
+bin: ${TARGET_BIN}
+
+${TARGET_ELF}: ${OBJ_FILES}
+	${CC} ${LDFLAGS} -Wl,--start-group -lm $^ -Wl,--end-group -o $@
+
+${TARGET_BIN}: ${TARGET_ELF}
+	${OBJCOPY} -O binary $< $@
 
 clean:
 	rm -rf ${BUILD_DIR}
+
+
+${BUILD_DIR}/%.S.o: %.S
+	mkdir -p $(dir $@)
+	${CC} ${ASMFLAGS} -c $< -o $@
+
+${BUILD_DIR}/%.c.o: %.c
+	mkdir -p $(dir $@)
+	${CC} ${CFLAGS} -c $< -o $@
+
+${BUILD_DIR}/%.cpp.o: %.cpp
+	mkdir -p $(dir $@)
+	${CXX} ${CXXFLAGS} -c $< -o $@
+
+
+-include ${DEPENDENCIES}
+
 
 program: bin
 	stty -F ${PORT_DEVICE} 1200
 	sleep .5
 	while [[ ! -c ${PORT_DEVICE} ]]; do sleep .1; done
-	${BOSSAC} -i -d --port=${PORT} -U true -i -e -w -v ${OUTPUT_BIN} -R 
+	${BOSSAC} -i -d --port=${PORT} -U true -i -e -w -v ${TARGET_BIN} -R
 
 serial: program
 	sleep 2
 	stty -F ${PORT_DEVICE} cs8 ${SERIAL_BAUD} ignbrk -brkint -icrnl -imaxbel -opost -onlcr -isig -icanon -iexten -echo -echoe -echok -echoctl -echoke noflsh -ixon -crtscts
-	tail -f ${PORT_DEVICE}  | tee log.txt
-
-
-# Building source
-${BUILD_DIR}/%.o: %.cpp ${HEADER_FILES}
-	mkdir -p $(shell dirname $@)
-	${CXX} ${CXXFLAGS} -c $< -o $@
-
-# Building libraries
-${BUILD_DIR}/cores/%.o: ${CORE_PATH}/%.S
-	mkdir -p $(shell dirname $@)
-	${CC} ${ASMFLAGS} -c $< -o $@
-
-${BUILD_DIR}/cores/%.o: ${CORE_PATH}/%.c
-	mkdir -p $(shell dirname $@)
-	${CC} ${CFLAGS} -c $< -o $@
-
-${BUILD_DIR}/cores/%.o: ${CORE_PATH}/%.cpp
-	mkdir -p $(shell dirname $@)
-	${CXX} ${CXXFLAGS} -c $< -o $@
-
-${BUILD_DIR}/libs/%.o: ${LIBRARIES_PATH}/%.cpp
-	mkdir -p $(shell dirname $@)
-	${CXX} ${CXXFLAGS} -c $< -o $@
-
-${BUILD_DIR}/arduino_libs/%.o: ${ARDUINO_LIBS_PATH}/%.cpp
-	mkdir -p $(shell dirname $@)
-	${CXX} ${CXXFLAGS} -c $< -o $@
-
-${BUILD_DIR}/variants/%.o: ${VARIANTS_PATH}/%.cpp
-	mkdir -p $(shell dirname $@)
-	${CXX} ${CXXFLAGS} -c $< -o $@
-
-# Linking and stuff
-${OUTPUT_ELF}: compile
-	${CC} ${LDFLAGS} -Wl,--start-group -lm ${OBJ_FILES} -Wl,--end-group -o $@
-
-${OUTPUT_BIN}: ${OUTPUT_ELF}
-	${OBJCOPY} -O binary $< $@
+	tail -f ${PORT_DEVICE} | tee log.txt
 
 
 .PHONY: all, program, serial, clean, compile, link, bin
