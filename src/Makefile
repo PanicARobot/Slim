@@ -50,7 +50,10 @@ CXXFLAGS=-std=gnu++11 ${COMMON_FLAGS} -fno-threadsafe-statics -fno-rtti -fno-exc
 LDFLAGS=${OPTIMISE_FLAGS} -Wl,--gc-sections -save-temps "-T${VARIANTS_PATH}/linker_scripts/gcc/flash_with_bootloader.ld" --specs=nano.specs --specs=nosys.specs -Wl,--check-sections -Wl,--gc-sections -Wl,--unresolved-symbols=report-all -Wl,--warn-common -Wl,--warn-section-align # -Wl,--cref
 
 
-SRC_DIRS=. \
+SRC_DIRS=\
+	./Slim \
+	./lsm6-arduino \
+	./MahonyAHRS/src \
 	${CORE_PATH} \
 	${VARIANTS_PATH} \
 	${LIBRARIES_PATH}/Wire/ \
