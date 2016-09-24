@@ -5,7 +5,7 @@ CORES_PATH=./ArduinoCore-samd/cores/arduino
 VARIANTS_PATH=./ArduinoCore-samd/variants/arduino_zero
 LIBRARIES_PATH=./ArduinoCore-samd/libraries
 
-BOSSAC=${ARDUINO_PACKAGES}/arduino/tools/bossac/1.6.1-arduino/bossac
+BOSSAC=./BOSSA/bin/bossac
 PORT=ttyACM0
 PORT_DEVICE=/dev/${PORT}
 SERIAL_BAUD=115200
@@ -76,6 +76,9 @@ ${TARGET_BIN}: ${TARGET_ELF}
 clean:
 	rm -rf ${BUILD_DIR}
 
+clean_tools:
+	make -C ./BOSSA clean
+
 
 ${BUILD_DIR}/%.S.o: %.S
 	mkdir -p $(dir $@)
@@ -93,11 +96,14 @@ ${BUILD_DIR}/%.cpp.o: %.cpp
 -include ${DEPENDENCIES}
 
 
-program: bin
+${BOSSAC}:
+	make -C ./BOSSA strip-bossac
+
+program: ${TARGET_BIN} ${BOSSAC}
 	stty -F ${PORT_DEVICE} 1200
 	sleep .5
 	while [[ ! -c ${PORT_DEVICE} ]]; do sleep .1; done
-	${BOSSAC} -i -d --port=${PORT} -U true -i -e -w -v ${TARGET_BIN} -R
+	${BOSSAC} -i -d --port=${PORT} -U true -i -e -w -v $< -R
 
 serial: program
 	sleep 2
@@ -105,4 +111,4 @@ serial: program
 	tail -f ${PORT_DEVICE} | tee log.txt
 
 
-.PHONY: all, program, serial, clean, compile, link, bin
+.PHONY: all, program, serial, clean, clean_tools, compile, link, bin

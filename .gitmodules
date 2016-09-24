@@ -10,3 +10,6 @@
 [submodule "src/MahonyAHRS"]
 	path = src/MahonyAHRS
 	url = https://github.com/PaulStoffregen/MahonyAHRS.git
+[submodule "src/BOSSA"]
+	path = src/BOSSA
+	url = https://github.com/shumatech/BOSSA.git
