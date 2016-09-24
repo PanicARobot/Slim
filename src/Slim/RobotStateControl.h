@@ -1,4 +1,0 @@
-#ifndef __ROBOT_STATE_CONTROL_H
-#define __ROBOT_STATE_CONTROL_H
-
-#endif // __ROBOT_STATE_CONTROL_H

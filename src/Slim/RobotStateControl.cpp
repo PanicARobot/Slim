@@ -1,5 +1,3 @@
-#include "RobotStateControl.h"
-
 #include "OrientationSensorsWrapper.h"
 #include "SDLogDriver.h"
 #include "DualEncoderDriver.h"
