@@ -1,9 +1,13 @@
 #ifndef __MAIN_LOGIC_H
 #define __MAIN_LOGIC_H
 
-#include <cstdint>
+#include <stdint.h>
 
-void MainLogic();
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void MainLogic(void);
 
 /*
 void LinearMovement(int32_t);
@@ -14,5 +18,9 @@ void WaitToPass();
 void TurnTowards();
 void TurnAround();
 */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //__MAIN_LOGIC_H
