@@ -32,8 +32,6 @@ enum {
 	MOVEMENT_SYSTEM_STATUS_ROUND_MOVEMENT
 } movementSystemStatus = MOVEMENT_SYSTEM_STATUS_OFF;
 
-template<typename T> inline void swap(T& a, T& b) { T c = a; a = b; b = c; }
-
 static float distanceExpectedByLeftTire, distanceExpectedByRightTire;
 
 static int16_t leftMotorSpeed, rightMotorSpeed, leftMotorDir, rightMotorDir;
@@ -176,9 +174,9 @@ void Turn(int turnRadius, int turnDegrees)
 	distanceExpectedByRightTire = 2.00 * ((float)turnRadius - HALF_DISTANCE_BETWEEN_MOTORS) * M_PI * (float)turnDegrees / 360;
 	if(turnDegrees < 0)
 	{
-		swap(distanceExpectedByLeftTire, distanceExpectedByRightTire);
-		distanceExpectedByLeftTire *= -1;
-		distanceExpectedByRightTire *= -1;
+		auto temp = -distanceExpectedByLeftTire;
+		distanceExpectedByLeftTire = -distanceExpectedByRightTire;
+		distanceExpectedByRightTire = temp;
 	}
 
 	circleMotorSpeedDifference = distanceExpectedByLeftTire / distanceExpectedByRightTire;
