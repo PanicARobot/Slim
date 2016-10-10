@@ -41,7 +41,7 @@ DEBUG_FLAGS=-g
 COMMON_FLAGS=${OPTIMISE_FLAGS} ${DEBUG_FLAGS} ${WARNING_FLAGS} -ffunction-sections -fdata-sections -nostdlib --param max-inline-insns-single=500 ${DEFINES} ${INCLUDE_FLAGS} -MMD -MP
 
 ASMFLAGS=${DEBUG_FLAGS} -x assembler-with-cpp ${DEFINES} ${INCLUDE_FLAGS}
-CFLAGS=-std=gnu11 ${COMMON_FLAGS}
+CFLAGS=-std=gnu11 ${COMMON_FLAGS} -Wstrict-prototypes
 CXXFLAGS=-std=gnu++11 ${COMMON_FLAGS} -fno-threadsafe-statics -fno-rtti -fno-exceptions
 LDFLAGS=${OPTIMISE_FLAGS} -Wl,--gc-sections -save-temps "-T${VARIANTS_PATH}/linker_scripts/gcc/flash_with_bootloader.ld" --specs=nano.specs --specs=nosys.specs -Wl,--check-sections -Wl,--gc-sections -Wl,--unresolved-symbols=report-all -Wl,--warn-common -Wl,--warn-section-align # -Wl,--cref
 
