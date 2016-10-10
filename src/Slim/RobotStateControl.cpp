@@ -270,10 +270,6 @@ void loop()
 				Serial.print(leftEncoder.getSpeed()); Serial.print(", ");
 				Serial.print(rightEncoder.getSpeed()); Serial.print("     ");
 
-				Serial.print("Acc: ");
-				Serial.print(leftEncoder.getAcc()); Serial.print(", ");
-				Serial.print(rightEncoder.getAcc()); Serial.print("     ");
-
 				Serial.print("Vector: ");
 				Serial.print(planarAcceleration.getX()); Serial.print(", ");
 				Serial.print(planarAcceleration.getY()); Serial.print("\n");

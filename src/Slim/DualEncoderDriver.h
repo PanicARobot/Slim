@@ -9,7 +9,6 @@ class Encoder {
 		int8_t impulse_counter;
 
 		float speed;
-		float acceleration;
 
 		void update(uint8_t);
 
@@ -18,7 +17,6 @@ class Encoder {
 
 		void update();
 		inline float getSpeed() { return speed; }; // mm / s
-		inline float getAcc() { return acceleration; }; // mm / s^2
 
 		friend void leftAHandler();
 		friend void leftBHandler();

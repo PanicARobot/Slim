@@ -17,7 +17,7 @@ static constexpr float DISTANCE = MICROS_PER_SECOND * WHEEL_PERIMETER / IMPULSES
 
 Encoder::Encoder() :
 	last_micros(42), impulse_counter(0),
-	speed(0), acceleration(0) {}
+	speed(0) {}
 
 void Encoder::update(uint8_t b)
 {
@@ -35,8 +35,6 @@ void Encoder::update(uint8_t b)
 
 		float last_speed = speed;
 		speed = DISTANCE * impulse_counter / (current_micros - last_micros);
-		//acceleration = MICROS_PER_SECOND * (speed - last_speed) / (current_micros - last_micros);
-		acceleration = speed - last_speed;
 
 		last_micros = current_micros;
 		impulse_counter = 0;
@@ -50,7 +48,6 @@ void Encoder::update()
 	if(current_micros - last_micros > MICROS_PER_SECOND / 10)
 	{
 		speed = 0;
-		acceleration = 0;
 		impulse_counter = 0;
 	}
 }
