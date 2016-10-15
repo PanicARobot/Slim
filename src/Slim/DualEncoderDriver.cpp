@@ -16,24 +16,18 @@ static constexpr float IMPULSES_PER_ROUND = 12 * 29.86;
 static constexpr float DISTANCE = MICROS_PER_SECOND * WHEEL_PERIMETER / IMPULSES_PER_ROUND;
 
 Encoder::Encoder() :
-	last_micros(42), impulse_counter(0),
+	last_micros(0),
+	impulse_counter(0),
 	speed(0) {}
 
 void Encoder::update(uint8_t b)
 {
-	if(impulse_counter == 42)
-	{
-		impulse_counter = 0;
-		last_micros = micros();
-	}
-
-	impulse_counter += b * 2 - 1;
+	impulse_counter += b * 2 - 1; // 1 or -1
 
 	if(impulse_counter == 12 || impulse_counter == -12)
 	{
 		uint32_t current_micros = micros();
 
-		float last_speed = speed;
 		speed = DISTANCE * impulse_counter / (current_micros - last_micros);
 
 		last_micros = current_micros;
