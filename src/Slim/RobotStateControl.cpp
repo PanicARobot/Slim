@@ -30,6 +30,8 @@ enum {
 	TEST_MODE
 } robot_state = WAITING_FOR_COMMAND;
 
+OrientationSensors position;
+
 void log_info()
 {
 	log_data_pack.timestamp = millis();
@@ -270,9 +272,9 @@ void loop()
 				Serial.print(leftEncoder.getSpeed()); Serial.print(", ");
 				Serial.print(rightEncoder.getSpeed()); Serial.print("     ");
 
-				Serial.print("Vector: ");
-				Serial.print(planarAcceleration.getX()); Serial.print(", ");
-				Serial.print(planarAcceleration.getY()); Serial.print("\n");
+				// Serial.print("Vector: ");
+				// Serial.print(planarAcceleration.getX()); Serial.print(", ");
+				// Serial.print(planarAcceleration.getY()); Serial.print("\n");
 			}
 			break;
 
@@ -286,7 +288,7 @@ void loop()
 		position.update();
 		leftEncoder.update();
 		rightEncoder.update();
-		planarAcceleration.update();
+		updatePlanarAcceleration(position);
 
 		getProximityCommand();
 

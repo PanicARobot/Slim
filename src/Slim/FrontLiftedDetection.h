@@ -1,16 +1,10 @@
 #ifndef __FRONT_LIFTED_DETECTION_H
 #define __FRONT_LIFTED_DETECTION_H
 
+#include "OrientationSensorsWrapper.h"
+
 #include <stdint.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-uint8_t getFrontLiftedState(void);
-
-#ifdef __cplusplus
-}
-#endif
+uint8_t getFrontLiftedState(OrientationSensors&);
 
 #endif // __FRONT_LIFTED_DETECTION_H

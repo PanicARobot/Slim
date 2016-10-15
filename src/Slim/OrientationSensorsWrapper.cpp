@@ -158,5 +158,3 @@ void OrientationSensors::update()
 	imu.a.y -= acc_offset.y;
 	imu.a.z -= acc_offset.z;
 }
-
-OrientationSensors position;

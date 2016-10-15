@@ -48,6 +48,4 @@ class OrientationSensors {
 		inline float getYaw() { return ahrs_reading.z; }
 };
 
-extern OrientationSensors position;
-
 #endif // __ORIENTATION_SENSORS_WRAPPER_H

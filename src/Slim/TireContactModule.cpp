@@ -1,7 +1,5 @@
 #include "TireContactModule.h"
 
-#include "OrientationSensorsWrapper.h"
-
 #include <cmath>
 
 #define TIRE_LOST_OF_CONTACT_DEGREES 2.50
@@ -10,7 +8,7 @@
 // a module that determines whether the tires have contact to the surface, based on AHRS data
 
 // read left tire contact state
-uint8_t getLeftTireContactState()
+uint8_t getLeftTireContactState(OrientationSensors& position)
 {
     // valid, tested
     if(position.getPitch() * 180 / M_PI > TIRE_LOST_OF_CONTACT_DEGREES)
@@ -28,7 +26,7 @@ uint8_t getLeftTireContactState()
 }
 
 // read right tire contact state
-uint8_t getRightTireContactState()
+uint8_t getRightTireContactState(OrientationSensors& position)
 {
     // valid, tested
     if(position.getPitch() * 180 / M_PI < -TIRE_LOST_OF_CONTACT_DEGREES)
