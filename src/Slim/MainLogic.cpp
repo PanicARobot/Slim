@@ -39,7 +39,7 @@ static int8_t directionOfLinearMovement;
 static float circleMotorSpeedDifference;
 
 
-void HandleControlledMovement()
+void HandleControlledMovement(float leftTyreSpeed, float rightTyreSpeed)
 {
 	switch(movementSystemStatus)
 	{
@@ -50,9 +50,6 @@ void HandleControlledMovement()
 
 		case MOVEMENT_SYSTEM_STATUS_LINEAR_MOVEMENT:
 		{
-			float leftTyreSpeed = (float)leftEncoder.getSpeed();
-			float rightTyreSpeed = (float)rightEncoder.getSpeed();
-
 			// check if the speeds are the same if not correct the speed of the slower motors
 			if(leftTyreSpeed > rightTyreSpeed)
 			{
@@ -92,9 +89,6 @@ void HandleControlledMovement()
 
 		case MOVEMENT_SYSTEM_STATUS_ROUND_MOVEMENT:
 		{
-			float leftTyreSpeed = leftEncoder.getSpeed();
-			float rightTyreSpeed = rightEncoder.getSpeed();
-
 			// check if the speeds are the same if not correct the speed of the slower motors
 			if(leftTyreSpeed / rightTyreSpeed > circleMotorSpeedDifference)
 			{
@@ -292,7 +286,7 @@ void RoundPattern()
 }
 */
 
-void MainLogic()
+void MainLogic(float left_speed, float right_speed)
 {
 	uint8_t left, right;
 	readProximitySensors(left, right);
@@ -301,5 +295,5 @@ void MainLogic()
 	else if(right) STATE = FOUND_RIGHT;
 
 	MovePattern();
-	HandleControlledMovement();
+	HandleControlledMovement(left_speed, right_speed);
 }

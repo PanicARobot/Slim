@@ -32,6 +32,8 @@ enum {
 
 OrientationSensors position;
 
+DualEncoder leftEncoder(12, 11), rightEncoder(9, 10);
+
 void log_info()
 {
 	log_data_pack.timestamp = millis();
@@ -62,7 +64,9 @@ void setup()
 
 	initLogger();
 
-	initDualEncoders();
+	leftEncoder.init([](){leftEncoder.A_handler();}, [](){leftEncoder.B_handler();});
+	rightEncoder.init([](){rightEncoder.A_handler();}, [](){rightEncoder.B_handler();});
+
 	initMotors();
 
 	initProximitySensors();
@@ -254,7 +258,7 @@ void loop()
 					break;
 				}*/
 
-				MainLogic();
+				MainLogic(leftEncoder.getSpeed(), rightEncoder.getSpeed());
 			}
 		}
 		break;

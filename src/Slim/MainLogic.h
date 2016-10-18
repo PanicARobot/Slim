@@ -7,7 +7,7 @@
 extern "C" {
 #endif
 
-void MainLogic(void);
+void MainLogic(float, float);
 
 /*
 void LinearMovement(int32_t);
