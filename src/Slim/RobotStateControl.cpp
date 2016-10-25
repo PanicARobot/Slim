@@ -23,6 +23,11 @@
 
 #define LED_PIN                 13
 
+#define LEFT_A_PIN              12
+#define LEFT_B_PIN              11
+#define RIGHT_A_PIN             9
+#define RIGHT_B_PIN             10
+
 enum {
 	WAITING_FOR_COMMAND,
 	PREPARE_TO_FIGHT,
@@ -33,7 +38,8 @@ enum {
 
 OrientationSensors position;
 
-DualEncoder leftEncoder(12, 11), rightEncoder(9, 10);
+DualEncoder leftEncoder(LEFT_A_PIN, LEFT_B_PIN);
+DualEncoder rightEncoder(RIGHT_A_PIN, RIGHT_B_PIN);
 
 void log_info()
 {
