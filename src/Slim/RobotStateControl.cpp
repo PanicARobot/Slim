@@ -35,28 +35,6 @@ OrientationSensors position;
 
 DualEncoder leftEncoder(12, 11), rightEncoder(9, 10);
 
-void log_info()
-{
-	log_data_pack.timestamp = millis();
-
-	log_data_pack.acc_x = position.getAccX();
-	log_data_pack.acc_y = position.getAccY();
-	log_data_pack.acc_z = position.getAccZ();
-
-	log_data_pack.gyro_x = position.getGyroX();
-	log_data_pack.gyro_y = position.getGyroY();
-	log_data_pack.gyro_z = position.getGyroZ();
-
-	log_data_pack.ahrs_x = position.getRoll();
-	log_data_pack.ahrs_y = position.getPitch();
-	log_data_pack.ahrs_z = position.getYaw();
-
-	log_data_pack.left_speed = leftEncoder.getSpeed();
-	log_data_pack.right_speed = rightEncoder.getSpeed();
-
-	logDataPack();
-}
-
 void setup()
 {
 	Serial.begin(SERIAL_BAUD_RATE);
@@ -260,7 +238,7 @@ void loop()
 	// Log data
 	if(current_micros - last_log_micros >= MICROS_PER_SECOND / LOG_FREQUENCY)
 	{
-		log_info();
+		logDataPack(position, leftEncoder, rightEncoder);
 		last_log_micros = current_micros;
 	}
 

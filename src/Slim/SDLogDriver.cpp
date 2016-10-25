@@ -2,16 +2,25 @@
 
 #include <SD.h>
 
+#include <cstdint>
+
 #define LOG_FILENAME            "LOG"
 #define BEGIN_LIFE_BYTE         'B'
 #define BEGIN_DATA_BYTE         'b'
 
-__LOG_DATA log_data_pack;
+static struct {
+	uint32_t timestamp;
+	float acc_x, acc_y, acc_z;
+	float gyro_x, gyro_y, gyro_z;
+	float ahrs_x, ahrs_y, ahrs_z;
+	float left_speed, right_speed;
+} log_data_pack;
 
-File f;
 
-char* const data_begin = (char*)(&log_data_pack); // Yes, yes, I know
-int data_length = sizeof(log_data_pack);
+static File f;
+
+static char* const data_begin = (char*)(&log_data_pack); // Yes, yes, I know
+static const int data_length = sizeof(log_data_pack);
 
 void initLogger()
 {
@@ -20,8 +29,25 @@ void initLogger()
 	f.flush();
 }
 
-void logDataPack()
+void logDataPack(OrientationSensors& position, DualEncoder& leftEncoder, DualEncoder& rightEncoder)
 {
+	log_data_pack.timestamp = millis();
+
+	log_data_pack.acc_x = position.getAccX();
+	log_data_pack.acc_y = position.getAccY();
+	log_data_pack.acc_z = position.getAccZ();
+
+	log_data_pack.gyro_x = position.getGyroX();
+	log_data_pack.gyro_y = position.getGyroY();
+	log_data_pack.gyro_z = position.getGyroZ();
+
+	log_data_pack.ahrs_x = position.getRoll();
+	log_data_pack.ahrs_y = position.getPitch();
+	log_data_pack.ahrs_z = position.getYaw();
+
+	log_data_pack.left_speed = leftEncoder.getSpeed();
+	log_data_pack.right_speed = rightEncoder.getSpeed();
+
 	f.write(BEGIN_DATA_BYTE);
 	f.write(data_begin, data_length);
 	f.flush();
