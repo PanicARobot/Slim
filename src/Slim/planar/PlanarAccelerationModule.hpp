@@ -1,9 +1,8 @@
 #ifndef __PLANAR_ACCELERATION_MODULE_H
 #define __PLANAR_ACCELERATION_MODULE_H
 
-#include "utility/Point3D.hpp"
-
-#include "OrientationSensorsWrapper.hpp"
+#include "../utility/Point3D.hpp"
+#include "../OrientationSensorsWrapper.hpp"
 
 extern Point3D<double> acceleration_vector;
 

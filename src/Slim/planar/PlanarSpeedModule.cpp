@@ -1,7 +1,7 @@
 #include "PlanarSpeedModule.hpp"
 
 #include "PlanarAccelerationModule.hpp"
-#include "DualEncoderDriver.hpp"
+#include "../DualEncoderDriver.hpp"
 
 static Point3D<double> speed_vector;
 
