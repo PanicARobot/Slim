@@ -1,3 +1,5 @@
+#include "RobotStateControl.h"
+
 #include "OrientationSensorsWrapper.hpp"
 #include "SDLogDriver.hpp"
 #include "DualEncoderDriver.hpp"
@@ -45,7 +47,6 @@ DualEncoder rightEncoder(RIGHT_A_PIN, RIGHT_B_PIN);
 void setup()
 {
 	Serial.begin(SERIAL_BAUD_RATE);
-	while(!Serial);
 
 	SD.begin(SD_CHIP_SELECT);
 
@@ -62,11 +63,19 @@ void setup()
 	Wire.setClock(I2C_FREQUENCY);
 
 	position.init();
-
-	initPlanarSpeed(position);
 }
 
 uint32_t event_micros;
+
+void calibrate() {
+	digitalWrite(LED_PIN, HIGH);
+	position.calibrate();
+	initPlanarSpeed(position);
+}
+
+void setState(int new_state) {
+	robot_state = (decltype(robot_state)) new_state;
+}
 
 void getProximityCommand()
 {
@@ -103,12 +112,12 @@ void getProximityCommand()
 						break;
 
 					case 1:
-						digitalWrite(LED_PIN, HIGH);
-						position.calibrate();
+						calibrate();
 						break;
 
 					case 2:
 						robot_state = TEST_MODE;
+						Serial.println("Welcome to test mode");
 						break;
 				}
 			}
