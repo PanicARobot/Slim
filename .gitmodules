@@ -3,7 +3,7 @@
 	url = https://github.com/arduino/Arduino.git
 [submodule "src/ArduinoCore-samd"]
 	path = src/ArduinoCore-samd
-	url = https://github.com/arduino/ArduinoCore-samd.git
+	url = https://github.com/adafruit/ArduinoCore-samd.git
 [submodule "src/lsm6-arduino"]
 	path = src/lsm6-arduino
 	url = https://github.com/pololu/lsm6-arduino.git
