@@ -32,7 +32,7 @@ void initLogger()
 
 void logDataPack(OrientationSensors& position,
 		DualEncoder& leftEncoder, DualEncoder& rightEncoder,
-		const Point3D<double>& planar_acc, const Point3D<double>& planar_speed)
+		const Point3D<float>& planar_acc, const Point3D<float>& planar_speed)
 {
 	log_data_pack.timestamp = millis();
 
@@ -58,6 +58,39 @@ void logDataPack(OrientationSensors& position,
 	log_data_pack.planar_speed_x = planar_speed.x;
 	log_data_pack.planar_speed_y = planar_speed.y;
 	log_data_pack.planar_speed_z = planar_speed.z;
+
+	/*
+			Serial.print(log_data_pack.timestamp); Serial.print("ms: ");
+
+			Serial.print("Acc ("); // g
+			Serial.print(log_data_pack.acc_x); Serial.print(", ");
+			Serial.print(log_data_pack.acc_y); Serial.print(", ");
+			Serial.print(log_data_pack.acc_z); Serial.print(")\t");
+
+			Serial.print("Gyro ("); // m / s^2
+			Serial.print(log_data_pack.gyro_x); Serial.print(", ");
+			Serial.print(log_data_pack.gyro_y); Serial.print(", ");
+			Serial.print(log_data_pack.gyro_z); Serial.print(")\t");
+
+			Serial.print("Ahrs ("); // degrees
+			Serial.print(log_data_pack.ahrs_x * 180 / M_PI); Serial.print(", ");
+			Serial.print(log_data_pack.ahrs_y * 180 / M_PI); Serial.print(", ");
+			Serial.print(log_data_pack.ahrs_z * 180 / M_PI); Serial.print(")\t");
+
+			Serial.print("Encoders ("); // mm / s
+			Serial.print(log_data_pack.left_speed); Serial.print(", ");
+			Serial.print(log_data_pack.right_speed); Serial.print(")\t");
+
+			Serial.print("Planar acc ("); // ???
+			Serial.print(log_data_pack.planar_acc_x); Serial.print(", ");
+			Serial.print(log_data_pack.planar_acc_y); Serial.print(", ");
+			Serial.print(log_data_pack.planar_acc_z); Serial.print(")\t");
+
+			Serial.print("Planar speed ("); // ???
+			Serial.print(log_data_pack.planar_speed_x); Serial.print(", ");
+			Serial.print(log_data_pack.planar_speed_y); Serial.print(", ");
+			Serial.print(log_data_pack.planar_speed_z); Serial.print(")\n");
+*/
 
 	f.write(BEGIN_DATA_BYTE);
 	f.write(data_begin, data_length);
@@ -116,6 +149,7 @@ void dumpLog()
 		else
 		{
 			Serial.println("Log file is corrupt");
+			Serial.println((int)c);
 			break;
 		}
 	}
