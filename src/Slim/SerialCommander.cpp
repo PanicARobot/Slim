@@ -38,12 +38,13 @@ void getSerialCommand()
 
 		setMotors(left, right);
 	}
-	else if(cmd == 'd')
-	{
+	else if(cmd == 'd') {
 		dumpLog();
 	}
-	else if(cmd == 'e')
-	{
+	else if(cmd == 'e') {
 		dropLog();
+	}
+	else if(cmd == 'h') {
+		Serial.println("Hello, I am here!");
 	}
 }

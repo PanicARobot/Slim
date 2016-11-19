@@ -45,6 +45,7 @@ DualEncoder rightEncoder(RIGHT_A_PIN, RIGHT_B_PIN);
 void setup()
 {
 	Serial.begin(SERIAL_BAUD_RATE);
+	while(!Serial);
 
 	SD.begin(SD_CHIP_SELECT);
 
@@ -61,6 +62,8 @@ void setup()
 	Wire.setClock(I2C_FREQUENCY);
 
 	position.init();
+
+	initPlanarSpeed(position);
 }
 
 uint32_t event_micros;
@@ -125,7 +128,7 @@ void getProximityCommand()
 			command_counter = 42; // Just something invalid and BIG
 		}
 
-		robot_state = WAITING_FOR_COMMAND;
+		robot_state = WAITING_FOR_COMMAND; // Remove
 		setMotors(0, 0);
 	}
 
@@ -192,19 +195,19 @@ void loop()
 			}
 			break;
 		case FIGHT_MODE:
-		{
-			if(current_micros - last_sample_micros >= MICROS_PER_SECOND / SAMPLE_FREQUENCY)
 			{
-				/*if(getLeftTireContactState() == 0 && getRightTireContactState() == 0)
+				if(current_micros - last_sample_micros >= MICROS_PER_SECOND / SAMPLE_FREQUENCY)
 				{
-					robot_state = BRAINDEAD;
-					break;
-				}*/
+					/*if(getLeftTireContactState() == 0 && getRightTireContactState() == 0)
+					  {
+					  robot_state = BRAINDEAD;
+					  break;
+					  }*/
 
-				MainLogic(leftEncoder.getSpeed(), rightEncoder.getSpeed());
+					MainLogic(leftEncoder.getSpeed(), rightEncoder.getSpeed());
+				}
 			}
-		}
-		break;
+			break;
 
 		case TEST_MODE:
 			if(current_micros - last_sample_micros >= MICROS_PER_SECOND / SAMPLE_FREQUENCY)

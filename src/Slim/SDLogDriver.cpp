@@ -18,7 +18,6 @@ static struct {
 	float planar_speed_x, planar_speed_y, planar_speed_z;
 } log_data_pack;
 
-
 static File f;
 
 static char* const data_begin = (char*)(&log_data_pack); // Yes, yes, I know
