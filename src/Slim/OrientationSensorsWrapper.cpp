@@ -2,6 +2,7 @@
 
 #define CALIBRATION_FREQUENCY   250
 #define MICROS_PER_SECOND       1000000
+#define SAMPLES_COUNT           250
 
 void OrientationSensors::init()
 {
@@ -39,24 +40,10 @@ void OrientationSensors::calibrate()
 
 void OrientationSensors::calibrate_sensors()
 {
-	int samples_count = 0;
-
 	acc_offset = {0, 0, 0};
 	gyro_offset = {0, 0, 0};
 
-	// Collect sensor data for a second
-	uint32_t start_micros = micros();
-	uint32_t last_micros = start_micros - MICROS_PER_SECOND;
-
-	while(true)
-	{
-		uint32_t current_micros = micros();
-		if(current_micros - start_micros > MICROS_PER_SECOND)
-			break;
-
-		if(current_micros - last_micros < MICROS_PER_SECOND / CALIBRATION_FREQUENCY)
-			continue;
-
+	for(int i = 0; i < SAMPLES_COUNT; ++i) {
 		imu.read();
 
 		acc_offset.x += imu.a.x;
@@ -68,51 +55,23 @@ void OrientationSensors::calibrate_sensors()
 		gyro_offset.y += imu.g.y;
 		gyro_offset.z += imu.g.z;
 
-		++samples_count;
+		delayMicroseconds(MICROS_PER_SECOND / CALIBRATION_FREQUENCY);
 	}
 
-	acc_offset /= samples_count;
-	gyro_offset /= samples_count;
+	acc_offset /= SAMPLES_COUNT;
+	gyro_offset /= SAMPLES_COUNT;
 }
 
 void OrientationSensors::calibrate_ahrs()
 {
-	uint32_t start_micros = micros();
-	uint32_t last_micros = start_micros - MICROS_PER_SECOND;
-
-	// Give ahrs a second
-	while(true)
-	{
-		uint32_t current_micros = micros();
-		if(current_micros - start_micros > MICROS_PER_SECOND)
-			break;
-
-		if(current_micros - last_micros < MICROS_PER_SECOND / CALIBRATION_FREQUENCY)
-			continue;
-
-		last_micros = current_micros;
-
+	for(int i = 0; i < SAMPLES_COUNT; ++i) {
 		update();
+		delayMicroseconds(MICROS_PER_SECOND / CALIBRATION_FREQUENCY);
 	}
 
-	int samples_count = 0;
 	ahrs_offset = {0, 0, 0};
 
-	// Collect data for a second
-	start_micros = micros();
-	last_micros = start_micros - MICROS_PER_SECOND;
-
-	while(true)
-	{
-		uint32_t current_micros = micros();
-		if(current_micros - start_micros > MICROS_PER_SECOND)
-			break;
-
-		if(current_micros - last_micros < MICROS_PER_SECOND / CALIBRATION_FREQUENCY)
-			continue;
-
-		last_micros = current_micros;
-
+	for(int i = 0; i < SAMPLES_COUNT; ++i) {
 		update();
 
 		ahrs_offset += {
@@ -120,11 +79,9 @@ void OrientationSensors::calibrate_ahrs()
 			ahrs.getPitchRadians(),
 			ahrs.getYawRadians()
 		};
-
-		++samples_count;
 	}
 
-	ahrs_offset /= samples_count;
+	ahrs_offset /= SAMPLES_COUNT;
 }
 
 void OrientationSensors::update_ahrs()
