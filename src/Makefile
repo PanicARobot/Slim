@@ -21,7 +21,7 @@ TARGET_ELF=${BUILD_DIR}/result.elf
 TARGET_BIN=${BUILD_DIR}/result.bin
 
 INCLUDE_DIRS=\
-	./Arduino/libraries/SD/src/ \
+	./SD/ \
 	${ARDUINO_PACKAGES}/arduino/tools/CMSIS/4.0.0-atmel/CMSIS/Include/ \
 	${ARDUINO_PACKAGES}/arduino/tools/CMSIS/4.0.0-atmel/Device/ATMEL/ \
 	${CORES_PATH} \
@@ -50,7 +50,7 @@ SRC_DIRS=\
 	./Slim \
 	./lsm6-arduino \
 	./MahonyAHRS/src \
-	./Arduino/libraries/SD/src/ \
+	./SD/ \
 	./ArduinoCore-samd/cores/arduino/ \
 	./ArduinoCore-samd/variants/arduino_zero/ \
 	./ArduinoCore-samd/libraries/Wire/ \

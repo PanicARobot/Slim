@@ -13,3 +13,6 @@
 [submodule "src/BOSSA"]
 	path = src/BOSSA
 	url = https://github.com/shumatech/BOSSA.git
+[submodule "src/SD"]
+	path = src/SD
+	url = https://github.com/adafruit/SD.git
