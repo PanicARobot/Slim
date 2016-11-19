@@ -2,6 +2,7 @@
 
 #include "SDLogDriver.hpp"
 #include "MotorDriver.h"
+#include "RobotStateControl.h"
 
 #include <Wire.h>
 
@@ -46,5 +47,15 @@ void getSerialCommand()
 	}
 	else if(cmd == 'h') {
 		Serial.println("Hello, I am here!");
+	}
+	else if(cmd == 'c') {
+		calibrate();
+	}
+	else if(cmd == 'm') {
+		int new_state = 0;
+		if(Serial.available() > 0)
+			new_state = Serial.read() - '0';
+
+		setState(new_state);
 	}
 }
