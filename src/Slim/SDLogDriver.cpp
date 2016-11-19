@@ -14,6 +14,8 @@ static struct {
 	float gyro_x, gyro_y, gyro_z;
 	float ahrs_x, ahrs_y, ahrs_z;
 	float left_speed, right_speed;
+	float planar_acc_x, planar_acc_y, planar_acc_z;
+	float planar_speed_x, planar_speed_y, planar_speed_z;
 } log_data_pack;
 
 
@@ -29,7 +31,9 @@ void initLogger()
 	f.flush();
 }
 
-void logDataPack(OrientationSensors& position, DualEncoder& leftEncoder, DualEncoder& rightEncoder)
+void logDataPack(OrientationSensors& position,
+		DualEncoder& leftEncoder, DualEncoder& rightEncoder,
+		const Point3D<double>& planar_acc, const Point3D<double>& planar_speed)
 {
 	log_data_pack.timestamp = millis();
 
@@ -47,6 +51,14 @@ void logDataPack(OrientationSensors& position, DualEncoder& leftEncoder, DualEnc
 
 	log_data_pack.left_speed = leftEncoder.getSpeed();
 	log_data_pack.right_speed = rightEncoder.getSpeed();
+
+	log_data_pack.planar_acc_x = planar_acc.x;
+	log_data_pack.planar_acc_y = planar_acc.y;
+	log_data_pack.planar_acc_z = planar_acc.z;
+
+	log_data_pack.planar_speed_x = planar_speed.x;
+	log_data_pack.planar_speed_y = planar_speed.y;
+	log_data_pack.planar_speed_z = planar_speed.z;
 
 	f.write(BEGIN_DATA_BYTE);
 	f.write(data_begin, data_length);
@@ -90,7 +102,17 @@ void dumpLog()
 
 			Serial.print("Encoders ("); // mm / s
 			Serial.print(log_data_pack.left_speed); Serial.print(", ");
-			Serial.print(log_data_pack.right_speed); Serial.print(")\n");
+			Serial.print(log_data_pack.right_speed); Serial.print(")\t");
+
+			Serial.print("Planar acc ("); // ???
+			Serial.print(log_data_pack.planar_acc_x); Serial.print(", ");
+			Serial.print(log_data_pack.planar_acc_y); Serial.print(", ");
+			Serial.print(log_data_pack.planar_acc_z); Serial.print(")\t");
+
+			Serial.print("Planar speed ("); // ???
+			Serial.print(log_data_pack.planar_speed_x); Serial.print(", ");
+			Serial.print(log_data_pack.planar_speed_y); Serial.print(", ");
+			Serial.print(log_data_pack.planar_speed_z); Serial.print(")\n");
 		}
 		else
 		{

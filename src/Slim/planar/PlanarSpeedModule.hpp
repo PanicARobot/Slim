@@ -3,6 +3,8 @@
 
 #include "../OrientationSensorsWrapper.hpp"
 
+extern Point3D<double> speed_vector;
+
 void initPlanarSpeed(OrientationSensors&);
 void updatePlanarSpeed(OrientationSensors&);
 

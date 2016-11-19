@@ -7,6 +7,8 @@
 #include "MainLogic.h"
 #include "ProximitySensors.hpp"
 #include "SerialCommander.h"
+#include "planar/PlanarAccelerationModule.hpp"
+#include "planar/PlanarSpeedModule.hpp"
 
 #include <Wire.h>
 #include <SD.h>
@@ -233,7 +235,7 @@ void loop()
 		position.update();
 		leftEncoder.update();
 		rightEncoder.update();
-		// updatePlanarAcceleration(position);
+		updatePlanarSpeed(position);
 
 		getProximityCommand();
 
@@ -243,7 +245,7 @@ void loop()
 	// Log data
 	if(current_micros - last_log_micros >= MICROS_PER_SECOND / LOG_FREQUENCY)
 	{
-		logDataPack(position, leftEncoder, rightEncoder);
+		logDataPack(position, leftEncoder, rightEncoder, acceleration_vector, speed_vector);
 		last_log_micros = current_micros;
 	}
 

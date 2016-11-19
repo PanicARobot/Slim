@@ -3,9 +3,10 @@
 
 #include "OrientationSensorsWrapper.hpp"
 #include "DualEncoderDriver.hpp"
+#include "utility/Point3D.hpp"
 
 void initLogger();
-void logDataPack(OrientationSensors&, DualEncoder&, DualEncoder&);
+void logDataPack(OrientationSensors&, DualEncoder&, DualEncoder&, const Point3D<double>&, const Point3D<double>&);
 void dumpLog();
 void dropLog();
 
