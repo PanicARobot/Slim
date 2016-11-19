@@ -40,8 +40,8 @@ class OrientationSensors {
 		inline float getGyroY() { return imu.g.y / dpsScale; }
 		inline float getGyroZ() { return imu.g.z / dpsScale; }
 
-		inline float getRoll() { return ahrs_reading.x; }
-		inline float getPitch() { return ahrs_reading.y; }
+		inline float getPitch() { return ahrs_reading.x; }
+		inline float getRoll() { return ahrs_reading.y; }
 		inline float getYaw() { return ahrs_reading.z; }
 };
 
