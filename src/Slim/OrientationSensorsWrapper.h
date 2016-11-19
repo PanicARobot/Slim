@@ -1,6 +1,8 @@
 #ifndef __ORIENTATION_SENSORS_WRAPPER_H
 #define __ORIENTATION_SENSORS_WRAPPER_H
 
+#include "utility/Point3D.hpp"
+
 #include <LSM6.h>
 #include <MahonyAHRS.h>
 
@@ -14,16 +16,11 @@ class OrientationSensors {
 		LSM6 imu;
 		Mahony ahrs;
 
-		template<typename _T>
-			struct xyz {
-				_T x, y, z;
-		};
+		Point3D<int32_t> acc_offset;
+		Point3D<int32_t> gyro_offset;
 
-		xyz<int32_t> acc_offset;
-		xyz<int32_t> gyro_offset;
-
-		xyz<float> ahrs_offset;
-		xyz<float> ahrs_reading;
+		Point3D<float> ahrs_offset;
+		Point3D<float> ahrs_reading;
 
 		void calibrate_sensors();
 		void calibrate_ahrs();

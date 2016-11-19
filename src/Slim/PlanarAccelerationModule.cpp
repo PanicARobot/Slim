@@ -6,9 +6,7 @@
 #define CALIBRATION_FREQUENCY  250
 #define CALIBRATION_TIME       MICROS_PER_SECOND
 
-static struct {
-	double x, y, z;
-} acceleration_vector;
+Point3D<double> acceleration_vector;
 
 static double gravity;
 
