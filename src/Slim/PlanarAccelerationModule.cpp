@@ -12,7 +12,7 @@ static struct {
 
 static double gravity;
 
-void calibrate_gravity(OrientationSensors& position) {
+void calibrateGravity(OrientationSensors& position) {
 	acceleration_vector = {0, 0, 0};
 	uint32_t samples_count = 0;
 
