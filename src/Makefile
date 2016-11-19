@@ -105,7 +105,7 @@ program: ${TARGET_BIN} ${BOSSAC}
 	while [[ ! -c ${PORT_DEVICE} ]]; do sleep .1; done
 	${BOSSAC} -i -d --port=${PORT} -U true -i -e -w -v $< -R
 
-serial: program
+serial:
 	sleep 2
 	stty -F ${PORT_DEVICE} cs8 ${SERIAL_BAUD} ignbrk -brkint -icrnl -imaxbel -opost -onlcr -isig -icanon -iexten -echo -echoe -echok -echoctl -echoke noflsh -ixon -crtscts
 	tail -f ${PORT_DEVICE} | tee log.txt
