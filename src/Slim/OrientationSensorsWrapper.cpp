@@ -70,13 +70,8 @@ void OrientationSensors::calibrate_sensors()
 		++samples_count;
 	}
 
-	acc_offset.x /= samples_count;
-	acc_offset.y /= samples_count;
-	acc_offset.z /= samples_count;
-
-	gyro_offset.x /= samples_count;
-	gyro_offset.y /= samples_count;
-	gyro_offset.z /= samples_count;
+	acc_offset /= samples_count;
+	gyro_offset /= samples_count;
 }
 
 void OrientationSensors::calibrate_ahrs()
@@ -119,16 +114,16 @@ void OrientationSensors::calibrate_ahrs()
 
 		update();
 
-		ahrs_offset.x += ahrs.getRollRadians();
-		ahrs_offset.y += ahrs.getPitchRadians();
-		ahrs_offset.z += ahrs.getYawRadians();
+		ahrs_offset += {
+			ahrs.getRollRadians(),
+			ahrs.getPitchRadians(),
+			ahrs.getYawRadians()
+		};
 
 		++samples_count;
 	}
 
-	ahrs_offset.x /= samples_count;
-	ahrs_offset.y /= samples_count;
-	ahrs_offset.z /= samples_count;
+	ahrs_offset /= samples_count;
 }
 
 void OrientationSensors::update_ahrs()
@@ -149,9 +144,12 @@ void OrientationSensors::update()
 	update_ahrs();
 
 	// Apply ahrs offsets
-	ahrs_reading.x = ahrs.getRollRadians() - ahrs_offset.x;
-	ahrs_reading.y = ahrs.getPitchRadians() - ahrs_offset.y;
-	ahrs_reading.z = ahrs.getYawRadians() - ahrs_offset.z;
+	ahrs_reading = {
+		ahrs.getRollRadians(),
+		ahrs.getPitchRadians(),
+		ahrs.getYawRadians()
+	};
+	ahrs_reading -= ahrs_offset;
 
 	// Apply accelerometer offsets
 	imu.a.x -= acc_offset.x;
