@@ -24,9 +24,9 @@ struct Point3D {
 	}
 
 	inline void operator/=(T div) {
-		x *= div;
-		y *= div;
-		z *= div;
+		x /= div;
+		y /= div;
+		z /= div;
 	}
 };
 
