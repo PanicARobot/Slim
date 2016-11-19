@@ -1,4 +1,4 @@
-#include "PlanarAccelerationModule.h"
+#include "PlanarAccelerationModule.hpp"
 
 #include <cmath>
 

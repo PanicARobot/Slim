@@ -1,4 +1,4 @@
-#include "DualEncoderDriver.h"
+#include "DualEncoderDriver.hpp"
 
 #include <Arduino.h>
 

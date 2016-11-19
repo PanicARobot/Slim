@@ -1,7 +1,7 @@
 #ifndef __FRONT_LIFTED_DETECTION_H
 #define __FRONT_LIFTED_DETECTION_H
 
-#include "OrientationSensorsWrapper.h"
+#include "OrientationSensorsWrapper.hpp"
 
 #include <stdint.h>
 

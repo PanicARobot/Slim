@@ -1,7 +1,7 @@
 #ifndef __TIRE_CONTACT_MODULE_H
 #define __TIRE_CONTACT_MODULE_H
 
-#include "OrientationSensorsWrapper.h"
+#include "OrientationSensorsWrapper.hpp"
 
 #include <cstdint>
 

@@ -1,4 +1,4 @@
-#include "ProximitySensors.h"
+#include "ProximitySensors.hpp"
 
 #include <Arduino.h>
 

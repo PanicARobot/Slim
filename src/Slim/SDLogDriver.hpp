@@ -1,8 +1,8 @@
 #ifndef __SD_LOG_DRIVER_H
 #define __SD_LOG_DRIVER_H
 
-#include "OrientationSensorsWrapper.h"
-#include "DualEncoderDriver.h"
+#include "OrientationSensorsWrapper.hpp"
+#include "DualEncoderDriver.hpp"
 
 void initLogger();
 void logDataPack(OrientationSensors&, DualEncoder&, DualEncoder&);

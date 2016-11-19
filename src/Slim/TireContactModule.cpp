@@ -1,4 +1,4 @@
-#include "TireContactModule.h"
+#include "TireContactModule.hpp"
 
 #include <cmath>
 

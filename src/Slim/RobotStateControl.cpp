@@ -1,12 +1,11 @@
-#include "OrientationSensorsWrapper.h"
-#include "SDLogDriver.h"
-#include "DualEncoderDriver.h"
+#include "OrientationSensorsWrapper.hpp"
+#include "SDLogDriver.hpp"
+#include "DualEncoderDriver.hpp"
 #include "MotorDriver.h"
-#include "PlanarAccelerationModule.h"
-#include "TireContactModule.h"
-#include "FrontLiftedDetection.h"
+#include "TireContactModule.hpp"
+#include "FrontLiftedDetection.hpp"
 #include "MainLogic.h"
-#include "ProximitySensors.h"
+#include "ProximitySensors.hpp"
 #include "SerialCommander.h"
 
 #include <Wire.h>
@@ -234,7 +233,7 @@ void loop()
 		position.update();
 		leftEncoder.update();
 		rightEncoder.update();
-		updatePlanarAcceleration(position);
+		// updatePlanarAcceleration(position);
 
 		getProximityCommand();
 

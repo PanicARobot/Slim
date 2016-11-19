@@ -3,7 +3,7 @@
 
 #include "utility/Point3D.hpp"
 
-#include "OrientationSensorsWrapper.h"
+#include "OrientationSensorsWrapper.hpp"
 
 extern Point3D<double> acceleration_vector;
 

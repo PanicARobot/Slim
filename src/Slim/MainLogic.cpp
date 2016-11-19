@@ -1,9 +1,9 @@
 #include "MainLogic.h"
 
 #include "MotorDriver.h"
-#include "DualEncoderDriver.h"
-#include "FrontLiftedDetection.h"
-#include "ProximitySensors.h"
+#include "DualEncoderDriver.hpp"
+#include "FrontLiftedDetection.hpp"
+#include "ProximitySensors.hpp"
 
 #include <cmath>
 

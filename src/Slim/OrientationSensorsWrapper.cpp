@@ -1,4 +1,4 @@
-#include "OrientationSensorsWrapper.h"
+#include "OrientationSensorsWrapper.hpp"
 
 #define CALIBRATION_FREQUENCY   250
 #define MICROS_PER_SECOND       1000000
