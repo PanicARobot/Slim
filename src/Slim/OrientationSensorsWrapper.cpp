@@ -61,7 +61,8 @@ void OrientationSensors::calibrate_sensors()
 
 		acc_offset.x += imu.a.x;
 		acc_offset.y += imu.a.y;
-//		acc_offset.z += imu.a.z; let gravity stay there
+		// let gravity be there
+		// acc_offset.z += imu.a.z;
 
 		gyro_offset.x += imu.g.x;
 		gyro_offset.y += imu.g.y;
