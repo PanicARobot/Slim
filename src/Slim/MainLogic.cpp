@@ -39,7 +39,7 @@ static int8_t directionOfLinearMovement;
 static float circleMotorSpeedDifference;
 
 
-void HandleControlledMovement(float leftTyreSpeed, float rightTyreSpeed)
+void HandleControlledMovement(float leftTireSpeed, float rightTireSpeed)
 {
 	switch(movementSystemStatus)
 	{
@@ -51,18 +51,18 @@ void HandleControlledMovement(float leftTyreSpeed, float rightTyreSpeed)
 		case MOVEMENT_SYSTEM_STATUS_LINEAR_MOVEMENT:
 		{
 			// check if the speeds are the same if not correct the speed of the slower motors
-			if(leftTyreSpeed > rightTyreSpeed)
+			if(leftTireSpeed > rightTireSpeed)
 			{
 				leftMotorSpeed -= SPEED_CHANGE_STEP;
 			}
-			else if(leftTyreSpeed < rightTyreSpeed)
+			else if(leftTireSpeed < rightTireSpeed)
 			{
 				leftMotorSpeed += SPEED_CHANGE_STEP;
 			}
 
 			// update moved distance
-			distanceExpectedByLeftTire -= (float)(leftTyreSpeed / SAMPLE_FREQUENCY);
-			distanceExpectedByRightTire -= (float)(rightTyreSpeed / SAMPLE_FREQUENCY);
+			distanceExpectedByLeftTire -= (float)(leftTireSpeed / SAMPLE_FREQUENCY);
+			distanceExpectedByRightTire -= (float)(rightTireSpeed / SAMPLE_FREQUENCY);
 
 			if(	(distanceExpectedByLeftTire < 0 && directionOfLinearMovement > 0) ||
 				(distanceExpectedByLeftTire > 0 && directionOfLinearMovement < 0) )
@@ -90,20 +90,20 @@ void HandleControlledMovement(float leftTyreSpeed, float rightTyreSpeed)
 		case MOVEMENT_SYSTEM_STATUS_ROUND_MOVEMENT:
 		{
 			// check if the speeds are the same if not correct the speed of the slower motors
-			if(leftTyreSpeed / rightTyreSpeed > circleMotorSpeedDifference)
+			if(leftTireSpeed / rightTireSpeed > circleMotorSpeedDifference)
 			{
 				leftMotorSpeed -= SPEED_CHANGE_STEP;
 				rightMotorSpeed += SPEED_CHANGE_STEP;
 			}
-			else if(leftTyreSpeed / rightTyreSpeed < circleMotorSpeedDifference)
+			else if(leftTireSpeed / rightTireSpeed < circleMotorSpeedDifference)
 			{
 				leftMotorSpeed += SPEED_CHANGE_STEP;
 				rightMotorSpeed -= SPEED_CHANGE_STEP;
 			}
 
 			// update moved distance
-			distanceExpectedByLeftTire -= leftTyreSpeed / SAMPLE_FREQUENCY;
-			distanceExpectedByRightTire -= rightTyreSpeed / SAMPLE_FREQUENCY;
+			distanceExpectedByLeftTire -= leftTireSpeed / SAMPLE_FREQUENCY;
+			distanceExpectedByRightTire -= rightTireSpeed / SAMPLE_FREQUENCY;
 
 			if(	(distanceExpectedByLeftTire < 0 && leftMotorDir > 0) ||
 				(distanceExpectedByLeftTire > 0 && leftMotorDir < 0) )
