@@ -32,16 +32,16 @@ class OrientationSensors {
 		void calibrate();
 		void update();
 
-		inline float getAccX() { return imu.a.x / gScale; }
-		inline float getAccY() { return imu.a.y / gScale; }
+		inline float getAccX() { return imu.a.y / gScale; } // Must be swapped
+		inline float getAccY() { return imu.a.x / gScale; }
 		inline float getAccZ() { return imu.a.z / gScale; }
 
-		inline float getGyroX() { return imu.g.x / dpsScale; }
-		inline float getGyroY() { return imu.g.y / dpsScale; }
+		inline float getGyroX() { return imu.g.y / dpsScale; } // Must be swapped
+		inline float getGyroY() { return imu.g.x / dpsScale; }
 		inline float getGyroZ() { return imu.g.z / dpsScale; }
 
-		inline float getPitch() { return ahrs_reading.x; }
-		inline float getRoll() { return ahrs_reading.y; }
+		inline float getRoll() { return ahrs_reading.x; }
+		inline float getPitch() { return ahrs_reading.y; }
 		inline float getYaw() { return ahrs_reading.z; }
 };
 

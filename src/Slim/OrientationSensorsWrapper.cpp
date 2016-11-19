@@ -46,8 +46,8 @@ void OrientationSensors::calibrate_sensors()
 	for(int i = 0; i < SAMPLES_COUNT; ++i) {
 		imu.read();
 
-		acc_offset.x += imu.a.x;
-		acc_offset.y += imu.a.y;
+		acc_offset.x += imu.a.y; // Must be swapped
+		acc_offset.y += imu.a.x;
 		// let gravity be there
 		// acc_offset.z += imu.a.z;
 
