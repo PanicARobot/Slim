@@ -1,6 +1,3 @@
-[submodule "src/Arduino"]
-	path = src/Arduino
-	url = https://github.com/arduino/Arduino.git
 [submodule "src/ArduinoCore-samd"]
 	path = src/ArduinoCore-samd
 	url = https://github.com/adafruit/ArduinoCore-samd.git
