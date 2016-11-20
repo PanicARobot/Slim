@@ -13,6 +13,10 @@ struct Point3D {
 		z += other.z;
 	}
 
+	Point3D<T> operator+(const Point3D& other) {
+		return { x + other.x, y + other.y, z + other.z };
+	}
+
 	inline void operator-=(const Point3D& other) {
 		x -= other.x;
 		y -= other.y;
@@ -23,6 +27,10 @@ struct Point3D {
 		x *= mul;
 		y *= mul;
 		z *= mul;
+	}
+
+	Point3D<T> operator*(T mul) {
+		return { x * mul, y * mul, z * mul };
 	}
 
 	inline void operator/=(T div) {
@@ -42,7 +50,7 @@ struct Point3D {
 		x = nx; y = ny; z = nz;
 	}
 
-	inline void rotateYPR(Point3D<T> ahrs) {
+	inline void rotateYPR(Point3D ahrs) {
 		float cy = cos(ahrs.z), cp = cos(ahrs.y), cr = cos(ahrs.x);
 		float sy = sin(ahrs.z), sp = sin(ahrs.y), sr = sin(ahrs.x);
 
