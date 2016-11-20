@@ -12,7 +12,7 @@ static struct {
 	uint32_t timestamp;
 	float acc_x, acc_y, acc_z;
 	float gyro_x, gyro_y, gyro_z;
-	float ahrs_x, ahrs_y, ahrs_z;
+	float ahrs_roll, ahrs_pitch, ahrs_yaw;
 	float left_speed, right_speed;
 	float planar_acc_x, planar_acc_y, planar_acc_z;
 	float planar_speed_x, planar_speed_y, planar_speed_z;
@@ -32,7 +32,7 @@ void initLogger()
 
 void logDataPack(OrientationSensors& position,
 		DualEncoder& leftEncoder, DualEncoder& rightEncoder,
-		const Point3D<double>& planar_acc, const Point3D<double>& planar_speed)
+		const Point3D<float>& planar_acc, const Point3D<float>& planar_speed)
 {
 	log_data_pack.timestamp = millis();
 
@@ -44,9 +44,9 @@ void logDataPack(OrientationSensors& position,
 	log_data_pack.gyro_y = position.getGyroY();
 	log_data_pack.gyro_z = position.getGyroZ();
 
-	log_data_pack.ahrs_x = position.getRoll();
-	log_data_pack.ahrs_y = position.getPitch();
-	log_data_pack.ahrs_z = position.getYaw();
+	log_data_pack.ahrs_roll = position.getRoll();
+	log_data_pack.ahrs_pitch = position.getPitch();
+	log_data_pack.ahrs_yaw = position.getYaw();
 
 	log_data_pack.left_speed = leftEncoder.getSpeed();
 	log_data_pack.right_speed = rightEncoder.getSpeed();
@@ -61,7 +61,9 @@ void logDataPack(OrientationSensors& position,
 
 	f.write(BEGIN_DATA_BYTE);
 	f.write(data_begin, data_length);
-	f.flush();
+
+	// TODO: implement own buffering
+	// f.flush();
 }
 
 void dumpLog()
@@ -76,42 +78,43 @@ void dumpLog()
 		if(c == BEGIN_LIFE_BYTE)
 		{
 			Serial.println("=== UNIT BOOTUP ===");
+			Serial.print("timestamp,acc x,acc y,acc z,gyro x,gyro y,gyro z,roll,pitch,yaw,left enc,right enc,planar acc x,planar acc y,planar acc z,planar speed x,planar speed y,planar speed z\n");
 		}
 		else if(c == BEGIN_DATA_BYTE)
 		{
 			for(int i = 0; i < data_length; ++i)
 				data_begin[i] = f.read();
 
-			Serial.print(log_data_pack.timestamp); Serial.print("ms: ");
+			Serial.print(log_data_pack.timestamp); Serial.print(",");
 
-			Serial.print("Acc ("); // g
-			Serial.print(log_data_pack.acc_x); Serial.print(", ");
-			Serial.print(log_data_pack.acc_y); Serial.print(", ");
-			Serial.print(log_data_pack.acc_z); Serial.print(")\t");
+			// Accelerometer in g
+			Serial.print(log_data_pack.acc_x); Serial.print(",");
+			Serial.print(log_data_pack.acc_y); Serial.print(",");
+			Serial.print(log_data_pack.acc_z); Serial.print(",");
 
-			Serial.print("Gyro ("); // m / s^2
-			Serial.print(log_data_pack.gyro_x); Serial.print(", ");
-			Serial.print(log_data_pack.gyro_y); Serial.print(", ");
-			Serial.print(log_data_pack.gyro_z); Serial.print(")\t");
+			// Gyroscope in m / s^2
+			Serial.print(log_data_pack.gyro_x); Serial.print(",");
+			Serial.print(log_data_pack.gyro_y); Serial.print(",");
+			Serial.print(log_data_pack.gyro_z); Serial.print(",");
 
-			Serial.print("Ahrs ("); // degrees
-			Serial.print(log_data_pack.ahrs_x * 180 / M_PI); Serial.print(", ");
-			Serial.print(log_data_pack.ahrs_y * 180 / M_PI); Serial.print(", ");
-			Serial.print(log_data_pack.ahrs_z * 180 / M_PI); Serial.print(")\t");
+			// AHRS in radians
+			Serial.print(log_data_pack.ahrs_roll); Serial.print(",");
+			Serial.print(log_data_pack.ahrs_pitch); Serial.print(",");
+			Serial.print(log_data_pack.ahrs_yaw); Serial.print(",");
 
-			Serial.print("Encoders ("); // mm / s
-			Serial.print(log_data_pack.left_speed); Serial.print(", ");
-			Serial.print(log_data_pack.right_speed); Serial.print(")\t");
+			// Encoders in mm / s
+			Serial.print(log_data_pack.left_speed); Serial.print(",");
+			Serial.print(log_data_pack.right_speed); Serial.print(",");
 
-			Serial.print("Planar acc ("); // ???
-			Serial.print(log_data_pack.planar_acc_x); Serial.print(", ");
-			Serial.print(log_data_pack.planar_acc_y); Serial.print(", ");
-			Serial.print(log_data_pack.planar_acc_z); Serial.print(")\t");
+			// Planar acceleration ???
+			Serial.print(log_data_pack.planar_acc_x); Serial.print(",");
+			Serial.print(log_data_pack.planar_acc_y); Serial.print(",");
+			Serial.print(log_data_pack.planar_acc_z); Serial.print(",");
 
-			Serial.print("Planar speed ("); // ???
-			Serial.print(log_data_pack.planar_speed_x); Serial.print(", ");
-			Serial.print(log_data_pack.planar_speed_y); Serial.print(", ");
-			Serial.print(log_data_pack.planar_speed_z); Serial.print(")\n");
+			// Planar speed ???
+			Serial.print(log_data_pack.planar_speed_x); Serial.print(",");
+			Serial.print(log_data_pack.planar_speed_y); Serial.print(",");
+			Serial.print(log_data_pack.planar_speed_z); Serial.print("\n");
 		}
 		else
 		{

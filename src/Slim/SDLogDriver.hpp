@@ -6,7 +6,7 @@
 #include "utility/Point3D.hpp"
 
 void initLogger();
-void logDataPack(OrientationSensors&, DualEncoder&, DualEncoder&, const Point3D<double>&, const Point3D<double>&);
+void logDataPack(OrientationSensors&, DualEncoder&, DualEncoder&, const Point3D<float>&, const Point3D<float>&);
 void dumpLog();
 void dropLog();
 

@@ -62,7 +62,7 @@ OBJ_FILES=$(SRC_FILES:%=${BUILD_DIR}/%.o)
 DEPENDENCIES=${OBJ_FILES:.o=.d}
 
 
-all: bin
+all: link
 compile: ${OBJ_FILES}
 link: ${TARGET_ELF}
 bin: ${TARGET_BIN}
@@ -104,11 +104,6 @@ program: ${TARGET_BIN} ${BOSSAC}
 	sleep .5
 	while [[ ! -c ${PORT_DEVICE} ]]; do sleep .1; done
 	${BOSSAC} -i -d --port=${PORT} -U true -i -e -w -v $< -R
-
-serial: program
-	sleep 2
-	stty -F ${PORT_DEVICE} cs8 ${SERIAL_BAUD} ignbrk -brkint -icrnl -imaxbel -opost -onlcr -isig -icanon -iexten -echo -echoe -echok -echoctl -echoke noflsh -ixon -crtscts
-	tail -f ${PORT_DEVICE} | tee log.txt
 
 
 .PHONY: all, program, serial, clean, clean_tools, compile, link, bin

@@ -4,7 +4,7 @@
 #include "../utility/Point3D.hpp"
 #include "../OrientationSensorsWrapper.hpp"
 
-extern Point3D<double> acceleration_vector;
+extern Point3D<float> acceleration_vector;
 
 void calibrateGravity(OrientationSensors&);
 void updatePlanarAcceleration(OrientationSensors&);

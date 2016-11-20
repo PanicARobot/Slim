@@ -1,3 +1,5 @@
+#include "RobotStateControl.h"
+
 #include "OrientationSensorsWrapper.hpp"
 #include "SDLogDriver.hpp"
 #include "DualEncoderDriver.hpp"
@@ -17,7 +19,7 @@
 #define I2C_FREQUENCY           400000
 #define SD_CHIP_SELECT          4
 
-#define LOG_FREQUENCY           5
+#define LOG_FREQUENCY           100
 
 #define SAMPLE_FREQUENCY        250
 #define MICROS_PER_SECOND       1000000
@@ -45,7 +47,6 @@ DualEncoder rightEncoder(RIGHT_A_PIN, RIGHT_B_PIN);
 void setup()
 {
 	Serial.begin(SERIAL_BAUD_RATE);
-	while(!Serial);
 
 	SD.begin(SD_CHIP_SELECT);
 
@@ -62,11 +63,19 @@ void setup()
 	Wire.setClock(I2C_FREQUENCY);
 
 	position.init();
-
-	initPlanarSpeed(position);
 }
 
 uint32_t event_micros;
+
+void calibrate() {
+	digitalWrite(LED_PIN, HIGH);
+	position.calibrate();
+	initPlanarSpeed(position);
+}
+
+void setState(int new_state) {
+	robot_state = (decltype(robot_state)) new_state;
+}
 
 void getProximityCommand()
 {
@@ -103,12 +112,12 @@ void getProximityCommand()
 						break;
 
 					case 1:
-						digitalWrite(LED_PIN, HIGH);
-						position.calibrate();
+						calibrate();
 						break;
 
 					case 2:
 						robot_state = TEST_MODE;
+						Serial.println("Welcome to test mode");
 						break;
 				}
 			}
@@ -212,19 +221,7 @@ void loop()
 		case TEST_MODE:
 			if(current_micros - last_sample_micros >= MICROS_PER_SECOND / SAMPLE_FREQUENCY)
 			{
-				static constexpr float GRAVITY = 9805.63;
-
-				Serial.print("Accelerometer: ");
-				Serial.print(position.getAccX() * GRAVITY); Serial.print(", ");
-				Serial.print(position.getAccY() * GRAVITY); Serial.print("     ");
-
-				Serial.print("Speed: ");
-				Serial.print(leftEncoder.getSpeed()); Serial.print(", ");
-				Serial.print(rightEncoder.getSpeed()); Serial.print("     ");
-
-				// Serial.print("Vector: ");
-				// Serial.print(planarAcceleration.getX()); Serial.print(", ");
-				// Serial.print(planarAcceleration.getY()); Serial.print("\n");
+				/* PERFORM TESTS */
 			}
 			break;
 

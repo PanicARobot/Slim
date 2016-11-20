@@ -4,18 +4,17 @@
 
 #define MICROS_PER_SECOND      1000000
 #define CALIBRATION_FREQUENCY  250
-#define CALIBRATION_TIME       MICROS_PER_SECOND
+#define SAMPLES_COUNT          250
 
-Point3D<double> acceleration_vector;
+Point3D<float> acceleration_vector;
 
-static double gravity;
+static float gravity;
 
 void calibrateGravity(OrientationSensors& position) {
 	acceleration_vector = {0, 0, 0};
-	uint32_t samples_count = 0;
 
-	uint8_t start_micros = micros();
-	uint8_t last_micros = start_micros;
+	for(int i = 0; i < SAMPLES_COUNT; ++i) {
+		position.update();
 
 		acceleration_vector += {
 			position.getAccX(),
@@ -23,20 +22,10 @@ void calibrateGravity(OrientationSensors& position) {
 			position.getAccZ()
 		};
 
-		if(current_micros - start_micros > CALIBRATION_TIME)
-			break;
-
-		if(current_micros - last_micros < MICROS_PER_SECOND / CALIBRATION_FREQUENCY)
-			continue;
-
-		acceleration_vector.x += position.getAccX(); // CHECK THESE
-		acceleration_vector.y += position.getAccY(); // CHECK THESE
-		acceleration_vector.z += position.getAccZ();
+		delayMicroseconds(MICROS_PER_SECOND / CALIBRATION_FREQUENCY);
 	}
 
-	acceleration_vector.x /= samples_count;
-	acceleration_vector.y /= samples_count;
-	acceleration_vector.z /= samples_count;
+	acceleration_vector /= SAMPLES_COUNT;
 
 	gravity = sqrt(acceleration_vector.x * acceleration_vector.x
 			+ acceleration_vector.y * acceleration_vector.y
@@ -82,4 +71,13 @@ void updatePlanarAcceleration(OrientationSensors& position) {
 		-sin(roll) * cos(pitch) * gravity,
 		cos(roll)  * cos(pitch) * gravity
 	};
+
+	acceleration_vector.x = position.getAccX(); // CHECK THESE
+	acceleration_vector.y = position.getAccY(); // CHECK THESE
+	acceleration_vector.z = position.getAccZ();
+
+	// Aaand CHECK THESE
+	acceleration_vector.x -= sin(position.getPitch()) * cos(position.getRoll()) * gravity;
+	acceleration_vector.y += sin(position.getRoll()) * gravity;
+	acceleration_vector.z -= cos(position.getPitch()) * cos(position.getRoll()) * gravity;
 }
