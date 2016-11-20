@@ -1,5 +1,8 @@
 #include "SDLogDriver.hpp"
 
+#include "../planar/PlanarSpeedModule.hpp"
+#include "../planar/PlanarAccelerationModule.hpp"
+
 #include <SD.h>
 
 #include <cstdint>
@@ -31,8 +34,7 @@ void initLogger()
 }
 
 void logDataPack(OrientationSensors& position,
-		DualEncoder& leftEncoder, DualEncoder& rightEncoder,
-		const Point3D<float>& planar_acc, const Point3D<float>& planar_speed)
+		DualEncoder& leftEncoder, DualEncoder& rightEncoder)
 {
 	log_data_pack.timestamp = millis();
 
@@ -51,13 +53,13 @@ void logDataPack(OrientationSensors& position,
 	log_data_pack.left_speed = leftEncoder.getSpeed();
 	log_data_pack.right_speed = rightEncoder.getSpeed();
 
-	log_data_pack.planar_acc_x = planar_acc.x;
-	log_data_pack.planar_acc_y = planar_acc.y;
-	log_data_pack.planar_acc_z = planar_acc.z;
+	log_data_pack.planar_acc_x = acceleration_vector.x;
+	log_data_pack.planar_acc_y = acceleration_vector.y;
+	log_data_pack.planar_acc_z = acceleration_vector.z;
 
-	log_data_pack.planar_speed_x = planar_speed.x;
-	log_data_pack.planar_speed_y = planar_speed.y;
-	log_data_pack.planar_speed_z = planar_speed.z;
+	log_data_pack.planar_speed_x = speed_vector.x;
+	log_data_pack.planar_speed_y = speed_vector.y;
+	log_data_pack.planar_speed_z = speed_vector.z;
 
 	f.write(BEGIN_DATA_BYTE);
 	f.write(data_begin, data_length);

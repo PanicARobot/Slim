@@ -48,9 +48,6 @@ void getSerialCommand()
 	else if(cmd == 'h') {
 		Serial.println("Hello, I am here!");
 	}
-	else if(cmd == 'c') {
-		calibrate();
-	}
 	else if(cmd == 'm') {
 		int new_state = 0;
 		if(Serial.available() > 0)
