@@ -42,9 +42,9 @@ struct Point3D {
 		x = nx; y = ny; z = nz;
 	}
 
-	inline void rotateYPR(float yaw, float pitch, float roll) {
-		float cy = cos(yaw), cp = cos(pitch), cr = cos(roll);
-		float sy = sin(yaw), sp = sin(pitch), sr = sin(roll);
+	inline void rotateYPR(Point3D<T> ahrs) {
+		float cy = cos(ahrs.z), cp = cos(ahrs.y), cr = cos(ahrs.x);
+		float sy = sin(ahrs.z), sp = sin(ahrs.y), sr = sin(ahrs.x);
 
 		float nx = cy * cp * x + (cy * sp * sr - sy * cr) * y + (cy * sp * cr + sy * sr) * z;
 		float ny = sy * cp * x + (sy * sp * sr + cy * cr) * y + (sy * sp * cr - cy * sr) * z;
