@@ -4,15 +4,9 @@
 #include "../drivers/DualEncoderDriver.hpp"
 #include "../drivers/ProximitySensors.hpp"
 #include "../modules/FrontLiftedDetection.hpp"
-
-#include <cmath>
+#include "Movement.h"
 
 #define STANDARD_SPEED				       170
-#define SPEED_CHANGE_STEP			       1
-#define DISTANCE_BETWEEN_MOTORS		       85.00
-#define HALF_DISTANCE_BETWEEN_MOTORS       (DISTANCE_BETWEEN_MOTORS / 2.00)
-
-#define SAMPLE_FREQUENCY        208
 
 enum {
 	SEARCH_INITIAL,
@@ -26,169 +20,6 @@ enum {
 	STOP_MOVING
 } STATE = SEARCH_INITIAL;
 
-enum {
-	MOVEMENT_SYSTEM_STATUS_OFF,
-	MOVEMENT_SYSTEM_STATUS_LINEAR_MOVEMENT,
-	MOVEMENT_SYSTEM_STATUS_ROUND_MOVEMENT
-} movementSystemStatus = MOVEMENT_SYSTEM_STATUS_OFF;
-
-static float distanceExpectedByLeftTire, distanceExpectedByRightTire;
-
-static int16_t leftMotorSpeed, rightMotorSpeed, leftMotorDir, rightMotorDir;
-static int8_t directionOfLinearMovement;
-static float circleMotorSpeedDifference;
-
-
-void HandleControlledMovement(float leftTireSpeed, float rightTireSpeed)
-{
-	switch(movementSystemStatus)
-	{
-		case MOVEMENT_SYSTEM_STATUS_OFF:
-			// stop the motors, they should not be moving
-			setMotors(0, 0);
-			break;
-
-		case MOVEMENT_SYSTEM_STATUS_LINEAR_MOVEMENT:
-		{
-			// check if the speeds are the same if not correct the speed of the slower motors
-			if(leftTireSpeed > rightTireSpeed)
-			{
-				leftMotorSpeed -= SPEED_CHANGE_STEP;
-			}
-			else if(leftTireSpeed < rightTireSpeed)
-			{
-				leftMotorSpeed += SPEED_CHANGE_STEP;
-			}
-
-			// update moved distance
-			distanceExpectedByLeftTire -= (float)(leftTireSpeed / SAMPLE_FREQUENCY);
-			distanceExpectedByRightTire -= (float)(rightTireSpeed / SAMPLE_FREQUENCY);
-
-			if(	(distanceExpectedByLeftTire < 0 && directionOfLinearMovement > 0) ||
-				(distanceExpectedByLeftTire > 0 && directionOfLinearMovement < 0) )
-			{
-				leftMotorSpeed = 0;
-			}
-
-
-			if(	(distanceExpectedByRightTire < 0 && directionOfLinearMovement > 0) ||
-				(distanceExpectedByRightTire > 0 && directionOfLinearMovement < 0) )
-			{
-				rightMotorSpeed = 0;
-			}
-
-			if(leftMotorSpeed == 0 && rightMotorSpeed == 0)
-			{
-				movementSystemStatus = MOVEMENT_SYSTEM_STATUS_OFF;
-			}
-
-			setMotors(leftMotorSpeed, rightMotorSpeed);
-
-			break;
-		}
-
-		case MOVEMENT_SYSTEM_STATUS_ROUND_MOVEMENT:
-		{
-			// check if the speeds are the same if not correct the speed of the slower motors
-			if(leftTireSpeed / rightTireSpeed > circleMotorSpeedDifference)
-			{
-				leftMotorSpeed -= SPEED_CHANGE_STEP;
-				rightMotorSpeed += SPEED_CHANGE_STEP;
-			}
-			else if(leftTireSpeed / rightTireSpeed < circleMotorSpeedDifference)
-			{
-				leftMotorSpeed += SPEED_CHANGE_STEP;
-				rightMotorSpeed -= SPEED_CHANGE_STEP;
-			}
-
-			// update moved distance
-			distanceExpectedByLeftTire -= leftTireSpeed / SAMPLE_FREQUENCY;
-			distanceExpectedByRightTire -= rightTireSpeed / SAMPLE_FREQUENCY;
-
-			if(	(distanceExpectedByLeftTire < 0 && leftMotorDir > 0) ||
-				(distanceExpectedByLeftTire > 0 && leftMotorDir < 0) )
-			{
-				leftMotorSpeed = 0;
-			}
-
-			if(	(distanceExpectedByRightTire < 0 && rightMotorDir > 0) ||
-				(distanceExpectedByRightTire > 0 && rightMotorDir < 0) )
-			{
-				rightMotorSpeed = 0;
-			}
-
-			if(leftMotorSpeed == 0 && rightMotorSpeed == 0)
-			{
-				movementSystemStatus = MOVEMENT_SYSTEM_STATUS_OFF;
-			}
-
-			setMotors(leftMotorSpeed, rightMotorSpeed);
-
-			break;
-		}
-	}
-}
-
-inline bool IsMovementComplete()
-{
-	return movementSystemStatus == MOVEMENT_SYSTEM_STATUS_OFF;
-}
-
-void LinearMovement(int32_t distanceInMMWithDirection) // TODO: Fix backwards
-{
-	// evaluate direction and pass to drivers the start state
-	if(0 < distanceInMMWithDirection)
-	{
-		directionOfLinearMovement = 1;
-		setMotors(STANDARD_SPEED, STANDARD_SPEED);
-	}
-	else
-	{
-		directionOfLinearMovement = -1;
-		setMotors(-STANDARD_SPEED, -STANDARD_SPEED);
-	}
-
-	// set setpoints for end of movement, used in handler
-	distanceExpectedByRightTire = (float)distanceInMMWithDirection;
-	distanceExpectedByLeftTire = (float)distanceInMMWithDirection;
-
-	// set motor speeds, used in handler
-	rightMotorSpeed = STANDARD_SPEED;
-	leftMotorSpeed = STANDARD_SPEED;
-
-	// set state on state machine
-	movementSystemStatus = MOVEMENT_SYSTEM_STATUS_LINEAR_MOVEMENT;
-}
-
-void Turn(int turnRadius, int turnDegrees)
-{
-	if(turnDegrees == 0) return;
-
-	distanceExpectedByLeftTire  = 2.00 * ((float)turnRadius + HALF_DISTANCE_BETWEEN_MOTORS) * M_PI * (float)turnDegrees / 360;
-	distanceExpectedByRightTire = 2.00 * ((float)turnRadius - HALF_DISTANCE_BETWEEN_MOTORS) * M_PI * (float)turnDegrees / 360;
-	if(turnDegrees < 0)
-	{
-		auto temp = -distanceExpectedByLeftTire;
-		distanceExpectedByLeftTire = -distanceExpectedByRightTire;
-		distanceExpectedByRightTire = temp;
-	}
-
-	circleMotorSpeedDifference = distanceExpectedByLeftTire / distanceExpectedByRightTire;
-
-	leftMotorDir = (turnDegrees > 0 || distanceExpectedByLeftTire > 0) ? 1 : -1;
-	rightMotorDir = (turnDegrees < 0 || distanceExpectedByRightTire > 0) ? 1 : -1;
-
-	leftMotorSpeed = STANDARD_SPEED * leftMotorDir;
-	rightMotorSpeed = STANDARD_SPEED * rightMotorDir;
-
-	if(turnDegrees > 0) leftMotorSpeed *= STANDARD_SPEED;
-	else rightMotorSpeed *= STANDARD_SPEED;
-
-	setMotors(leftMotorSpeed, rightMotorSpeed);
-
-	// set state on state machine
-	movementSystemStatus = MOVEMENT_SYSTEM_STATUS_ROUND_MOVEMENT;
-}
 
 void MovePattern()
 {
@@ -295,5 +126,5 @@ void MainLogic(float left_speed, float right_speed)
 	else if(right) STATE = FOUND_RIGHT;
 
 	MovePattern();
-	HandleControlledMovement(left_speed, right_speed);
+	handleControlledMovement(left_speed, right_speed);
 }
