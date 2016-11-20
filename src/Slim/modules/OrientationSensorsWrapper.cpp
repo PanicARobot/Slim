@@ -1,7 +1,6 @@
 #include "OrientationSensorsWrapper.hpp"
 
 #define CALIBRATION_FREQUENCY   208
-#define MICROS_PER_SECOND       1000000
 #define SAMPLES_COUNT           250
 
 void OrientationSensors::init()

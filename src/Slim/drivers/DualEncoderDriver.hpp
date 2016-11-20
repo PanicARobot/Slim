@@ -7,8 +7,6 @@
 #define IMPULSES_PER_ROUND   12
 #define WHEEL_REDUCTION   29.86
 
-#define MICROS_PER_SECOND 1000000
-
 
 class DualEncoder {
 	private:

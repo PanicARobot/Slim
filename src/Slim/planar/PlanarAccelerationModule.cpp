@@ -2,8 +2,6 @@
 
 #include <cmath>
 
-#define MICROS_PER_SECOND      1000000
-
 Point3D<float> acceleration_vector;
 
 void updatePlanarAcceleration(OrientationSensors& position) {

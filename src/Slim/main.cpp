@@ -19,7 +19,6 @@
 #define LOG_FREQUENCY           50
 
 #define SAMPLE_FREQUENCY        208
-#define MICROS_PER_SECOND       1000000
 
 #define LEFT_A_PIN              12
 #define LEFT_B_PIN              11

@@ -7,8 +7,6 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-#define MICROS_PER_SECOND 1000000
-
 #define LED_PIN 13
 #define PREPARE_TO_FIGHT_TIMEOUT 5
 
