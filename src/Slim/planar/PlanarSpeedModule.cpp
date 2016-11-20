@@ -5,7 +5,7 @@
 
 Point3D<float> speed_vector;
 
-void initPlanarSpeed(OrientationSensors& position) {
+void initPlanarSpeed() {
 	speed_vector = {0, 0, 0};
 }
 
