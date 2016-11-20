@@ -19,13 +19,13 @@ void OrientationSensors::init()
 	imu.enableDefault();
 
 	imu.writeReg(LSM6::CTRL1_XL, // Accelerometer
-		0x8 << 4 | // 1.66 kHz sample frequency
-		0x3 << 2 | // 8g
-		0x1);      // Anti-aliasing: 200 Hz
+			0x8 << 4 | // 1.66 kHz sample frequency
+			0x3 << 2 | // 8g
+			0x1);      // Anti-aliasing: 200 Hz
 	imu.writeReg(LSM6::CTRL2_G, // Gyroscope
-		0x8 << 4 | // 1.66 kHz sample frequency
-		0x2 << 2 | // 1000 degrees per second
-		0x0);
+			0x8 << 4 | // 1.66 kHz sample frequency
+			0x2 << 2 | // 1000 degrees per second
+			0x0);
 
 	// TODO: read calibration settings from EEPROM
 }
@@ -40,25 +40,18 @@ void OrientationSensors::calibrate()
 
 void OrientationSensors::calibrate_sensors()
 {
-	acc_offset = {0, 0, 0};
 	gyro_offset = {0, 0, 0};
 
 	for(int i = 0; i < SAMPLES_COUNT; ++i) {
 		imu.read();
 
-		acc_offset.x += imu.a.x;
-		acc_offset.y += imu.a.y;
-		// let gravity be there
-		// acc_offset.z += imu.a.z;
-
-		gyro_offset.x += imu.g.x;
-		gyro_offset.y += imu.g.y;
+		gyro_offset.x += imu.g.y; // Must stay swapped
+		gyro_offset.y += imu.g.x;
 		gyro_offset.z += imu.g.z;
 
 		delayMicroseconds(MICROS_PER_SECOND / CALIBRATION_FREQUENCY);
 	}
 
-	acc_offset /= SAMPLES_COUNT;
 	gyro_offset /= SAMPLES_COUNT;
 }
 
@@ -94,10 +87,22 @@ void OrientationSensors::update()
 {
 	imu.read();
 
+	acc_reading = {
+		imu.a.y, // Must stay swapped
+		imu.a.x,
+		imu.a.z
+	};
+	acc_reading /= gScale;
+
+	gyro_reading = {
+		imu.g.y, // Must stay swapped
+		imu.g.x,
+		imu.g.z
+	};
+
 	// Apply gyroscope offsets
-	imu.g.x -= gyro_offset.x;
-	imu.g.y -= gyro_offset.y;
-	imu.g.z -= gyro_offset.z;
+	gyro_reading -= gyro_offset;
+	gyro_reading /= dpsScale;
 
 	update_ahrs();
 
@@ -109,8 +114,6 @@ void OrientationSensors::update()
 	};
 	ahrs_reading -= ahrs_offset;
 
-	// Apply accelerometer offsets
-//	imu.a.x -= acc_offset.x;
-//	imu.a.y -= acc_offset.y;
-//	imu.a.z -= acc_offset.z;
+	// Apply accelerometer rotation
+	acc_reading.rotateYPR(ahrs_offset);
 }
