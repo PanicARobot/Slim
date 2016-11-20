@@ -70,7 +70,7 @@ uint32_t event_micros;
 void calibrate() {
 	digitalWrite(LED_PIN, HIGH);
 	position.calibrate();
-	initPlanarSpeed(position);
+	initPlanarSpeed();
 }
 
 void setState(int new_state) {
