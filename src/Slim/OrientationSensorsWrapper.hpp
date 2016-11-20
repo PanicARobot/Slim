@@ -16,7 +16,6 @@ class OrientationSensors {
 		LSM6 imu;
 		Mahony ahrs;
 
-		Point3D<int32_t> acc_offset;
 		Point3D<int32_t> gyro_offset;
 
 		Point3D<float> ahrs_offset;
