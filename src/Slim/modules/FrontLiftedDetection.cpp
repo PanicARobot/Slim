@@ -6,7 +6,7 @@
 
 uint8_t getFrontLiftedState(OrientationSensors& position)
 {
-    if(position.getRoll() * 180 / M_PI > FRONT_LIFTED_THRESHOLD)
+    if(position.getPitch() * 180 / M_PI > FRONT_LIFTED_THRESHOLD)
     {
         return 1;
     }

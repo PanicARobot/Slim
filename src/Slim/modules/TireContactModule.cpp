@@ -11,7 +11,7 @@
 uint8_t getLeftTireContactState(OrientationSensors& position)
 {
     // valid, tested
-    if(position.getPitch() * 180 / M_PI > TIRE_LOST_OF_CONTACT_DEGREES)
+    if(position.getRoll() * 180 / M_PI > TIRE_LOST_OF_CONTACT_DEGREES)
     {
         return 0;
     }
@@ -29,7 +29,7 @@ uint8_t getLeftTireContactState(OrientationSensors& position)
 uint8_t getRightTireContactState(OrientationSensors& position)
 {
     // valid, tested
-    if(position.getPitch() * 180 / M_PI < -TIRE_LOST_OF_CONTACT_DEGREES)
+    if(position.getRoll() * 180 / M_PI < -TIRE_LOST_OF_CONTACT_DEGREES)
     {
         return 0;
     }
