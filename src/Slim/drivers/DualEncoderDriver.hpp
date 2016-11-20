@@ -6,11 +6,12 @@
 
 #define IMPULSES_PER_ROUND   12
 #define WHEEL_REDUCTION   29.86
+#define WHEEL_DIAMETER       18
 
 
 class DualEncoder {
 	private:
-		static constexpr float WHEEL_PERIMETER = 18 * M_PI;
+		static constexpr float WHEEL_PERIMETER = WHEEL_DIAMETER * M_PI;
 		static constexpr float IMPULSES_PER_WHEEL = IMPULSES_PER_ROUND * WHEEL_REDUCTION;
 		static constexpr float DISTANCE = MICROS_PER_SECOND * WHEEL_PERIMETER / IMPULSES_PER_WHEEL;
 
