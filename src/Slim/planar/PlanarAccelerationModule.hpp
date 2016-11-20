@@ -6,7 +6,6 @@
 
 extern Point3D<float> acceleration_vector;
 
-void calibrateGravity(OrientationSensors&);
 void updatePlanarAcceleration(OrientationSensors&);
 
 #endif // __PLANAR_ACCELERATION_MODULE_H

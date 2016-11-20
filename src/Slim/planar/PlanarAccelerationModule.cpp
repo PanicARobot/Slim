@@ -4,33 +4,8 @@
 
 #define MICROS_PER_SECOND      1000000
 #define CALIBRATION_FREQUENCY  250
-#define SAMPLES_COUNT          250
 
 Point3D<float> acceleration_vector;
-
-static float gravity;
-
-void calibrateGravity(OrientationSensors& position) {
-	acceleration_vector = {0, 0, 0};
-
-	for(int i = 0; i < SAMPLES_COUNT; ++i) {
-		position.update();
-
-		acceleration_vector += {
-			position.getAccX(),
-			position.getAccY(),
-			position.getAccZ()
-		};
-
-		delayMicroseconds(MICROS_PER_SECOND / CALIBRATION_FREQUENCY);
-	}
-
-	acceleration_vector /= SAMPLES_COUNT;
-
-	gravity = sqrt(acceleration_vector.x * acceleration_vector.x
-			+ acceleration_vector.y * acceleration_vector.y
-			+ acceleration_vector.z * acceleration_vector.z);
-}
 
 void updatePlanarAcceleration(OrientationSensors& position) {
 	/*

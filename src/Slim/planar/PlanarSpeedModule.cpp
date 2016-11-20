@@ -6,7 +6,7 @@
 Point3D<float> speed_vector;
 
 void initPlanarSpeed(OrientationSensors& position) {
-	calibrateGravity(position);
+	speed_vector = {0, 0, 0};
 }
 
 void updatePlanarSpeed(OrientationSensors& position) {
