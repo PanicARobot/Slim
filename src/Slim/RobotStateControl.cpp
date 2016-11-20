@@ -19,7 +19,7 @@
 #define I2C_FREQUENCY           400000
 #define SD_CHIP_SELECT          4
 
-#define LOG_FREQUENCY           100
+#define LOG_FREQUENCY           250
 
 #define SAMPLE_FREQUENCY        250
 #define MICROS_PER_SECOND       1000000

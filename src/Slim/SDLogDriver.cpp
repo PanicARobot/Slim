@@ -4,11 +4,12 @@
 
 #include <cstdint>
 
-#define LOG_FILENAME            "LOG"
 #define BEGIN_LIFE_BYTE         'B'
 #define BEGIN_DATA_BYTE         'b'
 
-static struct {
+#define BUFFER_SIZE             300
+
+struct LogSample {
 	uint32_t timestamp;
 	float acc_x, acc_y, acc_z;
 	float gyro_x, gyro_y, gyro_z;
@@ -16,12 +17,17 @@ static struct {
 	float left_speed, right_speed;
 	float planar_acc_x, planar_acc_y, planar_acc_z;
 	float planar_speed_x, planar_speed_y, planar_speed_z;
-} log_data_pack;
+};
 
-static File f;
+static int buffer_index = 0;
+static LogSample log_data_buffer[BUFFER_SIZE];
+static LogSample log_data_pack;
 
 static char* const data_begin = (char*)(&log_data_pack); // Yes, yes, I know
-static const int data_length = sizeof(log_data_pack);
+static const int data_length = sizeof(LogSample);
+
+static File f;
+char* const LOG_FILENAME = "LOG";
 
 void initLogger()
 {
@@ -30,44 +36,53 @@ void initLogger()
 	f.flush();
 }
 
+void flush_data() {
+	for(int i = 0; i < buffer_index; ++i) {
+		char* const data_begin = (char*)(log_data_buffer + i);
+		f.write(BEGIN_DATA_BYTE);
+		f.write(data_begin, data_length);
+	}
+	f.flush();
+	buffer_index = 0;
+}
+
 void logDataPack(OrientationSensors& position,
 		DualEncoder& leftEncoder, DualEncoder& rightEncoder,
 		const Point3D<float>& planar_acc, const Point3D<float>& planar_speed)
 {
-	log_data_pack.timestamp = millis();
+	log_data_buffer[buffer_index].timestamp = millis();
 
-	log_data_pack.acc_x = position.getAccX();
-	log_data_pack.acc_y = position.getAccY();
-	log_data_pack.acc_z = position.getAccZ();
+	log_data_buffer[buffer_index].acc_x = position.getAccX();
+	log_data_buffer[buffer_index].acc_y = position.getAccY();
+	log_data_buffer[buffer_index].acc_z = position.getAccZ();
 
-	log_data_pack.gyro_x = position.getGyroX();
-	log_data_pack.gyro_y = position.getGyroY();
-	log_data_pack.gyro_z = position.getGyroZ();
+	log_data_buffer[buffer_index].gyro_x = position.getGyroX();
+	log_data_buffer[buffer_index].gyro_y = position.getGyroY();
+	log_data_buffer[buffer_index].gyro_z = position.getGyroZ();
 
-	log_data_pack.ahrs_roll = position.getRoll();
-	log_data_pack.ahrs_pitch = position.getPitch();
-	log_data_pack.ahrs_yaw = position.getYaw();
+	log_data_buffer[buffer_index].ahrs_roll = position.getRoll();
+	log_data_buffer[buffer_index].ahrs_pitch = position.getPitch();
+	log_data_buffer[buffer_index].ahrs_yaw = position.getYaw();
 
-	log_data_pack.left_speed = leftEncoder.getSpeed();
-	log_data_pack.right_speed = rightEncoder.getSpeed();
+	log_data_buffer[buffer_index].left_speed = leftEncoder.getSpeed();
+	log_data_buffer[buffer_index].right_speed = rightEncoder.getSpeed();
 
-	log_data_pack.planar_acc_x = planar_acc.x;
-	log_data_pack.planar_acc_y = planar_acc.y;
-	log_data_pack.planar_acc_z = planar_acc.z;
+	log_data_buffer[buffer_index].planar_acc_x = planar_acc.x;
+	log_data_buffer[buffer_index].planar_acc_y = planar_acc.y;
+	log_data_buffer[buffer_index].planar_acc_z = planar_acc.z;
 
-	log_data_pack.planar_speed_x = planar_speed.x;
-	log_data_pack.planar_speed_y = planar_speed.y;
-	log_data_pack.planar_speed_z = planar_speed.z;
+	log_data_buffer[buffer_index].planar_speed_x = planar_speed.x;
+	log_data_buffer[buffer_index].planar_speed_y = planar_speed.y;
+	log_data_buffer[buffer_index].planar_speed_z = planar_speed.z;
 
-	f.write(BEGIN_DATA_BYTE);
-	f.write(data_begin, data_length);
-
-	// TODO: implement own buffering
-	// f.flush();
+	++buffer_index;
+	if(buffer_index == BUFFER_SIZE)
+		flush_data();
 }
 
 void dumpLog()
 {
+	flush_data();
 	f.close();
 
 	f = SD.open(LOG_FILENAME, FILE_READ);
@@ -134,6 +149,7 @@ void dumpLog()
 
 void dropLog()
 {
+	buffer_index = 0;
 	f.close();
 
 	Serial.println("=== LOG ERASED ===");
