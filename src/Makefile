@@ -62,7 +62,7 @@ OBJ_FILES=$(SRC_FILES:%=${BUILD_DIR}/%.o)
 DEPENDENCIES=${OBJ_FILES:.o=.d}
 
 
-all: bin
+all: link
 compile: ${OBJ_FILES}
 link: ${TARGET_ELF}
 bin: ${TARGET_BIN}
