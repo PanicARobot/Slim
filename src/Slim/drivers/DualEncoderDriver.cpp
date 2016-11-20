@@ -29,12 +29,12 @@ void DualEncoder::init(void (*a_handler)(), void (*b_handler)())
 	attachInterrupt(digitalPinToInterrupt(B_PIN), b_handler, CHANGE);
 }
 
-void DualEncoder::update(uint8_t dir)
+void DualEncoder::update(int8_t dir)
 {
 	uint32_t current_micros = micros();
 
 	dir = dir * 2 - 1; // 1 is forward
-	if((dir ^ impulse_counter) < 0) // changed direction
+	if((dir ^ impulse_counter) < 0) // if direction has changed
 	{
 		impulse_counter = dir;
 		impulse_deltas_sum = 0;

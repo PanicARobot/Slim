@@ -27,7 +27,7 @@ class DualEncoder {
 		const int A_PIN;
 		const int B_PIN;
 
-		void update(uint8_t);
+		void update(int8_t);
 
 	public:
 		DualEncoder(int, int);
