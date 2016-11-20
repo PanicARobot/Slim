@@ -2,6 +2,8 @@
 
 #include <Arduino.h>
 
+#define RESET_TIMEOUT_MULTIPLIER 3
+
 DualEncoder::DualEncoder(int a_pin, int b_pin) :
 	last_micros(0),
 	impulse_counter(0),
@@ -34,28 +36,29 @@ void DualEncoder::update(int8_t dir)
 	uint32_t current_micros = micros();
 
 	dir = dir * 2 - 1; // 1 is forward
-	if((dir ^ impulse_counter) < 0) // if direction has changed
+	if(impulse_counter == 0 || (dir > 0 && impulse_counter < 0) || (dir < 0 && impulse_counter > 0))
 	{
 		impulse_counter = dir;
 		impulse_deltas_sum = 0;
+		speed = 0;
 	}
 	else
 	{
-		if(impulse_counter < IMPULSES_PER_ROUND)
+		if(impulse_deltas_index + 1 == IMPULSES_PER_ROUND)
+			impulse_deltas_index = 0;
+		else ++impulse_deltas_index;
+
+		if(dir > 0 && impulse_counter <= IMPULSES_PER_ROUND)
 			++impulse_counter;
-		else if(impulse_counter > -IMPULSES_PER_ROUND)
+		else if(dir < 0 && impulse_counter >= -IMPULSES_PER_ROUND)
 			--impulse_counter;
 		else impulse_deltas_sum -= impulse_deltas[impulse_deltas_index];
 
 		impulse_deltas[impulse_deltas_index] = current_micros - last_micros;
 		impulse_deltas_sum += impulse_deltas[impulse_deltas_index];
+
+		speed = DISTANCE_PER_IMPULSE * (impulse_counter - 1) / impulse_deltas_sum;
 	}
-
-	if(impulse_deltas_index + 1 == IMPULSES_PER_ROUND)
-		impulse_deltas_index = 0;
-	else ++impulse_deltas_index;
-
-	speed = DISTANCE * impulse_counter / impulse_deltas_sum;
 
 	last_micros = current_micros;
 }
@@ -64,7 +67,7 @@ void DualEncoder::update()
 {
 	uint32_t current_micros = micros();
 
-	if(current_micros - last_micros > MICROS_PER_SECOND / 10)
+	if(current_micros - last_micros > impulse_deltas[impulse_deltas_index] * RESET_TIMEOUT_MULTIPLIER)
 	{
 		speed = 0;
 		impulse_counter = 0;

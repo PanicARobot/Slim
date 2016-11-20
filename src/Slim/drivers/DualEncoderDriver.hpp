@@ -13,7 +13,7 @@ class DualEncoder {
 	private:
 		static constexpr float WHEEL_PERIMETER = WHEEL_DIAMETER * M_PI;
 		static constexpr float IMPULSES_PER_WHEEL = IMPULSES_PER_ROUND * WHEEL_REDUCTION;
-		static constexpr float DISTANCE = MICROS_PER_SECOND * WHEEL_PERIMETER / IMPULSES_PER_WHEEL;
+		static constexpr float DISTANCE_PER_IMPULSE = MICROS_PER_SECOND * WHEEL_PERIMETER / IMPULSES_PER_WHEEL;
 
 		uint32_t last_micros;
 		int8_t impulse_counter;
