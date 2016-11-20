@@ -1,10 +1,8 @@
-#include "MainLogic.h"
+#include "fight.h"
 
 #include "../drivers/MotorDriver.h"
-#include "../drivers/DualEncoderDriver.hpp"
 #include "../drivers/ProximitySensors.hpp"
-#include "../modules/FrontLiftedDetection.hpp"
-#include "Movement.h"
+#include "../control/Movement.h"
 
 #define STANDARD_SPEED				       170
 
@@ -28,7 +26,7 @@ void MovePattern()
 		case SEARCH_INITIAL:
 			if(IsMovementComplete())
 			{
-				Turn(0, -90);
+				initiateTurn(STANDARD_SPEED, 0, -90);
 				STATE = SEARCH_TURNING;
 			}
 			break;
@@ -36,7 +34,7 @@ void MovePattern()
 		case SEARCH_TURNING:
 			if(IsMovementComplete())
 			{
-				LinearMovement(200);
+				initiateLinearMovement(STANDARD_SPEED, 200);
 				STATE = SEARCH_FORWARD;
 			}
 			break;
@@ -44,25 +42,25 @@ void MovePattern()
 		case SEARCH_FORWARD:
 			if(IsMovementComplete())
 			{
-				Turn(50, 270);
+				initiateTurn(STANDARD_SPEED, 50, 270);
 				STATE = SEARCH_TURNING;
 			}
 			break;
 
 		case FOUND_LEFT:
-			Turn(0, -90);
+			initiateTurn(STANDARD_SPEED, 0, -90);
 			STATE = FOUND_STRAIGHT;
 			break;
 
 		case FOUND_RIGHT:
-			Turn(0, 90);
+			initiateTurn(STANDARD_SPEED, 0, 90);
 			STATE = FOUND_STRAIGHT;
 			break;
 
 		case FOUND_STRAIGHT:
 			if(IsMovementComplete())
 			{
-				LinearMovement(1000);
+				initiateLinearMovement(STANDARD_SPEED, 1000);
 				STATE = FOUND_STRAIGHT;
 			}
 			break;
@@ -117,7 +115,7 @@ void RoundPattern()
 }
 */
 
-void MainLogic(float left_speed, float right_speed)
+void handleFight(float left_speed, float right_speed)
 {
 	uint8_t left, right;
 	readProximitySensors(left, right);

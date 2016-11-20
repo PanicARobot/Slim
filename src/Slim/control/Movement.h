@@ -8,15 +8,8 @@ extern "C" {
 void handleControlledMovement(float, float);
 int IsMovementComplete(void);
 
-void LinearMovement(int);
-void Turn(int, int);
-
-/*
-void Push();
-void WaitToPass();
-void TurnTowards();
-void TurnAround();
-*/
+void initiateLinearMovement(int, int);
+void initiateTurn(int, int, int);
 
 #ifdef __cplusplus
 }

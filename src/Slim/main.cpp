@@ -7,7 +7,8 @@
 #include "planar/PlanarSpeedModule.hpp"
 #include "control/RobotStateControl.h"
 #include "control/SerialCommander.h"
-#include "control/MainLogic.h"
+#include "logic/fight.h"
+#include "logic/test.h"
 
 #include <Wire.h>
 #include <SD.h>
@@ -74,9 +75,10 @@ void loop() {
 				initPlanarSpeed();
 			},
 			[](){ // fight
-				MainLogic(leftEncoder.getSpeed(), rightEncoder.getSpeed());
+				handleFight(leftEncoder.getSpeed(), rightEncoder.getSpeed());
 			},
 			[](){ // test
+				handleTest();
 			});
 
 		last_sample_micros = current_micros;

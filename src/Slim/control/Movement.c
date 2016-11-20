@@ -21,12 +21,14 @@ static float distance_expected_by_left_tire, distance_expected_by_right_tire;
 static int16_t left_motor_speed, right_motor_speed, left_motor_dir, right_motor_dir;
 static int8_t direction_of_linear_movement;
 static float circle_motor_speed_difference;
-static int16_t movement_speed;
+static int movement_speed;
 
-void LinearMovement(int distanceInMMWithDirection) // TODO: Fix backwards
+void initiateLinearMovement(int speed, int distance) // TODO: Fix backwards
 {
+	movement_speed = speed;
+
 	// evaluate direction and pass to drivers the start state
-	if(0 < distanceInMMWithDirection)
+	if(0 < distance)
 	{
 		direction_of_linear_movement = 1;
 		setMotors(movement_speed, movement_speed);
@@ -38,20 +40,22 @@ void LinearMovement(int distanceInMMWithDirection) // TODO: Fix backwards
 	}
 
 	// set setpoints for end of movement, used in handler
-	distance_expected_by_left_tire = (float)distanceInMMWithDirection;
-	distance_expected_by_right_tire = (float)distanceInMMWithDirection;
+	distance_expected_by_left_tire = (float) distance;
+	distance_expected_by_right_tire = (float) distance;
 
 	// set motor speeds, used in handler
 	left_motor_speed = movement_speed;
 	right_motor_speed = movement_speed;
 
 	// set state on state machine
-	movement_system_status = NO_MOVEMENT;
+	movement_system_status = LINEAR_MOVEMENT;
 }
 
-void Turn(int turn_radius, int turn_degrees)
+void initiateTurn(int speed, int turn_radius, int turn_degrees)
 {
 	if(turn_degrees == 0) return;
+
+	movement_speed = speed;
 
 	distance_expected_by_left_tire  = 2.00 * ((float)turn_radius + HALF_DISTANCE_BETWEEN_MOTORS) * M_PI * (float)turn_degrees / 360;
 	distance_expected_by_right_tire = 2.00 * ((float)turn_radius - HALF_DISTANCE_BETWEEN_MOTORS) * M_PI * (float)turn_degrees / 360;
