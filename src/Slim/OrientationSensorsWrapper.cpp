@@ -1,6 +1,6 @@
 #include "OrientationSensorsWrapper.hpp"
 
-#define CALIBRATION_FREQUENCY   250
+#define CALIBRATION_FREQUENCY   208
 #define MICROS_PER_SECOND       1000000
 #define SAMPLES_COUNT           250
 
@@ -19,11 +19,13 @@ void OrientationSensors::init()
 	imu.enableDefault();
 
 	imu.writeReg(LSM6::CTRL1_XL, // Accelerometer
-			0x8 << 4 | // 1.66 kHz sample frequency
+			//0x8 << 4 | // 1.66 kHz sample frequency
+			0x5 << 4 | // 208 Hz sample frequency
 			0x3 << 2 | // 8g
 			0x1);      // Anti-aliasing: 200 Hz
 	imu.writeReg(LSM6::CTRL2_G, // Gyroscope
-			0x8 << 4 | // 1.66 kHz sample frequency
+			//0x8 << 4 | // 1.66 kHz sample frequency
+			0x5 << 4 | // 208 Hz sample frequency
 			0x2 << 2 | // 1000 degrees per second
 			0x0);
 
@@ -109,8 +111,8 @@ void OrientationSensors::update()
 		ahrs.getPitchRadians(),
 		ahrs.getYawRadians()
 	};
-	ahrs_reading -= ahrs_offset;
+//	ahrs_reading -= ahrs_offset;
 
 	// Apply accelerometer rotation
-	acc_reading.rotateYPR(ahrs_offset);
+//	acc_reading.rotateYPR(ahrs_offset);
 }

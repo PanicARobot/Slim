@@ -3,7 +3,6 @@
 #include <cmath>
 
 #define MICROS_PER_SECOND      1000000
-#define CALIBRATION_FREQUENCY  250
 
 Point3D<float> acceleration_vector;
 
