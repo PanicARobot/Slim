@@ -1,16 +1,16 @@
 #include "RobotStateControl.h"
 
-#include "OrientationSensorsWrapper.hpp"
-#include "SDLogDriver.hpp"
-#include "DualEncoderDriver.hpp"
-#include "MotorDriver.h"
-#include "TireContactModule.hpp"
-#include "FrontLiftedDetection.hpp"
 #include "MainLogic.h"
-#include "ProximitySensors.hpp"
 #include "SerialCommander.h"
-#include "planar/PlanarAccelerationModule.hpp"
-#include "planar/PlanarSpeedModule.hpp"
+#include "../drivers/SDLogDriver.hpp"
+#include "../drivers/DualEncoderDriver.hpp"
+#include "../drivers/MotorDriver.h"
+#include "../drivers/ProximitySensors.hpp"
+#include "../modules/OrientationSensorsWrapper.hpp"
+#include "../modules/TireContactModule.hpp"
+#include "../modules/FrontLiftedDetection.hpp"
+#include "../planar/PlanarAccelerationModule.hpp"
+#include "../planar/PlanarSpeedModule.hpp"
 
 #include <Wire.h>
 #include <SD.h>

@@ -1,8 +1,8 @@
 #include "SerialCommander.h"
 
-#include "SDLogDriver.hpp"
-#include "MotorDriver.h"
 #include "RobotStateControl.h"
+#include "../drivers/SDLogDriver.hpp"
+#include "../drivers/MotorDriver.h"
 
 #include <Wire.h>
 

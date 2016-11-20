@@ -2,7 +2,7 @@
 #define __PLANAR_ACCELERATION_MODULE_H
 
 #include "../utility/Point3D.hpp"
-#include "../OrientationSensorsWrapper.hpp"
+#include "../modules/OrientationSensorsWrapper.hpp"
 
 extern Point3D<float> acceleration_vector;
 

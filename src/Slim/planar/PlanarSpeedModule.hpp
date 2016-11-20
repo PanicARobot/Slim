@@ -1,7 +1,8 @@
 #ifndef __PLANAR_SPEED_MODULE_H
 #define __PLANAR_SPEED_MODULE_H
 
-#include "../OrientationSensorsWrapper.hpp"
+#include "../modules/OrientationSensorsWrapper.hpp"
+#include "../utility/Point3D.hpp"
 
 extern Point3D<float> speed_vector;
 

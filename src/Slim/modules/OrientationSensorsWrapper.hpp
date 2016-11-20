@@ -1,7 +1,7 @@
 #ifndef __ORIENTATION_SENSORS_WRAPPER_H
 #define __ORIENTATION_SENSORS_WRAPPER_H
 
-#include "utility/Point3D.hpp"
+#include "../utility/Point3D.hpp"
 
 #include <LSM6.h>
 #include <MahonyAHRS.h>
