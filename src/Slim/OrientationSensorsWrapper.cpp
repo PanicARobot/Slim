@@ -88,20 +88,17 @@ void OrientationSensors::update()
 	imu.read();
 
 	acc_reading = {
-		imu.a.y, // Must stay swapped
-		imu.a.x,
-		imu.a.z
+		(float) imu.a.y, // Must stay swapped
+		(float) imu.a.x,
+		(float) imu.a.z
 	};
 	acc_reading /= gScale;
 
 	gyro_reading = {
-		imu.g.y, // Must stay swapped
-		imu.g.x,
-		imu.g.z
+		(float) imu.g.y - gyro_offset.x, // Must stay swapped
+		(float) imu.g.x - gyro_offset.y,
+		(float) imu.g.z - gyro_offset.z
 	};
-
-	// Apply gyroscope offsets
-	gyro_reading -= gyro_offset;
 	gyro_reading /= dpsScale;
 
 	update_ahrs();
