@@ -17,8 +17,9 @@ class OrientationSensors {
 		Mahony ahrs;
 
 		Point3D<int32_t> gyro_offset;
-
 		Point3D<float> ahrs_offset;
+
+		Point3D<float> acc_reading;
 		Point3D<float> ahrs_reading;
 
 		void calibrate_sensors();
@@ -31,9 +32,9 @@ class OrientationSensors {
 		void calibrate();
 		void update();
 
-		inline float getAccX() { return imu.a.y / gScale; } // Must stay swapped
-		inline float getAccY() { return imu.a.x / gScale; }
-		inline float getAccZ() { return imu.a.z / gScale; }
+		inline float getAccX() { return acc_reading.x; }
+		inline float getAccY() { return acc_reading.y; }
+		inline float getAccZ() { return acc_reading.z; }
 
 		inline float getGyroX() { return imu.g.y / dpsScale; } // Must stay swapped
 		inline float getGyroY() { return imu.g.x / dpsScale; }

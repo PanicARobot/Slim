@@ -102,5 +102,12 @@ void OrientationSensors::update()
 	};
 	ahrs_reading -= ahrs_offset;
 
-	// Apply accelerometer offsets
+	// Apply accelerometer rotation
+	acc_reading = {
+		imu.a.y / gScale, // Must stay swapped
+		imu.a.x / gScale,
+		imu.a.z / gScale
+	};
+
+	acc_reading.rotateYPR(ahrs_reading);
 }
