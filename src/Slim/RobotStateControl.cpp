@@ -19,7 +19,7 @@
 #define I2C_FREQUENCY           400000
 #define SD_CHIP_SELECT          4
 
-#define LOG_FREQUENCY           5
+#define LOG_FREQUENCY           100
 
 #define SAMPLE_FREQUENCY        250
 #define MICROS_PER_SECOND       1000000
@@ -221,19 +221,7 @@ void loop()
 		case TEST_MODE:
 			if(current_micros - last_sample_micros >= MICROS_PER_SECOND / SAMPLE_FREQUENCY)
 			{
-				static constexpr float GRAVITY = 9805.63;
-
-				Serial.print("Accelerometer: ");
-				Serial.print(position.getAccX() * GRAVITY); Serial.print(", ");
-				Serial.print(position.getAccY() * GRAVITY); Serial.print("     ");
-
-				Serial.print("Speed: ");
-				Serial.print(leftEncoder.getSpeed()); Serial.print(", ");
-				Serial.print(rightEncoder.getSpeed()); Serial.print("     ");
-
-				// Serial.print("Vector: ");
-				// Serial.print(planarAcceleration.getX()); Serial.print(", ");
-				// Serial.print(planarAcceleration.getY()); Serial.print("\n");
+				/* PERFORM TESTS */
 			}
 			break;
 
