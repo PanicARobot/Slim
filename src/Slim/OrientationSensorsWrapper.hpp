@@ -20,6 +20,7 @@ class OrientationSensors {
 		Point3D<float> ahrs_offset;
 
 		Point3D<float> acc_reading;
+		Point3D<float> gyro_reading;
 		Point3D<float> ahrs_reading;
 
 		void calibrate_sensors();
@@ -36,9 +37,9 @@ class OrientationSensors {
 		inline float getAccY() { return acc_reading.y; }
 		inline float getAccZ() { return acc_reading.z; }
 
-		inline float getGyroX() { return imu.g.y / dpsScale; } // Must stay swapped
-		inline float getGyroY() { return imu.g.x / dpsScale; }
-		inline float getGyroZ() { return imu.g.z / dpsScale; }
+		inline float getGyroX() { return gyro_reading.x; }
+		inline float getGyroY() { return gyro_reading.y; }
+		inline float getGyroZ() { return gyro_reading.z; }
 
 		inline float getRoll() { return ahrs_reading.x; }
 		inline float getPitch() { return ahrs_reading.y; }
