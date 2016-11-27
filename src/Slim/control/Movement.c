@@ -166,7 +166,7 @@ void handleControlledMovement(float left_tire_speed, float right_tire_speed, flo
 	}
 }
 
-int IsMovementComplete(void)
+int isMovementComplete(void)
 {
 	return movement_system_status == NO_MOVEMENT;
 }

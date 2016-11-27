@@ -8,7 +8,7 @@ void handleTest(void)
 {
 	static int moment = 0;
 
-	if(moment == 0 && IsMovementComplete())
+	if(moment == 0 && isMovementComplete())
 	{
 		++moment;
 		initiateTurn(100, 100, 180);

@@ -24,7 +24,7 @@ void MovePattern()
 	switch(STATE)
 	{
 		case SEARCH_INITIAL:
-			if(IsMovementComplete())
+			if(isMovementComplete())
 			{
 				initiateTurn(STANDARD_SPEED, 0, -90);
 				STATE = SEARCH_TURNING;
@@ -32,7 +32,7 @@ void MovePattern()
 			break;
 
 		case SEARCH_TURNING:
-			if(IsMovementComplete())
+			if(isMovementComplete())
 			{
 				initiateLinearMovement(STANDARD_SPEED, 200);
 				STATE = SEARCH_FORWARD;
@@ -40,7 +40,7 @@ void MovePattern()
 			break;
 
 		case SEARCH_FORWARD:
-			if(IsMovementComplete())
+			if(isMovementComplete())
 			{
 				initiateTurn(STANDARD_SPEED, 50, 270);
 				STATE = SEARCH_TURNING;
@@ -58,7 +58,7 @@ void MovePattern()
 			break;
 
 		case FOUND_STRAIGHT:
-			if(IsMovementComplete())
+			if(isMovementComplete())
 			{
 				initiateLinearMovement(STANDARD_SPEED, 1000);
 				STATE = FOUND_STRAIGHT;
@@ -66,7 +66,7 @@ void MovePattern()
 			break;
 
 		default:
-			if(IsMovementComplete())
+			if(isMovementComplete())
 			{
 				setMotors(0, 0);
 			}
@@ -87,7 +87,7 @@ void RoundPattern()
 			break;
 
 		case STATE_TURNING:
-			if(IsMovementComplete())
+			if(isMovementComplete())
 			{
 				// keep turning
 				Turn(200,360);
