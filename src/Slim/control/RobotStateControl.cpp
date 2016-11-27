@@ -1,7 +1,7 @@
 #include "RobotStateControl.h"
 
 #include "../drivers/MotorDriver.h"
-#include "../drivers/ProximitySensors.hpp"
+#include "../drivers/ProximitySensors.h"
 
 #include <Arduino.h>
 #include <Wire.h>
@@ -23,9 +23,6 @@ void setState(int new_state) {
 }
 
 void updateRobotState(uint32_t current_micros) {
-	static uint8_t left = 0;
-	static uint8_t right = 0;
-
 	static uint8_t last_left = 0;
 	static uint8_t last_right = 0;
 
@@ -33,7 +30,8 @@ void updateRobotState(uint32_t current_micros) {
 
 	static uint32_t start_time_micros;
 
-	readProximitySensors(left, right);
+	uint8_t left = readLeftSensor();
+	uint8_t right = readRightSensor();
 
 	if(robot_state == WAITING_FOR_COMMAND) {
 		if(right)

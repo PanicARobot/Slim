@@ -1,7 +1,7 @@
 #include "fight.h"
 
 #include "../drivers/MotorDriver.h"
-#include "../drivers/ProximitySensors.hpp"
+#include "../drivers/ProximitySensors.h"
 #include "../control/Movement.h"
 
 #define STANDARD_SPEED				       170
@@ -117,8 +117,8 @@ void RoundPattern()
 
 void handleFight(float left_speed, float right_speed)
 {
-	uint8_t left, right;
-	readProximitySensors(left, right);
+	uint8_t left = readLeftSensor();
+	uint8_t right = readRightSensor();
 
 	if(left) STATE = FOUND_LEFT;
 	else if(right) STATE = FOUND_RIGHT;
