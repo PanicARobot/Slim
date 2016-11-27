@@ -63,7 +63,7 @@ void indicateRobotState(uint32_t current_micros) {
 	}
 }
 
-void handleRobotAction(uint32_t current_micros, void (*calibrate)(), void (*fight)(), void (*test)()) {
+void handleRobotAction(uint32_t current_micros, void (*calibrate)(void), void (*fight)(void), void (*test)(void)) {
 	static uint32_t start_time_micros;
 
 	switch(robot_state)
