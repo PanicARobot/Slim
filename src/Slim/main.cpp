@@ -1,7 +1,7 @@
 #include "drivers/DualEncoderDriver.hpp"
 #include "drivers/SDLogDriver.hpp"
 #include "drivers/MotorDriver.h"
-#include "drivers/ProximitySensors.hpp"
+#include "drivers/ProximitySensors.h"
 #include "modules/OrientationSensorsWrapper.hpp"
 #include "planar/PlanarAccelerationModule.hpp"
 #include "planar/PlanarSpeedModule.hpp"

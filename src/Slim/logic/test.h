@@ -7,7 +7,7 @@
 extern "C" {
 #endif
 
-void handleTest();
+void handleTest(void);
 
 #ifdef __cplusplus
 }
