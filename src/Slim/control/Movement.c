@@ -8,8 +8,6 @@
 #define DISTANCE_BETWEEN_MOTORS		       85.00
 #define HALF_DISTANCE_BETWEEN_MOTORS       (DISTANCE_BETWEEN_MOTORS / 2.00)
 
-#define SAMPLE_FREQUENCY        208.0f
-
 enum {
 	NO_MOVEMENT,
 	LINEAR_MOVEMENT,
@@ -78,7 +76,7 @@ void initiateTurn(int speed, int turn_radius, int turn_degrees)
 	movement_system_status = ROUND_MOVEMENT;
 }
 
-void handleControlledMovement(float left_tire_speed, float right_tire_speed)
+void handleControlledMovement(float left_tire_speed, float right_tire_speed, float delta_time)
 {
 	switch(movement_system_status)
 	{
@@ -100,8 +98,8 @@ void handleControlledMovement(float left_tire_speed, float right_tire_speed)
 			}
 
 			// update moved distance
-			distance_expected_by_left_tire -= (float) left_tire_speed / SAMPLE_FREQUENCY;
-			distance_expected_by_right_tire -= (float) right_tire_speed / SAMPLE_FREQUENCY;
+			distance_expected_by_left_tire -= (float) left_tire_speed * delta_time;
+			distance_expected_by_right_tire -= (float) right_tire_speed * delta_time;
 
 			if( (distance_expected_by_left_tire < 0 && direction_of_linear_movement > 0) ||
 				(distance_expected_by_left_tire > 0 && direction_of_linear_movement < 0) )
@@ -141,8 +139,8 @@ void handleControlledMovement(float left_tire_speed, float right_tire_speed)
 			}
 
 			// update moved distance
-			distance_expected_by_left_tire -= left_tire_speed / SAMPLE_FREQUENCY;
-			distance_expected_by_right_tire -= right_tire_speed / SAMPLE_FREQUENCY;
+			distance_expected_by_left_tire -= left_tire_speed * delta_time;
+			distance_expected_by_right_tire -= right_tire_speed * delta_time;
 
 			if(	(distance_expected_by_left_tire < 0 && left_motor_dir > 0) ||
 				(distance_expected_by_left_tire > 0 && left_motor_dir < 0) )

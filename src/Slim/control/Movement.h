@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-void handleControlledMovement(float, float);
+void handleControlledMovement(float, float, float);
 int IsMovementComplete(void);
 
 void initiateLinearMovement(int, int);

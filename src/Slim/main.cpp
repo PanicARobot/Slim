@@ -72,7 +72,7 @@ void loop() {
 
 		handleRobotAction(current_micros, calibrate, handleFight, handleTest);
 
-		handleControlledMovement(leftEncoder.getSpeed(), rightEncoder.getSpeed());
+		handleControlledMovement(leftEncoder.getSpeed(), rightEncoder.getSpeed(), 1.0 / SAMPLE_FREQUENCY);
 
 		last_sample_micros = current_micros;
 	}
