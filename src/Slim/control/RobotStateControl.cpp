@@ -2,6 +2,7 @@
 
 #include "../drivers/MotorDriver.h"
 #include "../drivers/ProximitySensors.hpp"
+#include "../drivers/StartModule.h"
 
 #include <Arduino.h>
 #include <Wire.h>
@@ -36,7 +37,11 @@ void updateRobotState(uint32_t current_micros) {
 	readProximitySensors(left, right);
 
 	if(robot_state == WAITING_FOR_COMMAND) {
-		if(right)
+		if(getStart())
+		{
+			robot_state = FIGHT_MODE;
+		}
+		else if(right)
 		{
 			if(left < last_left)
 			{
