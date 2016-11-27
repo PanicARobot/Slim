@@ -8,7 +8,7 @@
 #define DISTANCE_BETWEEN_MOTORS		       85.00
 #define HALF_DISTANCE_BETWEEN_MOTORS       (DISTANCE_BETWEEN_MOTORS / 2.00)
 
-#define SAMPLE_FREQUENCY        208
+#define SAMPLE_FREQUENCY        208.0f
 
 enum {
 	NO_MOVEMENT,
@@ -105,17 +105,17 @@ void handleControlledMovement(float left_tire_speed, float right_tire_speed)
 			}
 
 			// update moved distance
-			distance_expected_by_left_tire -= (float)(left_tire_speed / SAMPLE_FREQUENCY);
-			distance_expected_by_right_tire -= (float)(right_tire_speed / SAMPLE_FREQUENCY);
+			distance_expected_by_left_tire -= (float) left_tire_speed / SAMPLE_FREQUENCY;
+			distance_expected_by_right_tire -= (float) right_tire_speed / SAMPLE_FREQUENCY;
 
-			if(	(distance_expected_by_left_tire < 0 && direction_of_linear_movement > 0) ||
+			if( (distance_expected_by_left_tire < 0 && direction_of_linear_movement > 0) ||
 				(distance_expected_by_left_tire > 0 && direction_of_linear_movement < 0) )
 			{
 				left_motor_speed = 0;
 			}
 
 
-			if(	(distance_expected_by_right_tire < 0 && direction_of_linear_movement > 0) ||
+			if( (distance_expected_by_right_tire < 0 && direction_of_linear_movement > 0) ||
 				(distance_expected_by_right_tire > 0 && direction_of_linear_movement < 0) )
 			{
 				right_motor_speed = 0;

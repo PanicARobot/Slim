@@ -7,7 +7,7 @@
 extern "C" {
 #endif
 
-void handleFight(float, float);
+void handleFight(void);
 
 #ifdef __cplusplus
 }

@@ -115,7 +115,7 @@ void RoundPattern()
 }
 */
 
-void handleFight(float left_speed, float right_speed)
+void handleFight(void)
 {
 	uint8_t left = readLeftSensor();
 	uint8_t right = readRightSensor();
@@ -124,5 +124,4 @@ void handleFight(float left_speed, float right_speed)
 	else if(right) STATE = FOUND_RIGHT;
 
 	MovePattern();
-	handleControlledMovement(left_speed, right_speed);
 }

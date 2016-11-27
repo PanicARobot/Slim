@@ -7,6 +7,7 @@
 #include "planar/PlanarSpeedModule.hpp"
 #include "control/RobotStateControl.h"
 #include "control/SerialCommander.h"
+#include "control/Movement.h"
 #include "logic/fight.h"
 #include "logic/test.h"
 
@@ -69,16 +70,9 @@ void loop() {
 		rightEncoder.update();
 		updatePlanarSpeed(position);
 
-		handleRobotAction(current_micros, []() { // calibrate
-				position.calibrate();
-				initPlanarSpeed();
-			},
-			[](){ // fight
-				handleFight(leftEncoder.getSpeed(), rightEncoder.getSpeed());
-			},
-			[](){ // test
-				handleTest();
-			});
+		handleRobotAction(current_micros, calibrate, handleFight, handleTest);
+
+		handleControlledMovement(leftEncoder.getSpeed(), rightEncoder.getSpeed());
 
 		last_sample_micros = current_micros;
 	}

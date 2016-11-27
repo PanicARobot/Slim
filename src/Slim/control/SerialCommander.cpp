@@ -55,4 +55,8 @@ void getSerialCommand()
 
 		setState(new_state);
 	}
+	else if(cmd == 'q') {
+		void (*reset)(void) = 0;
+		reset();
+	}
 }
