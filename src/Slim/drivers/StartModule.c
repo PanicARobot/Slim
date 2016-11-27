@@ -9,7 +9,7 @@ void initStartModule(void)
 	pinMode(START_BUTTON_PIN, INPUT);
 }
 
-uint8_t getStart(void)
+uint8_t remoteStarted(void)
 {
 	return digitalRead(START_BUTTON_PIN);
 }

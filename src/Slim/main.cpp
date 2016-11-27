@@ -69,8 +69,7 @@ void loop() {
 		rightEncoder.update();
 		updatePlanarSpeed(position);
 
-		updateRobotState(current_micros);
-		handleRobotAction([]() { // calibrate
+		handleRobotAction(current_micros, []() { // calibrate
 				position.calibrate();
 				initPlanarSpeed();
 			},

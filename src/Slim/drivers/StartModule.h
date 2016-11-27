@@ -10,7 +10,7 @@ extern "C" {
 #define START_BUTTON_PIN   A4
 
 void initStartModule(void);
-uint8_t getStart(void);
+uint8_t remoteStarted(void);
 
 #ifdef __cplusplus
 }

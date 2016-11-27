@@ -7,10 +7,9 @@
 extern "C" {
 #endif
 
-void setState(int);
-void updateRobotState(uint32_t);
+void setState(uint32_t);
 void indicateRobotState(uint32_t);
-void handleRobotAction(void (*)(), void (*)(), void (*)());
+void handleRobotAction(uint32_t, void (*)(), void (*)(), void (*)());
 
 #ifdef __cplusplus
 }
