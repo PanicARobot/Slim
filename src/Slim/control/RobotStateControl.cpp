@@ -34,12 +34,16 @@ void updateRobotState(uint32_t current_micros) {
 	uint8_t left = readLeftSensor();
 	uint8_t right = readRightSensor();
 
-	if(robot_state == WAITING_FOR_COMMAND) {
-		if(getStart())
-		{
-			robot_state = FIGHT_MODE;
-		}
-		else if(right)
+	if(robot_state == WAITING_FOR_COMMAND && getStart())
+	{
+		robot_state = FIGHT_MODE;
+	}
+	else if(robot_state == FIGHT_MODE && !getStart())
+	{
+		robot_state = BRAINDEAD;
+	}
+	else if(robot_state == WAITING_FOR_COMMAND) {
+		if(right)
 		{
 			if(left < last_left)
 			{
@@ -138,8 +142,9 @@ void indicateRobotState(uint32_t current_micros) {
 void handleRobotAction(void (*calibrate)(), void (*fight)(), void (*test)()) {
 	switch(robot_state)
 	{
-		case BRAINDEAD:
+		case WAITING_FOR_COMMAND:
 		case PREPARE_TO_FIGHT:
+		case BRAINDEAD:
 			setMotors(0, 0);
 			break;
 
