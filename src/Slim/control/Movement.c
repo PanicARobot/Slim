@@ -21,22 +21,19 @@ static float distance_expected_by_left_tire, distance_expected_by_right_tire;
 static int16_t left_motor_speed, right_motor_speed, left_motor_dir, right_motor_dir;
 static int8_t direction_of_linear_movement;
 static float circle_motor_speed_difference;
-static int movement_speed;
 
 void initiateLinearMovement(int speed, int distance) // TODO: Fix backwards
 {
-	movement_speed = speed;
-
 	// evaluate direction and pass to drivers the start state
 	if(0 < distance)
 	{
 		direction_of_linear_movement = 1;
-		setMotors(movement_speed, movement_speed);
+		setMotors(speed, speed);
 	}
 	else
 	{
 		direction_of_linear_movement = -1;
-		setMotors(-movement_speed, -movement_speed);
+		setMotors(-speed, -speed);
 	}
 
 	// set setpoints for end of movement, used in handler
@@ -44,8 +41,8 @@ void initiateLinearMovement(int speed, int distance) // TODO: Fix backwards
 	distance_expected_by_right_tire = (float) distance;
 
 	// set motor speeds, used in handler
-	left_motor_speed = movement_speed;
-	right_motor_speed = movement_speed;
+	left_motor_speed = speed;
+	right_motor_speed = speed;
 
 	// set state on state machine
 	movement_system_status = LINEAR_MOVEMENT;
@@ -54,8 +51,6 @@ void initiateLinearMovement(int speed, int distance) // TODO: Fix backwards
 void initiateTurn(int speed, int turn_radius, int turn_degrees)
 {
 	if(turn_degrees == 0) return;
-
-	movement_speed = speed;
 
 	distance_expected_by_left_tire  = 2.00 * ((float)turn_radius + HALF_DISTANCE_BETWEEN_MOTORS) * M_PI * (float)turn_degrees / 360;
 	distance_expected_by_right_tire = 2.00 * ((float)turn_radius - HALF_DISTANCE_BETWEEN_MOTORS) * M_PI * (float)turn_degrees / 360;
@@ -71,11 +66,11 @@ void initiateTurn(int speed, int turn_radius, int turn_degrees)
 	left_motor_dir = (turn_degrees > 0 || distance_expected_by_left_tire > 0) ? 1 : -1;
 	right_motor_dir = (turn_degrees < 0 || distance_expected_by_right_tire > 0) ? 1 : -1;
 
-	left_motor_speed = movement_speed * left_motor_dir;
-	right_motor_speed = movement_speed * right_motor_dir;
+	left_motor_speed = speed * left_motor_dir;
+	right_motor_speed = speed * right_motor_dir;
 
-	if(turn_degrees > 0) left_motor_speed *= movement_speed;
-	else right_motor_speed *= movement_speed;
+	if(turn_degrees > 0) left_motor_speed *= speed;
+	else right_motor_speed *= speed;
 
 	setMotors(left_motor_speed, right_motor_speed);
 
