@@ -18,9 +18,24 @@ void handleTest(void)
 		++moment;
 		initiateLinearMovement(400, 100);
 	}
-	if(moment == 1 && isMovementComplete())
+	else if(moment == 1 && isMovementComplete())
 	{
 		++moment;
 		initiateLinearMovement(400, -100);
+	}
+	else if(moment == 2 && isMovementComplete())
+	{
+		++moment;
+		initiateTurn(400, 0, 90);
+	}
+	else if(moment == 3 && isMovementComplete())
+	{
+		++moment;
+		initiateTurn(400, 0, -90);
+	}
+	else if(moment == 4 && isMovementComplete())
+	{
+		++moment;
+		initiateTurn(400, 100, 90);
 	}
 }
