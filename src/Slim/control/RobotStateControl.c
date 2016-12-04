@@ -6,6 +6,7 @@
 #include "../drivers/StartModule.h"
 #include "../logic/fight.h"
 #include "../logic/test.h"
+#include "../drivers/ProximitySensors.h"
 
 #include <Arduino.h>
 
@@ -98,7 +99,7 @@ void handleRobotAction(uint32_t current_micros, void (*calibrate)(void)) {
 			break;
 
 		case PREPARE_TO_FIGHT:
-			if(getUICommand() == UI_FAILSAFE)
+			if(readLeftSensor() && readRightSensor())
 			{
 				robot_state = WAITING_FOR_COMMAND;
 			}
@@ -123,26 +124,26 @@ void handleRobotAction(uint32_t current_micros, void (*calibrate)(void)) {
 			break;
 
 		case FIGHT_MODE:
-			if(remoteStarted() && getUICommand() != UI_FAILSAFE)
-			{
-				handleFight();
-			}
-			else
+			if(!remoteStarted() || (readLeftSensor() && readRightSensor()))
 			{
 				resetMovement();
 				robot_state = BRAINDEAD;
 			}
+			else
+			{
+				handleFight();
+			}
 			break;
 
 		case TEST_MODE:
-			if(getUICommand() != UI_FAILSAFE)
-			{
-				handleTest();
-			}
-			else
+			if(readLeftSensor() && readRightSensor())
 			{
 				resetMovement();
 				robot_state = WAITING_FOR_COMMAND;
+			}
+			else
+			{
+				handleTest();
 			}
 			break;
 

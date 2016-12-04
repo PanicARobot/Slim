@@ -3,10 +3,6 @@
 
 #include <stdint.h>
 
-// Both should be < 0
-#define UI_WAITING   -1
-#define UI_FAILSAFE  -2
-
 #ifdef __cplusplus
 extern "C" {
 #endif

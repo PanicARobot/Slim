@@ -12,7 +12,7 @@ int8_t getUICommand(void)
 	uint8_t left = readLeftSensor();
 	uint8_t right = readRightSensor();
 
-	int current_command = UI_WAITING;
+	int current_command = -1;
 
 	if(right)
 	{
@@ -30,9 +30,6 @@ int8_t getUICommand(void)
 
 	last_left = left;
 	last_right = right;
-
-	if(left && right)
-		current_command = UI_FAILSAFE;
 
 	return current_command;
 }
