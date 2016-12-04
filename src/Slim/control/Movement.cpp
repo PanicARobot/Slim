@@ -64,8 +64,16 @@ void initiateTurn(int speed, int turn_radius, int turn_degrees)
 		distance_expected_by_right_tire = -distance_expected_by_right_tire;
 	}
 
-	left_target_speed = speed / turn_radius * left_radius;
-	right_target_speed = speed / right_radius * right_radius;
+	if(turn_degrees > 0)
+	{
+		left_target_speed = distance_expected_by_left_tire > 0 ? speed : -speed;
+		right_target_speed = left_target_speed / left_radius * right_radius;
+	}
+	else
+	{
+		right_target_speed = distance_expected_by_right_tire > 0 ? speed : -speed;
+		left_target_speed = right_target_speed / right_radius * left_radius;
+	}
 
 	left_motor_pid.zero();
 	right_motor_pid.zero();
