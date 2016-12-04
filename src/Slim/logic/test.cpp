@@ -11,6 +11,6 @@ void handleTest(void)
 	if(moment == 0 && isMovementComplete())
 	{
 		++moment;
-		initiateTurn(100, 100, 180);
+		initiateLinearMovement(300, 100);
 	}
 }

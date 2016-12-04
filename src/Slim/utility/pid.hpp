@@ -4,15 +4,12 @@
 class PidController {
 	private:
 		const float kP, kI, kD;
-
-		const float MIN_SCALE;
-		const float MAX_SCALE;
-
 		float last_error, integral;
 
 	public:
-		PidController(float, float, float, float, float);
+		PidController(float, float, float);
 
+		void zero();
 		float sample(float, float, float);
 };
 
