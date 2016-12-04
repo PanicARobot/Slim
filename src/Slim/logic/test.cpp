@@ -4,11 +4,14 @@
 #include "../drivers/ProximitySensors.h"
 #include "../control/Movement.h"
 
-static int moment = 0;
+#define SPEED 3000
+
+static int moment = -1;
 
 void initTest()
 {
-	moment = 0;
+	if(moment > 10) moment = 0;
+	else ++moment;
 }
 
 void handleTest(void)
@@ -16,26 +19,31 @@ void handleTest(void)
 	if(moment == 0 && isMovementComplete())
 	{
 		++moment;
-		initiateLinearMovement(400, 100);
-	}
-	else if(moment == 1 && isMovementComplete())
-	{
-		++moment;
-		initiateLinearMovement(400, -100);
+		initiateLinearMovement(SPEED, 100);
 	}
 	else if(moment == 2 && isMovementComplete())
 	{
 		++moment;
-		initiateTurn(400, 0, 90);
-	}
-	else if(moment == 3 && isMovementComplete())
-	{
-		++moment;
-		initiateTurn(400, 0, -90);
+		initiateLinearMovement(SPEED, -100);
 	}
 	else if(moment == 4 && isMovementComplete())
 	{
 		++moment;
-		initiateTurn(400, 100, 90);
+		initiateTurn(SPEED, 0, 90);
+	}
+	else if(moment == 6 && isMovementComplete())
+	{
+		++moment;
+		initiateTurn(SPEED, 0, -90);
+	}
+	else if(moment == 8 && isMovementComplete())
+	{
+		++moment;
+		initiateTurn(SPEED, 100, 90);
+	}
+	else if(moment == 10 && isMovementComplete())
+	{
+		++moment;
+		initiateTurn(SPEED, 0, 360);
 	}
 }

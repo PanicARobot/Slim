@@ -68,7 +68,7 @@ void loop() {
 			initPlanarSpeed();
 		});
 
-		handleControlledMovement(leftEncoder.getSpeed(), rightEncoder.getSpeed(), 1.0 / SAMPLE_FREQUENCY);
+		handleControlledMovement(leftEncoder.getSpeed(), rightEncoder.getSpeed(), (float)(current_micros - last_sample_micros) / MICROS_PER_SECOND);
 
 		last_sample_micros = current_micros;
 	}
