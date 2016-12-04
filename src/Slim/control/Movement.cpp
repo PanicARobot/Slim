@@ -6,8 +6,8 @@
 #include <math.h>
 
 #define SPEED_CHANGE_STEP			       1
-#define DISTANCE_BETWEEN_MOTORS		       85.00
-#define HALF_DISTANCE_BETWEEN_MOTORS       (DISTANCE_BETWEEN_MOTORS / 2.00)
+#define DISTANCE_BETWEEN_MOTORS		       85.0f
+#define HALF_DISTANCE_BETWEEN_MOTORS       (DISTANCE_BETWEEN_MOTORS / 2.0f)
 
 #define MOTOR_KP   0.5f
 #define MOTOR_KI   2.0f
@@ -17,8 +17,7 @@ static bool moving = false;
 
 static float distance_expected_by_left_tire, distance_expected_by_right_tire;
 
-static int16_t left_target_speed, right_target_speed, left_motor_dir, right_motor_dir;
-static float circle_motor_speed_difference;
+static int16_t left_target_speed, right_target_speed;
 
 static PidController left_motor_pid(MOTOR_KP, MOTOR_KI, MOTOR_KD);
 static PidController right_motor_pid(MOTOR_KP, MOTOR_KI, MOTOR_KD);
@@ -46,27 +45,30 @@ void initiateTurn(int speed, int turn_radius, int turn_degrees)
 {
 	if(turn_degrees == 0) return;
 
-	distance_expected_by_left_tire  = 2.00 * ((float)turn_radius + HALF_DISTANCE_BETWEEN_MOTORS) * M_PI * (float)turn_degrees / 360;
-	distance_expected_by_right_tire = 2.00 * ((float)turn_radius - HALF_DISTANCE_BETWEEN_MOTORS) * M_PI * (float)turn_degrees / 360;
+	float left_radius = (float) turn_radius + HALF_DISTANCE_BETWEEN_MOTORS;
+	float right_radius = (float) turn_radius - HALF_DISTANCE_BETWEEN_MOTORS;
+
 	if(turn_degrees < 0)
 	{
-		float temp = -distance_expected_by_left_tire;
-		distance_expected_by_left_tire = -distance_expected_by_right_tire;
-		distance_expected_by_right_tire = temp;
+		float temp = left_radius;
+		left_radius = right_radius;
+		right_radius = temp;
 	}
 
-	circle_motor_speed_difference = distance_expected_by_left_tire / distance_expected_by_right_tire;
+	distance_expected_by_left_tire = left_radius * M_PI * (float) turn_degrees / 180.0f;
+	distance_expected_by_right_tire = right_radius * M_PI * (float) turn_degrees / 180.0f;
 
-	left_motor_dir = (turn_degrees > 0 || distance_expected_by_left_tire > 0) ? 1 : -1;
-	right_motor_dir = (turn_degrees < 0 || distance_expected_by_right_tire > 0) ? 1 : -1;
+	if(turn_degrees < 0)
+	{
+		distance_expected_by_left_tire = -distance_expected_by_left_tire;
+		distance_expected_by_right_tire = -distance_expected_by_right_tire;
+	}
 
-	left_target_speed = speed * left_motor_dir;
-	right_target_speed = speed * right_motor_dir;
+	left_target_speed = speed / turn_radius * left_radius;
+	right_target_speed = speed / right_radius * right_radius;
 
-	if(turn_degrees > 0) left_target_speed *= speed;
-	else right_target_speed *= speed;
-
-	setMotors(left_target_speed, right_target_speed);
+	left_motor_pid.zero();
+	right_motor_pid.zero();
 
 	moving = true;
 }
