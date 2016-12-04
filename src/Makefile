@@ -101,6 +101,7 @@ ${BOSSAC}:
 	make -C ./BOSSA strip-bossac
 
 program: ${TARGET_BIN} ${BOSSAC}
+	while [[ ! -c ${PORT_DEVICE} ]]; do sleep .1; done
 	stty -F ${PORT_DEVICE} 1200
 	sleep .5
 	while [[ ! -c ${PORT_DEVICE} ]]; do sleep .1; done
