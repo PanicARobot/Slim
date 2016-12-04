@@ -81,21 +81,24 @@ void handleRobotAction(uint32_t current_micros, void (*calibrate)(void)) {
 				break;
 			}
 
-			int8_t command = getUICommand();
-			if(command == 0)
 			{
-				robot_state = PREPARE_TO_FIGHT;
-				start_time_micros = current_micros;
+				int8_t command = getUICommand();
+				if(command == 0)
+				{
+					robot_state = PREPARE_TO_FIGHT;
+					start_time_micros = current_micros;
+				}
+				else if(command == 1)
+				{
+					robot_state = CALIBRATE;
+				}
+				else if(command == 2)
+				{
+					initTest();
+					robot_state = TEST_MODE;
+				}
 			}
-			else if(command == 1)
-			{
-				robot_state = CALIBRATE;
-			}
-			else if(command == 2)
-			{
-				initTest();
-				robot_state = TEST_MODE;
-			}
+
 			break;
 
 		case PREPARE_TO_FIGHT:
