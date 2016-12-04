@@ -16,11 +16,11 @@ void handleTest(void)
 	if(moment == 0 && isMovementComplete())
 	{
 		++moment;
-		initiateLinearMovement(200, 100);
+		initiateLinearMovement(400, 100);
 	}
 	if(moment == 1 && isMovementComplete())
 	{
 		++moment;
-		initiateLinearMovement(200, -100);
+		initiateLinearMovement(400, -100);
 	}
 }
