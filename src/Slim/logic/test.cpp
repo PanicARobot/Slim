@@ -4,13 +4,23 @@
 #include "../drivers/ProximitySensors.h"
 #include "../control/Movement.h"
 
+static int moment = 0;
+
+void initTest()
+{
+	moment = 0;
+}
+
 void handleTest(void)
 {
-	static int moment = 0;
-
 	if(moment == 0 && isMovementComplete())
 	{
 		++moment;
-		initiateLinearMovement(300, 100);
+		initiateLinearMovement(200, 100);
+	}
+	if(moment == 1 && isMovementComplete())
+	{
+		++moment;
+		initiateLinearMovement(200, -100);
 	}
 }

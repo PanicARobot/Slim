@@ -7,6 +7,7 @@
 extern "C" {
 #endif
 
+void initFight(void);
 void handleFight(void);
 
 #ifdef __cplusplus

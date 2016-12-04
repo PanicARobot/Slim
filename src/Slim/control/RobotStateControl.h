@@ -9,7 +9,7 @@ extern "C" {
 
 void setState(uint32_t);
 void indicateRobotState(uint32_t);
-void handleRobotAction(uint32_t, void (*)(void), void (*)(void), void (*)(void));
+void handleRobotAction(uint32_t, void (*)(void));
 
 #ifdef __cplusplus
 }

@@ -8,8 +8,6 @@
 #include "control/RobotStateControl.h"
 #include "control/SerialCommander.h"
 #include "control/Movement.h"
-#include "logic/fight.h"
-#include "logic/test.h"
 
 #include <Wire.h>
 #include <SD.h>
@@ -52,11 +50,6 @@ void setup() {
 	position.init();
 }
 
-void calibrate() {
-	position.calibrate();
-	initPlanarSpeed();
-}
-
 void loop() {
 	static uint32_t last_sample_micros = 0;
 	static uint32_t last_log_micros = 0;
@@ -70,7 +63,10 @@ void loop() {
 		rightEncoder.update();
 		updatePlanarSpeed(position);
 
-		handleRobotAction(current_micros, calibrate, handleFight, handleTest);
+		handleRobotAction(current_micros, []() {
+			position.calibrate();
+			initPlanarSpeed();
+		});
 
 		handleControlledMovement(leftEncoder.getSpeed(), rightEncoder.getSpeed(), 1.0 / SAMPLE_FREQUENCY);
 

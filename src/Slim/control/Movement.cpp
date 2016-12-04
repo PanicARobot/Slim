@@ -107,6 +107,12 @@ void handleControlledMovement(float left_tire_speed, float right_tire_speed, flo
 	setMotors(left_speed, right_speed);
 }
 
+void resetMovement()
+{
+	setMotors(0, 0);
+	moving = false;
+}
+
 int isMovementComplete()
 {
 	return !moving;

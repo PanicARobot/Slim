@@ -18,7 +18,6 @@ enum {
 	STOP_MOVING
 } STATE = SEARCH_INITIAL;
 
-
 void MovePattern()
 {
 	switch(STATE)
@@ -114,6 +113,10 @@ void RoundPattern()
 	// }
 }
 */
+
+void initFight()
+{
+}
 
 void handleFight(void)
 {

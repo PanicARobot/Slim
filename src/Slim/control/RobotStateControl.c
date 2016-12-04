@@ -4,6 +4,8 @@
 
 #include "../drivers/MotorDriver.h"
 #include "../drivers/StartModule.h"
+#include "../logic/fight.h"
+#include "../logic/test.h"
 
 #include <Arduino.h>
 
@@ -63,7 +65,7 @@ void indicateRobotState(uint32_t current_micros) {
 	}
 }
 
-void handleRobotAction(uint32_t current_micros, void (*calibrate)(void), void (*fight)(void), void (*test)(void)) {
+void handleRobotAction(uint32_t current_micros, void (*calibrate)(void)) {
 	static uint32_t start_time_micros;
 
 	switch(robot_state)
@@ -73,6 +75,7 @@ void handleRobotAction(uint32_t current_micros, void (*calibrate)(void), void (*
 
 			if(remoteStarted())
 			{
+				initFight();
 				robot_state = FIGHT_MODE;
 				break;
 			}
@@ -89,6 +92,7 @@ void handleRobotAction(uint32_t current_micros, void (*calibrate)(void), void (*
 			}
 			else if(command == 2)
 			{
+				initTest();
 				robot_state = TEST_MODE;
 			}
 			break;
@@ -100,6 +104,7 @@ void handleRobotAction(uint32_t current_micros, void (*calibrate)(void), void (*
 			}
 			else if(current_micros - start_time_micros >= MICROS_PER_SECOND * PREPARE_TO_FIGHT_TIMEOUT)
 			{
+				initFight();
 				robot_state = FIGHT_MODE;
 				break;
 			}
@@ -119,13 +124,26 @@ void handleRobotAction(uint32_t current_micros, void (*calibrate)(void), void (*
 
 		case FIGHT_MODE:
 			if(remoteStarted() && getUICommand() != UI_FAILSAFE)
-				fight();
-			else robot_state = BRAINDEAD;
+			{
+				handleFight();
+			}
+			else
+			{
+				resetMovement();
+				robot_state = BRAINDEAD;
+			}
 			break;
 
 		case TEST_MODE:
-			if(getUICommand() != UI_FAILSAFE) test();
-			else robot_state = WAITING_FOR_COMMAND;
+			if(getUICommand() != UI_FAILSAFE)
+			{
+				handleTest();
+			}
+			else
+			{
+				resetMovement();
+				robot_state = WAITING_FOR_COMMAND;
+			}
 			break;
 
 		default:
