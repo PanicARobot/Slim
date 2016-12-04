@@ -16,10 +16,10 @@ float PidController::sample(float target, float current, float delta_time)
 {
 	float error = target - current;
 
-	integral += error;
+	integral += error * delta_time;
+	float derivative = (error - last_error) / delta_time;
 
-	float diff = error - last_error;
 	last_error = error;
 
-	return kP * error + kI * integral * delta_time + kD * diff / delta_time;
+	return kP * error + kI * integral + kD * derivative;
 }

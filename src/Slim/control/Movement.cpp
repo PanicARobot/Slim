@@ -9,16 +9,15 @@
 #define DISTANCE_BETWEEN_MOTORS		       85.00
 #define HALF_DISTANCE_BETWEEN_MOTORS       (DISTANCE_BETWEEN_MOTORS / 2.00)
 
-#define MOTOR_KP   1.0f
-#define MOTOR_KI   0.2f
-#define MOTOR_KD   2.0f
+#define MOTOR_KP   0.5f
+#define MOTOR_KI   2.0f
+#define MOTOR_KD   0.0f
 
 static bool moving = false;
 
 static float distance_expected_by_left_tire, distance_expected_by_right_tire;
 
 static int16_t left_target_speed, right_target_speed, left_motor_dir, right_motor_dir;
-static int8_t direction_of_linear_movement;
 static float circle_motor_speed_difference;
 
 static PidController left_motor_pid(MOTOR_KP, MOTOR_KI, MOTOR_KD);
@@ -27,15 +26,15 @@ static PidController right_motor_pid(MOTOR_KP, MOTOR_KI, MOTOR_KD);
 void initiateLinearMovement(int speed, int distance)
 {
 	// evaluate direction and pass to drivers the start state
-	direction_of_linear_movement = distance > 0 ? 1 : -1;
+	int direction = distance > 0 ? 1 : -1;
 
 	// set setpoints for end of movement, used in handler
 	distance_expected_by_left_tire = (float) distance;
 	distance_expected_by_right_tire = (float) distance;
 
 	// set motor speeds, used in handler
-	left_target_speed = speed * direction_of_linear_movement;
-	right_target_speed = speed * direction_of_linear_movement;
+	left_target_speed = speed * direction;
+	right_target_speed = speed * direction;
 
 	left_motor_pid.zero();
 	right_motor_pid.zero();
@@ -85,21 +84,22 @@ void handleControlledMovement(float left_tire_speed, float right_tire_speed, flo
 	distance_expected_by_left_tire -= (float) left_tire_speed * delta_time;
 	distance_expected_by_right_tire -= (float) right_tire_speed * delta_time;
 
-	if( (distance_expected_by_left_tire < 0 && direction_of_linear_movement > 0) ||
-			(distance_expected_by_left_tire > 0 && direction_of_linear_movement < 0) )
+	if( (distance_expected_by_left_tire < 0 && left_target_speed > 0) ||
+		(distance_expected_by_left_tire > 0 && left_target_speed < 0) )
 	{
 		left_target_speed = 0;
 	}
 
-	if( (distance_expected_by_right_tire < 0 && direction_of_linear_movement > 0) ||
-			(distance_expected_by_right_tire > 0 && direction_of_linear_movement < 0) )
+	if( (distance_expected_by_right_tire < 0 && right_target_speed > 0) ||
+		(distance_expected_by_right_tire > 0 && right_target_speed < 0) )
 	{
 		right_target_speed = 0;
 	}
 
 	if(left_target_speed == 0 && right_target_speed == 0)
 	{
-		moving = false;
+		resetMovement();
+		return;
 	}
 
 	float left_speed = left_motor_pid.sample(left_target_speed, left_tire_speed, delta_time);
