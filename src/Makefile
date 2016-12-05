@@ -1,5 +1,7 @@
-ARDUINO_PACKAGES=/home/cuki/.arduino15/packages
-TOOLCHAIN_PATH=${ARDUINO_PACKAGES}/arduino/tools/arm-none-eabi-gcc/4.8.3-2014q1
+DOWNLOADS=./downloads
+
+CMSIS=${DOWNLOADS}/CMSIS
+TOOLCHAIN=${DOWNLOADS}/gcc-arm-none-eabi-4.8.3-2014q1
 
 CORES_PATH=./ArduinoCore-samd/cores/arduino
 VARIANTS_PATH=./ArduinoCore-samd/variants/arduino_zero
@@ -10,10 +12,10 @@ PORT=ttyACM0
 PORT_DEVICE=/dev/${PORT}
 SERIAL_BAUD=115200
 
-CC=${TOOLCHAIN_PATH}/bin/arm-none-eabi-gcc
-CXX=${TOOLCHAIN_PATH}/bin/arm-none-eabi-g++
-AR=${TOOLCHAIN_PATH}/bin/arm-none-eabi-ar
-OBJCOPY=${TOOLCHAIN_PATH}/bin/arm-none-eabi-objcopy
+CC=${TOOLCHAIN}/bin/arm-none-eabi-gcc
+CXX=${TOOLCHAIN}/bin/arm-none-eabi-g++
+AR=${TOOLCHAIN}/bin/arm-none-eabi-ar
+OBJCOPY=${TOOLCHAIN}/bin/arm-none-eabi-objcopy
 
 BUILD_DIR=build
 
@@ -22,8 +24,8 @@ TARGET_BIN=${BUILD_DIR}/result.bin
 
 INCLUDE_DIRS=\
 	./SD/ \
-	${ARDUINO_PACKAGES}/arduino/tools/CMSIS/4.0.0-atmel/CMSIS/Include/ \
-	${ARDUINO_PACKAGES}/arduino/tools/CMSIS/4.0.0-atmel/Device/ATMEL/ \
+	${CMSIS}/CMSIS/Include/ \
+	${CMSIS}/Device/ATMEL/ \
 	${CORES_PATH} \
 	${VARIANTS_PATH} \
 	${LIBRARIES_PATH}/Wire/ \
@@ -64,21 +66,15 @@ DEPENDENCIES=${OBJ_FILES:.o=.d}
 
 
 all: link
-compile: ${OBJ_FILES}
-link: ${TARGET_ELF}
-bin: ${TARGET_BIN}
+compile: ${TOOLCHAIN} ${CMSIS} ${OBJ_FILES}
+link: compile ${TARGET_ELF}
+bin: link ${TARGET_BIN}
 
 ${TARGET_ELF}: ${OBJ_FILES}
 	${CC} ${LDFLAGS} -Wl,--start-group -lm $^ -Wl,--end-group -o $@
 
-${TARGET_BIN}: ${TARGET_ELF}
+${TARGET_BIN}: ${TARGET_ELF} ${TOOLCHAIN}
 	${OBJCOPY} -O binary $< $@
-
-clean:
-	rm -rf ${BUILD_DIR}
-
-clean_tools:
-	make -C ./BOSSA clean
 
 
 ${BUILD_DIR}/%.S.o: %.S
@@ -108,4 +104,21 @@ program: ${TARGET_BIN} ${BOSSAC}
 	${BOSSAC} -i -d --port=${PORT} -U true -i -e -w -v $< -R
 
 
-.PHONY: all, program, serial, clean, clean_tools, compile, link, bin
+${CMSIS}:
+	mkdir -p ${DOWNLOADS}
+	curl -s http://downloads.arduino.cc/CMSIS-4.0.0.tar.bz2 | tar xjf - -C ${DOWNLOADS}
+${TOOLCHAIN}:
+	mkdir -p ${DOWNLOADS}
+	curl -s http://downloads.arduino.cc/gcc-arm-none-eabi-4.8.3-2014q1-linux64.tar.gz | tar xzf - -C ${DOWNLOADS}
+
+
+clean:
+	rm -rf ${BUILD_DIR}
+
+clean_tools:
+	make -C ./BOSSA clean
+
+clean_downloads:
+	rm -rf ${DOWNLOADS}
+
+.PHONY: all, program, serial, clean, clean_tools, clean_downloads, compile, link, bin
