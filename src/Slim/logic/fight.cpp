@@ -4,7 +4,7 @@
 #include "../drivers/ProximitySensors.h"
 #include "../control/Movement.h"
 
-#define STANDARD_SPEED				       170
+#define STANDARD_SPEED				       1000
 
 enum {
 	SEARCH_INITIAL,
