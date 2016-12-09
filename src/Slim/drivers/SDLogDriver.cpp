@@ -64,8 +64,7 @@ void logDataPack(OrientationSensors& position,
 	f.write(BEGIN_DATA_BYTE);
 	f.write(data_begin, data_length);
 
-	// TODO: implement own buffering
-	// f.flush();
+	f.flush();
 }
 
 void dumpLog()
