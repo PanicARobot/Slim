@@ -9,8 +9,8 @@
 #define DISTANCE_BETWEEN_MOTORS		       85.0f
 #define HALF_DISTANCE_BETWEEN_MOTORS       (DISTANCE_BETWEEN_MOTORS / 2.0f)
 
-#define MOTOR_KP   0.5f
-#define MOTOR_KI   2.0f
+#define MOTOR_KP   0.05f
+#define MOTOR_KI   6.0f
 #define MOTOR_KD   0.0f
 
 static bool moving = false;
@@ -19,8 +19,8 @@ static float distance_expected_by_left_tire, distance_expected_by_right_tire;
 
 static int16_t left_target_speed, right_target_speed;
 
-static PidController left_motor_pid(MOTOR_KP, MOTOR_KI, MOTOR_KD);
-static PidController right_motor_pid(MOTOR_KP, MOTOR_KI, MOTOR_KD);
+static PidController left_motor_pid(MOTOR_KP, MOTOR_KI, MOTOR_KD, 255.0f / MOTOR_KI);
+static PidController right_motor_pid(MOTOR_KP, MOTOR_KI, MOTOR_KD, 255.0f / MOTOR_KI);
 
 void initiateLinearMovement(int speed, int distance)
 {
