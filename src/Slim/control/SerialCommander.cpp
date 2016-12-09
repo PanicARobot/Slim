@@ -15,48 +15,52 @@ void getSerialCommand()
 
 	char cmd = Serial.read();
 
-	if(cmd == 'l' || cmd == 'r' || cmd == 'b')
+	switch(cmd)
 	{
-		int speed = 0;
-		if(Serial.available() > 0)
-		{
-			int dir = 1;
-			if(Serial.peek() == '-')
+		case 'l': case 'r': case 'b':
 			{
-				dir = -1;
-				Serial.read();
+				int speed = 0;
+				if(Serial.available() > 0)
+				{
+					int dir = 1;
+					if(Serial.peek() == '-')
+					{
+						dir = -1;
+						Serial.read();
+					}
+					while(Serial.available() > 0)
+					{
+						char digit = Serial.read();
+						speed = speed * 10 + (digit - '0');
+					}
+					speed *= dir;
+				}
+
+				if(cmd == 'l' || cmd == 'b') left = speed;
+				if(cmd == 'r' || cmd == 'b') right = speed;
+
+				setMotors(left, right);
 			}
-			while(Serial.available() > 0)
+			break;
+
+		case 'd': dumpLog(); break;
+		case 'e': dropLog(); break;
+
+		case 'h':
+			Serial.println("Hello, I am here!");
+			break;
+		case 'm':
 			{
-				char digit = Serial.read();
-				speed = speed * 10 + (digit - '0');
+				int new_state = 0;
+				if(Serial.available() > 0)
+					new_state = Serial.read() - '0';
+
+				setState(new_state);
 			}
-			speed *= dir;
-		}
-
-		if(cmd == 'l' || cmd == 'b') left = speed;
-		if(cmd == 'r' || cmd == 'b') right = speed;
-
-		setMotors(left, right);
-	}
-	else if(cmd == 'd') {
-		dumpLog();
-	}
-	else if(cmd == 'e') {
-		dropLog();
-	}
-	else if(cmd == 'h') {
-		Serial.println("Hello, I am here!");
-	}
-	else if(cmd == 'm') {
-		int new_state = 0;
-		if(Serial.available() > 0)
-			new_state = Serial.read() - '0';
-
-		setState(new_state);
-	}
-	else if(cmd == 'q') {
-		void (*reset)(void) = 0;
-		reset();
+			break;
+		case 'q':
+			void (*reset)(void) = 0;
+			reset();
+			break;
 	}
 }
