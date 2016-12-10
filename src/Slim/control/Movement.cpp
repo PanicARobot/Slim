@@ -113,6 +113,7 @@ void handleControlledMovement(float left_tire_speed, float right_tire_speed, flo
 
 	float left_speed = left_motor_pid.sample(QUEUE_FRONT.left_target_speed, left_tire_speed, delta_time);
 	float right_speed = right_motor_pid.sample(QUEUE_FRONT.right_target_speed, right_tire_speed, delta_time);
+
 	setMotors(left_speed, right_speed);
 
 	if( (QUEUE_FRONT.expected_distance_left < 0 && QUEUE_FRONT.left_target_speed > 0) ||
@@ -124,7 +125,11 @@ void handleControlledMovement(float left_tire_speed, float right_tire_speed, flo
 	}
 
 	if(left_index == right_index)
+	{
 		setMotors(0, 0);
+		left_motor_pid.zero();
+		right_motor_pid.zero();
+	}
 }
 
 int isQueueEmpty()
@@ -134,6 +139,8 @@ int isQueueEmpty()
 
 void clearQueue()
 {
-	right_index = left_index;
 	setMotors(0, 0);
+	left_motor_pid.zero();
+	right_motor_pid.zero();
+	right_index = left_index;
 }
