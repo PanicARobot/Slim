@@ -13,10 +13,6 @@
 #define MOTOR_KI   6.0f
 #define MOTOR_KD   0.0f
 
-#define QUEUE_SIZE 64
-#define QUEUE_FRONT movement_queue[left_index]
-#define QUEUE_BACK movement_queue[right_index]
-
 static PidController left_motor_pid(MOTOR_KP, MOTOR_KI, MOTOR_KD, 255.0f / MOTOR_KI);
 static PidController right_motor_pid(MOTOR_KP, MOTOR_KI, MOTOR_KD, 255.0f / MOTOR_KI);
 
@@ -28,21 +24,25 @@ struct Movement {
 	int16_t right_target_speed;
 };
 
+#define QUEUE_SIZE 64
+#define QUEUE_FRONT movement_queue[queue_left]
+#define QUEUE_BACK movement_queue[queue_right]
+
 static Movement movement_queue[QUEUE_SIZE];
-int left_index = 0, right_index = 0;
+int queue_left = 0, queue_right = 0;
 
 inline void push_queue()
 {
-	++right_index;
-	if(right_index == QUEUE_SIZE)
-		right_index = 0;
+	++queue_right;
+	if(queue_right == QUEUE_SIZE)
+		queue_right = 0;
 }
 
 inline void pop_queue()
 {
-	++left_index;
-	if(left_index == QUEUE_SIZE)
-		left_index = 0;
+	++queue_left;
+	if(queue_left == QUEUE_SIZE)
+		queue_left = 0;
 }
 
 void enqueueLinearMovement(int speed, int distance)
@@ -100,7 +100,7 @@ void enqueueTurn(int speed, int turn_radius, int turn_degrees)
 
 void handleControlledMovement(float left_tire_speed, float right_tire_speed, float delta_time)
 {
-	if(left_index == right_index)
+	if(queue_left == queue_right)
 	{
 		// stop the motors, they should not be moving
 		setMotors(0, 0);
@@ -111,10 +111,10 @@ void handleControlledMovement(float left_tire_speed, float right_tire_speed, flo
 	QUEUE_FRONT.expected_distance_left -= (float) left_tire_speed * delta_time;
 	QUEUE_FRONT.expected_distance_right -= (float) right_tire_speed * delta_time;
 
-	float left_speed = left_motor_pid.sample(QUEUE_FRONT.left_target_speed, left_tire_speed, delta_time);
-	float right_speed = right_motor_pid.sample(QUEUE_FRONT.right_target_speed, right_tire_speed, delta_time);
+	float left_power = left_motor_pid.sample(QUEUE_FRONT.left_target_speed, left_tire_speed, delta_time);
+	float right_power = right_motor_pid.sample(QUEUE_FRONT.right_target_speed, right_tire_speed, delta_time);
 
-	setMotors(left_speed, right_speed);
+	setMotors(left_power, right_power);
 
 	if( (QUEUE_FRONT.expected_distance_left < 0 && QUEUE_FRONT.left_target_speed > 0) ||
 		(QUEUE_FRONT.expected_distance_left > 0 && QUEUE_FRONT.left_target_speed < 0) ||
@@ -124,7 +124,7 @@ void handleControlledMovement(float left_tire_speed, float right_tire_speed, flo
 		pop_queue();
 	}
 
-	if(left_index == right_index)
+	if(queue_left == queue_right)
 	{
 		setMotors(0, 0);
 		left_motor_pid.zero();
@@ -134,7 +134,7 @@ void handleControlledMovement(float left_tire_speed, float right_tire_speed, flo
 
 int isQueueEmpty()
 {
-	return left_index == right_index;
+	return queue_left == queue_right;
 }
 
 void clearQueue()
@@ -142,5 +142,5 @@ void clearQueue()
 	setMotors(0, 0);
 	left_motor_pid.zero();
 	right_motor_pid.zero();
-	right_index = left_index;
+	queue_right = queue_left;
 }
