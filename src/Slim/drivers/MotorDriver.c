@@ -33,6 +33,6 @@ void setMotor(int32_t speed, int dirPin, int speedPin)
 
 void setMotors(int32_t left, int32_t right)
 {
-	setMotor(left, MOTOR_LEFT_DIR_PIN, MOTOR_LEFT_PWM_PIN);
+	setMotor(-left, MOTOR_LEFT_DIR_PIN, MOTOR_LEFT_PWM_PIN);
 	setMotor(right, MOTOR_RIGHT_DIR_PIN, MOTOR_RIGHT_PWM_PIN);
 }
