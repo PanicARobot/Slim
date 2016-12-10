@@ -4,6 +4,7 @@
 
 #include "../drivers/MotorDriver.h"
 #include "../drivers/StartModule.h"
+#include "../control/Movement.h"
 #include "../logic/fight.h"
 #include "../logic/test.h"
 #include "../drivers/ProximitySensors.h"
@@ -129,7 +130,7 @@ void handleRobotAction(uint32_t current_micros, void (*calibrate)(void)) {
 		case FIGHT_MODE:
 			if(!remoteStarted() || (readLeftSensor() && readRightSensor()))
 			{
-				resetMovement();
+				clearQueue();
 				robot_state = BRAINDEAD;
 			}
 			else
@@ -141,7 +142,7 @@ void handleRobotAction(uint32_t current_micros, void (*calibrate)(void)) {
 		case TEST_MODE:
 			if(readLeftSensor() && readRightSensor())
 			{
-				resetMovement();
+				clearQueue();
 				robot_state = WAITING_FOR_COMMAND;
 			}
 			else

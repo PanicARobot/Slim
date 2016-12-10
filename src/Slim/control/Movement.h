@@ -5,12 +5,12 @@
 extern "C" {
 #endif
 
-void initiateLinearMovement(int, int);
-void initiateTurn(int, int, int);
-void resetMovement(void);
+void enqueueLinearMovement(int, int);
+void enqueueTurn(int, int, int);
 
 void handleControlledMovement(float, float, float);
-int isMovementComplete(void);
+int isQueueEmpty(void);
+void clearQueue(void);
 
 #ifdef __cplusplus
 }
