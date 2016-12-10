@@ -10,6 +10,9 @@
 
 void initTest()
 {
+	enqueueLinearMovement(SPEED, 500);
+	return;
+
 	enqueueLinearMovement(SPEED, 250);
 	enqueueTurn(SPEED, 0, -180);
 	enqueueLinearMovement(SPEED, 250);

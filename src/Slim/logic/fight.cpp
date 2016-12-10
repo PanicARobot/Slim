@@ -23,58 +23,83 @@ void MovePattern()
 	switch(STATE)
 	{
 		case SEARCH_INITIAL:
-			if(isQueueEmpty())
-			{
-				enqueueTurn(STANDARD_SPEED, 0, -90);
-				STATE = SEARCH_TURNING;
-			}
-			break;
+//			if(isQueueEmpty())
+//			{
+//				enqueueTurn(STANDARD_SPEED, 0, -90);
+//				STATE = SEARCH_TURNING;
+//			}
+//			break;
 
 		case SEARCH_TURNING:
-			if(isQueueEmpty())
-			{
-				enqueueLinearMovement(STANDARD_SPEED, 200);
-				STATE = SEARCH_FORWARD;
-			}
-			break;
+//			if(isQueueEmpty())
+//			{
+//				enqueueLinearMovement(STANDARD_SPEED, 200);
+//				STATE = SEARCH_FORWARD;
+//			}
+//			break;
 
 		case SEARCH_FORWARD:
-			if(isQueueEmpty())
-			{
-				enqueueTurn(STANDARD_SPEED, 50, 270);
-				STATE = SEARCH_TURNING;
-			}
-			break;
+//			if(isQueueEmpty())
+//			{
+//				enqueueTurn(STANDARD_SPEED, 50, 270);
+//				STATE = SEARCH_TURNING;
+//			}
+//			break;
 
 		case FOUND_LEFT:
+			clearQueue();
 			enqueueTurn(STANDARD_SPEED, 0, -90);
+			enqueueLinearMovement(STANDARD_SPEED, 1000);
 			STATE = FOUND_STRAIGHT;
 			break;
 
 		case FOUND_RIGHT:
+			clearQueue();
 			enqueueTurn(STANDARD_SPEED, 0, 90);
+			enqueueLinearMovement(STANDARD_SPEED, 1000);
 			STATE = FOUND_STRAIGHT;
 			break;
 
 		case FOUND_STRAIGHT:
-			if(isQueueEmpty())
-			{
-				enqueueLinearMovement(STANDARD_SPEED, 1000);
-				STATE = FOUND_STRAIGHT;
-			}
+			//if(isQueueEmpty())
+			//{
+			//	enqueueLinearMovement(STANDARD_SPEED, 1000);
+			//	STATE = FOUND_STRAIGHT;
+			//}
 			break;
 
 		default:
-			if(isQueueEmpty())
-			{
-				setMotors(0, 0);
-			}
 			break;
 	}
 }
 
 void initFight()
 {
+	enqueueTurn(STANDARD_SPEED, 0, -90);
+
+	enqueueLinearMovement(STANDARD_SPEED, 200);
+	enqueueTurn(STANDARD_SPEED, 50, 270);
+
+	enqueueLinearMovement(STANDARD_SPEED, 200);
+	enqueueTurn(STANDARD_SPEED, 50, 270);
+
+	enqueueLinearMovement(STANDARD_SPEED, 200);
+	enqueueTurn(STANDARD_SPEED, 50, 270);
+
+	enqueueLinearMovement(STANDARD_SPEED, 200);
+	enqueueTurn(STANDARD_SPEED, 50, 270);
+
+	enqueueLinearMovement(STANDARD_SPEED, 200);
+	enqueueTurn(STANDARD_SPEED, 50, 270);
+
+	enqueueLinearMovement(STANDARD_SPEED, 200);
+	enqueueTurn(STANDARD_SPEED, 50, 270);
+
+	enqueueLinearMovement(STANDARD_SPEED, 200);
+	enqueueTurn(STANDARD_SPEED, 50, 270);
+
+	enqueueLinearMovement(STANDARD_SPEED, 200);
+	enqueueTurn(STANDARD_SPEED, 50, 270);
 }
 
 void handleFight(void)
