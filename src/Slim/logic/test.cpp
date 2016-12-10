@@ -10,7 +10,18 @@
 
 void initTest()
 {
-	enqueueLinearMovement(SPEED, 500);
+	static int moment = 0;
+
+	switch(moment)
+	{
+		default: moment = 0;
+		case 0: enqueueLinearMovement(SPEED, 500); break;
+		case 1: enqueueLinearMovement(SPEED, -500); break;
+		case 2: enqueueTurn(SPEED, 0, 90); break;
+		case 3: enqueueTurn(SPEED, 0, -90); break;
+	}
+
+	++moment;
 	return;
 
 	enqueueLinearMovement(SPEED, 250);
