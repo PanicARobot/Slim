@@ -54,10 +54,10 @@ SRC_DIRS=\
 	./lsm6-arduino \
 	./MahonyAHRS/src \
 	./SD/ \
-	./ArduinoCore-samd/cores/arduino/ \
-	./ArduinoCore-samd/variants/arduino_zero/ \
-	./ArduinoCore-samd/libraries/Wire/ \
-	./ArduinoCore-samd/libraries/SPI/
+	${CORES_PATH} \
+	${VARIANTS_PATH} \
+	${LIBRARIES_PATH}/Wire/ \
+	${LIBRARIES_PATH}/SPI/
 
 SRC_FILES=$(shell find ${SRC_DIRS} -name \*.S -or -name \*.c -or -name \*.cpp)
 
