@@ -1,6 +1,5 @@
 #include "fight.h"
 
-#include "../drivers/MotorDriver.h"
 #include "../drivers/ProximitySensors.h"
 #include "../control/Movement.h"
 
@@ -20,12 +19,11 @@ void initFight()
 {
 	debounce_start_timer = 50;
 
-	enqueueTurn(STANDARD_SPEED, 0, -20);
-	enqueueLinearMovement(STANDARD_SPEED, 250);
-	enqueueTurn(STANDARD_SPEED, 100, -360);
-	enqueueTurn(STANDARD_SPEED, 100, -360);
-	enqueueTurn(STANDARD_SPEED, 100, -360);
-	enqueueTurn(STANDARD_SPEED, 100, -360);
+	for(int i = 0; i < 16; ++i)
+	{
+		enqueueTurn(STANDARD_SPEED, 0, -90);
+		enqueueLinearMovement(STANDARD_SPEED, 150);
+	}
 }
 
 void handleFight()
