@@ -14,18 +14,28 @@ enum {
 	CHASE,
 } STATE = SEARCH;
 
+static uint16_t debounce_start_timer = 0;
+
 void initFight()
 {
+	debounce_start_timer = 50;
+
 	enqueueTurn(STANDARD_SPEED, 0, -20);
 	enqueueLinearMovement(STANDARD_SPEED, 250);
-	enqueueTurn(STANDARD_SPEED, 75, -360);
-	enqueueTurn(STANDARD_SPEED, 75, -360);
-	enqueueTurn(STANDARD_SPEED, 75, -360);
-	enqueueTurn(STANDARD_SPEED, 75, -360);
+	enqueueTurn(STANDARD_SPEED, 100, -360);
+	enqueueTurn(STANDARD_SPEED, 100, -360);
+	enqueueTurn(STANDARD_SPEED, 100, -360);
+	enqueueTurn(STANDARD_SPEED, 100, -360);
 }
 
 void handleFight()
 {
+	if(debounce_start_timer > 0)
+	{
+		debounce_start_timer--;
+		return;
+	}
+
 	uint8_t left = readLeftSensor();
 	uint8_t right = readRightSensor();
 
