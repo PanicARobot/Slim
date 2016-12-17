@@ -9,7 +9,7 @@
 enum {
 	SEARCH,
 	FOUND,
-	STOP_MOVING
+	CHASE,
 } STATE = SEARCH;
 
 void initFight()
@@ -24,7 +24,12 @@ void handleFight()
 	uint8_t left = readLeftSensor();
 	uint8_t right = readRightSensor();
 
-	if(STATE != FOUND || isQueueEmpty())
+	if(isQueueEmpty())
+	{
+		STATE = SEARCH;
+	}
+
+	if(STATE != FOUND)
 	{
 		if(left)
 		{
@@ -45,6 +50,7 @@ void handleFight()
 		if(!(left || right))
 		{
 			enqueueLinearMovement(STANDARD_SPEED, 1000);
+			STATE = CHASE;
 		}
 	}
 }
