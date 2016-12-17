@@ -16,7 +16,10 @@ void initFight()
 {
 	enqueueTurn(STANDARD_SPEED, 0, -20);
 	enqueueLinearMovement(STANDARD_SPEED, 150);
-	enqueueTurn(STANDARD_SPEED, 150, -360);
+	enqueueTurn(STANDARD_SPEED, 75, -360);
+	enqueueTurn(STANDARD_SPEED, 75, -360);
+	enqueueTurn(STANDARD_SPEED, 75, -360);
+	enqueueTurn(STANDARD_SPEED, 75, -360);
 }
 
 void handleFight()
