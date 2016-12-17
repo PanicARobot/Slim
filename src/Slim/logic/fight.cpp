@@ -24,7 +24,7 @@ void handleFight()
 	uint8_t left = readLeftSensor();
 	uint8_t right = readRightSensor();
 
-	if(STATE != FOUND)
+	if(STATE != FOUND || isQueueEmpty())
 	{
 		if(left)
 		{
@@ -39,8 +39,12 @@ void handleFight()
 			enqueueTurn(STANDARD_SPEED, 0, 90);
 		}
 	}
-	else if(!(left || right))
+
+	if(STATE == FOUND)
 	{
-		enqueueLinearMovement(STANDARD_SPEED, 1000);
+		if(!(left || right))
+		{
+			enqueueLinearMovement(STANDARD_SPEED, 1000);
+		}
 	}
 }
