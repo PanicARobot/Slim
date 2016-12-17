@@ -7,71 +7,10 @@
 #define STANDARD_SPEED				       1000
 
 enum {
-	SEARCH_INITIAL,
-	SEARCH_TURNING,
-	SEARCH_FORWARD,
-
-	FOUND_LEFT,
-	FOUND_RIGHT,
-	FOUND_STRAIGHT,
-
+	SEARCH,
+	FOUND,
 	STOP_MOVING
-} STATE = SEARCH_INITIAL;
-
-void MovePattern()
-{
-	switch(STATE)
-	{
-		case SEARCH_INITIAL:
-//			if(isQueueEmpty())
-//			{
-//				enqueueTurn(STANDARD_SPEED, 0, -90);
-//				STATE = SEARCH_TURNING;
-//			}
-			break;
-
-		case SEARCH_TURNING:
-//			if(isQueueEmpty())
-//			{
-//				enqueueLinearMovement(STANDARD_SPEED, 200);
-//				STATE = SEARCH_FORWARD;
-//			}
-			break;
-
-		case SEARCH_FORWARD:
-//			if(isQueueEmpty())
-//			{
-//				enqueueTurn(STANDARD_SPEED, 50, 270);
-//				STATE = SEARCH_TURNING;
-//			}
-			break;
-
-		case FOUND_LEFT:
-			clearQueue();
-			enqueueTurn(STANDARD_SPEED, 0, -90);
-			enqueueLinearMovement(STANDARD_SPEED, 1000);
-			STATE = FOUND_STRAIGHT;
-			break;
-
-		case FOUND_RIGHT:
-			clearQueue();
-			enqueueTurn(STANDARD_SPEED, 0, 90);
-			enqueueLinearMovement(STANDARD_SPEED, 1000);
-			STATE = FOUND_STRAIGHT;
-			break;
-
-		case FOUND_STRAIGHT:
-			//if(isQueueEmpty())
-			//{
-			//	enqueueLinearMovement(STANDARD_SPEED, 1000);
-			//	STATE = FOUND_STRAIGHT;
-			//}
-			break;
-
-		default:
-			break;
-	}
-}
+} STATE = SEARCH;
 
 void initFight()
 {
@@ -80,13 +19,28 @@ void initFight()
 	enqueueTurn(STANDARD_SPEED, 150, -360);
 }
 
-void handleFight(void)
+void handleFight()
 {
 	uint8_t left = readLeftSensor();
 	uint8_t right = readRightSensor();
 
-	if(left) STATE = FOUND_LEFT;
-	else if(right) STATE = FOUND_RIGHT;
-
-	MovePattern();
+	if(STATE != FOUND)
+	{
+		if(left)
+		{
+			STATE = FOUND;
+			clearQueue();
+			enqueueTurn(STANDARD_SPEED, 0, -90);
+		}
+		else if(right)
+		{
+			STATE = FOUND;
+			clearQueue();
+			enqueueTurn(STANDARD_SPEED, 0, 90);
+		}
+	}
+	else if(!(left || right))
+	{
+		enqueueLinearMovement(STANDARD_SPEED, 1000);
+	}
 }
